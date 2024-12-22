@@ -30,6 +30,11 @@ public class WorldManager : MonoBehaviour
     // Track coroutines by chunk position
     private Dictionary<Vector3Int, Coroutine> activeCoroutines = new Dictionary<Vector3Int, Coroutine>();
 
+    private string lastViewKey; // Add this field to track view changes
+
+    // Add a way to track chunks that are "in progress"
+    private HashSet<Vector3Int> chunksInQueue = new HashSet<Vector3Int>();
+
     private void Awake()
     {
         if (instance == null) instance = this;
@@ -74,27 +79,28 @@ public class WorldManager : MonoBehaviour
     {
         int chunksThisFrame = 0;
         
-        // Create a temporary list of chunks to remove from queue
-        List<Vector3Int> chunksToSkip = new List<Vector3Int>();
-        
         while (chunkLoadQueue.Count > 0 && chunksThisFrame < chunksPerFrame)
         {
-            Vector3Int chunkPos = chunkLoadQueue.Peek(); // Peek instead of Dequeue
+            Vector3Int chunkPos = chunkLoadQueue.Peek();
             
             // Skip if chunk is no longer needed
             if (!activeChunks.Contains(chunkPos))
             {
-                chunkLoadQueue.Dequeue(); // Remove from queue
+                chunkLoadQueue.Dequeue();
+                chunksInQueue.Remove(chunkPos);
                 continue;
             }
             
             if (!chunksInProgress.Contains(chunkPos))
             {
-                chunkLoadQueue.Dequeue(); // Only dequeue if we're actually processing it
+                chunkLoadQueue.Dequeue();
                 StartCoroutine(LoadChunkAsync(chunkPos));
                 chunksThisFrame++;
             }
         }
+
+        // Cleanup any chunks in chunksInQueue that aren't in activeChunks
+        chunksInQueue.RemoveWhere(pos => !activeChunks.Contains(pos));
     }
 
     // Public API for external systems
@@ -104,80 +110,102 @@ public class WorldManager : MonoBehaviour
     /// </summary>
     public void RequestChunkArea(Vector2Int center, int radius, Vector3 cameraPos)
     {
+        Debug.Log($"[WorldManager] Request: Center({center}), Radius({radius}), Camera({cameraPos})");
+        Debug.Log($"[WorldManager] View Size: {radius * 2}x{radius * 2} chunks ({radius * 2 * ChunkData.CHUNK_SIZE}x{radius * 2 * ChunkData.CHUNK_SIZE} blocks)");
+        
+        // Update debug visualization data
+        float width = radius * 2 * ChunkData.CHUNK_SIZE;
+        float height = ChunkData.WORLD_HEIGHT;
+        float depth = radius * 2 * ChunkData.CHUNK_SIZE;
+        
+        debugBoxCenter = new Vector3(
+            center.x * ChunkData.CHUNK_SIZE + (ChunkData.CHUNK_SIZE / 2f),
+            height / 2f,
+            center.y * ChunkData.CHUNK_SIZE + (ChunkData.CHUNK_SIZE / 2f)
+        );
+        
+        debugBoxSize = new Vector3(width, height, depth);
+
         HashSet<Vector3Int> newActiveChunks = new HashSet<Vector3Int>();
         List<ChunkRequest> requests = new List<ChunkRequest>();
 
-        // Debug visualization of the request area
-        Vector3 debugCenter = new Vector3(
-            center.x * ChunkData.CHUNK_SIZE,
-            ChunkData.WORLD_HEIGHT / 2,  // Center vertically
-            center.y * ChunkData.CHUNK_SIZE
-        );
-        
-        // Draw debug box for the requested area
-        Vector3 size = new Vector3(
-            radius * 2 * ChunkData.CHUNK_SIZE,
-            ChunkData.WORLD_HEIGHT,
-            radius * 2 * ChunkData.CHUNK_SIZE
-        );
-        
-        // Align debug box with camera position
-        debugBoxCenter = new Vector3(cameraPos.x, ChunkData.WORLD_HEIGHT / 2, cameraPos.z);
-        debugBoxSize = size;
-
-        // Calculate vertical chunk range for the entire world height
-        int minY = 0;
-        int maxY = ChunkData.WORLD_HEIGHT / ChunkData.CHUNK_SIZE;
-
-        // Generate sorted list of chunk requests
         for (int x = -radius; x <= radius; x++)
         {
             for (int z = -radius; z <= radius; z++)
             {
-                for (int y = minY; y < maxY; y++)
+                bool foundOpaque = false;
+                
+                for (int y = ChunkData.WORLD_HEIGHT / ChunkData.CHUNK_SIZE - 1; y >= 0; y--)
                 {
                     Vector3Int chunkPos = new Vector3Int(center.x + x, y, center.y + z);
-                    float distance = Vector3.Distance(
-                        new Vector3(chunkPos.x, 0, chunkPos.z),
-                        new Vector3(center.x, 0, center.y)
-                    );
-                    requests.Add(new ChunkRequest(chunkPos, distance));
+                    ChunkData chunk = chunkManager.GetChunkData(chunkPos);
+                    
+                    if (!foundOpaque)
+                    {
+                        newActiveChunks.Add(chunkPos);
+                        
+                        // Only queue if chunk needs generation or visualization
+                        if (chunk == null || !visualizationManager.IsChunkVisualized(chunkPos))
+                        {
+                            // Skip if we're already generating this chunk
+                            if (!chunksInQueue.Contains(chunkPos))
+                            {
+                                float priority = GetChunkPriority(chunkPos, cameraPos);
+                                requests.Add(new ChunkRequest(chunkPos, priority));
+                                chunksInQueue.Add(chunkPos);
+                            }
+                        }
+                    }
+
+                    if (chunk != null && chunk.IsChunkOpaque())
+                    {
+                        foundOpaque = true;
+                    }
                 }
             }
         }
 
-        // Sort by distance and queue
-        requests.Sort((a, b) => a.Distance.CompareTo(b.Distance));
+        // Queue only new or unvisualized chunks
         foreach (var request in requests)
         {
-            newActiveChunks.Add(request.Position);
             chunkLoadQueue.Enqueue(request.Position);
         }
 
-        // Cleanup old chunks
-        foreach (Vector3Int oldChunk in activeChunks)
+        // Cleanup chunks that are no longer active
+        HashSet<Vector3Int> chunksToRemove = new HashSet<Vector3Int>(activeChunks);
+        chunksToRemove.ExceptWith(newActiveChunks);
+        foreach (var chunkPos in chunksToRemove)
         {
-            if (!newActiveChunks.Contains(oldChunk))
-            {
-                CleanupChunk(oldChunk);
-            }
+            CleanupChunk(chunkPos);
         }
 
         activeChunks = newActiveChunks;
     }
 
+    private float GetChunkPriority(Vector3Int chunkPos, Vector3 cameraPos)
+    {
+        // Convert chunk position to world position (center of chunk)
+        Vector3 chunkWorldPos = new Vector3(
+            (chunkPos.x * ChunkData.CHUNK_SIZE) + (ChunkData.CHUNK_SIZE / 2f),
+            (chunkPos.y * ChunkData.CHUNK_SIZE) + (ChunkData.CHUNK_SIZE / 2f),
+            (chunkPos.z * ChunkData.CHUNK_SIZE) + (ChunkData.CHUNK_SIZE / 2f)
+        );
+
+        // Calculate distance from camera
+        float distance = Vector3.Distance(chunkWorldPos, cameraPos);
+        
+        // Add height bias to prioritize higher chunks slightly
+        float heightBias = (ChunkData.WORLD_HEIGHT - chunkPos.y) * 0.1f;
+        
+        return distance + heightBias;
+    }
+
     private void CleanupChunk(Vector3Int chunkPos)
     {
-        // Remove from processing queue if it's there
         chunksInProgress.Remove(chunkPos);
-        
-        // Remove visual representation
+        chunksInQueue.Remove(chunkPos);
         visualizationManager.RemoveChunkMesh(chunkPos);
-        
-        // Remove chunk data
         chunkManager.MarkChunkInactive(chunkPos);
-        
-        // Cancel any pending coroutines for this chunk
         StopCoroutineForChunk(chunkPos);
     }
 
@@ -285,8 +313,50 @@ public class WorldManager : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.yellow;
+        // Draw the request volume
+        Gizmos.color = new Color(1f, 1f, 0f, 0.2f); // Yellow, very transparent
         Gizmos.DrawWireCube(debugBoxCenter, debugBoxSize);
+        
+        // Draw solid faces for the request volume
+        Gizmos.color = new Color(1f, 1f, 0f, 0.05f); // Yellow, extremely transparent
+        Gizmos.DrawCube(debugBoxCenter, debugBoxSize);
+
+        // Draw active chunks
+        if (!Application.isPlaying) return;
+        
+        foreach (Vector3Int chunkPos in activeChunks)
+        {
+            ChunkData chunk = chunkManager.GetChunkData(chunkPos);
+            if (chunk == null) continue;
+
+            Vector3 worldPos = new Vector3(
+                chunkPos.x * ChunkData.CHUNK_SIZE,
+                chunkPos.y * ChunkData.CHUNK_SIZE,
+                chunkPos.z * ChunkData.CHUNK_SIZE
+            );
+
+            Vector3 chunkCenter = worldPos + Vector3.one * (ChunkData.CHUNK_SIZE / 2f);
+            Vector3 chunkSize = Vector3.one * ChunkData.CHUNK_SIZE;
+
+            // Draw chunks with different colors based on their state
+            if (chunksInProgress.Contains(chunkPos))
+            {
+                // Loading chunks in yellow
+                Gizmos.color = new Color(1f, 1f, 0f, 0.3f);
+            }
+            else if (!chunk.IsChunkOpaque())
+            {
+                // Transparent chunks in blue
+                Gizmos.color = new Color(0f, 1f, 1f, 0.3f);
+            }
+            else
+            {
+                // Opaque chunks in red
+                Gizmos.color = new Color(1f, 0f, 0f, 0.3f);
+            }
+            
+            Gizmos.DrawWireCube(chunkCenter, chunkSize);
+        }
     }
 
     private void StopCoroutineForChunk(Vector3Int chunkPos)
@@ -317,34 +387,86 @@ public class WorldManager : MonoBehaviour
     }
 
     private IEnumerator LoadChunkAsyncInternal(Vector3Int chunkPos)
+    {        
+        try
+        {
+            // 1. Safety check - exit if chunk is no longer needed
+            if (!activeChunks.Contains(chunkPos))
+            {
+                chunksInProgress.Remove(chunkPos);
+                yield break;
+            }
+
+            // 2. Create new chunk and prepare for generation
+            ChunkData chunk = new ChunkData(chunkPos);
+            
+            // 3. Generate chunk data on a separate thread
+            yield return new WaitForThreadedTask(() => {
+                worldGenerator.GenerateChunk(chunk);
+            });
+
+            // 4. Post-generation validation
+            if (chunk.IsEmpty() || !activeChunks.Contains(chunkPos))
+            {
+                chunksInProgress.Remove(chunkPos);
+                yield break;
+            }
+
+            // 5. Store the chunk data
+            chunkManager.StoreChunkData(chunkPos, chunk);
+
+            // 6. Occlusion check - see if this chunk should be visible
+            bool shouldRender = true;
+            for (int y = chunkPos.y + 1; y < ChunkData.WORLD_HEIGHT / ChunkData.CHUNK_SIZE; y++)
+            {
+                Vector3Int abovePos = new Vector3Int(chunkPos.x, y, chunkPos.z);
+                ChunkData aboveChunk = chunkManager.GetChunkData(abovePos);
+                if (aboveChunk != null && aboveChunk.IsChunkOpaque())
+                {
+                    shouldRender = false;
+                    break;
+                }
+            }
+
+            // 7. Create visual mesh if chunk should be visible
+            if (shouldRender)
+            {
+                visualizationManager.CreateChunkMesh(chunk);
+            }
+        }
+        finally
+        {
+            // Always clean up tracking collections
+            chunksInProgress.Remove(chunkPos);
+            chunksInQueue.Remove(chunkPos);
+        }
+    }
+
+    public void UpdateWorldView(Vector3 viewerPos, float viewWidth, float viewHeight)
     {
-        // Early exit if chunk is no longer needed
-        if (!activeChunks.Contains(chunkPos))
-        {
-            chunksInProgress.Remove(chunkPos);
-            yield break;
-        }
+        // Convert view dimensions to chunk space
+        Vector2Int centerChunk = new Vector2Int(
+            Mathf.FloorToInt(viewerPos.x / ChunkData.CHUNK_SIZE),
+            Mathf.FloorToInt(viewerPos.z / ChunkData.CHUNK_SIZE)
+        );
 
-        // Create chunk data
-        ChunkData chunk = new ChunkData(chunkPos);
-        
-        // Generate terrain on a background thread
-        yield return new WaitForThreadedTask(() => {
-            worldGenerator.GenerateChunk(chunk);
-        });
+        int chunksNeededX = Mathf.CeilToInt(viewWidth / ChunkData.CHUNK_SIZE);
+        int chunksNeededZ = Mathf.CeilToInt(viewHeight / ChunkData.CHUNK_SIZE);
+        int radius = Mathf.Max(chunksNeededX, chunksNeededZ) / 2 + 1;
 
-        // Check again if chunk is still needed after generation
-        if (!activeChunks.Contains(chunkPos))
-        {
-            chunksInProgress.Remove(chunkPos);
-            yield break;
-        }
+        // Only process if the view request is different from the last one
+        string viewKey = $"{centerChunk}_{radius}_{viewerPos.y:F1}";
+        if (viewKey == lastViewKey) return;
+        lastViewKey = viewKey;
 
-        // Store chunk data and create visualization
-        chunkManager.StoreChunkData(chunkPos, chunk);
-        visualizationManager.CreateChunkMesh(chunk);
+        Debug.Log($"[WorldManager] New view request: Center({centerChunk}), Radius({radius})");
+        RequestChunkArea(centerChunk, radius, viewerPos);
+    }
 
-        chunksInProgress.Remove(chunkPos);
+    // When chunk generation is complete:
+    public void OnChunkGenerationComplete(Vector3Int chunkPos)
+    {
+        chunksInQueue.Remove(chunkPos);
     }
 }
 

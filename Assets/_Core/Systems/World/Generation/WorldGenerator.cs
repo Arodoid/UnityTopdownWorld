@@ -49,42 +49,57 @@ public class WorldGenerator : MonoBehaviour, IWorldSystem
        int worldY = chunkPos.y * ChunkData.CHUNK_SIZE;
        int worldZ = chunkPos.z * ChunkData.CHUNK_SIZE;
 
-       // Generate height map for the entire chunk at once
-       float[,] heightMap = new float[ChunkData.CHUNK_SIZE, ChunkData.CHUNK_SIZE];
-       for (int x = 0; x < ChunkData.CHUNK_SIZE; x++)
+       // Quick height check first - if chunk is entirely above or below terrain, skip detailed check
+       int maxHeight = GetMaxHeightInChunk(worldX, worldZ);
+       int minY = worldY;
+       int maxY = worldY + ChunkData.CHUNK_SIZE;
+
+       // Quick empty check
+       if (maxY < maxHeight - 4) // Definitely has blocks (underground)
        {
-           for (int z = 0; z < ChunkData.CHUNK_SIZE; z++)
-           {
-               heightMap[x,z] = GetHeightAt(worldX + x, worldZ + z);
-           }
+           chunk.MarkNotEmpty();
+       }
+       else if (minY > maxHeight) // Definitely empty (above terrain)
+       {
+           chunk.MarkEmpty();
+           return; // Skip generation
        }
 
-       // Fill chunk using the pre-calculated height map
+       // Only do detailed generation if we're in the transition zone
        for (int x = 0; x < ChunkData.CHUNK_SIZE; x++)
        {
            for (int z = 0; z < ChunkData.CHUNK_SIZE; z++)
            {
-               int terrainHeight = Mathf.RoundToInt(heightMap[x,z]);
+               int height = GetHeightAt(worldX + x, worldZ + z);
                
                for (int y = 0; y < ChunkData.CHUNK_SIZE; y++)
                {
-                   int currentHeight = worldY + y;
-                   
-                   if (currentHeight > terrainHeight)
-                       continue; // Skip air blocks (they're not stored)
-                       
-                   byte blockType;
-                   if (currentHeight == terrainHeight)
-                       blockType = BlockType.Grass.ID;
-                   else if (currentHeight > terrainHeight - 4)
-                       blockType = BlockType.Dirt.ID;
-                   else
-                       blockType = BlockType.Stone.ID;
-                       
-                   chunk.SetBlock(new Vector3Int(x, y, z), blockType);
+                   int currentY = worldY + y;
+                   if (currentY > height)
+                       continue;
+
+                   byte blockType = GetBlockAt(worldX + x, currentY, worldZ + z);
+                   if (blockType != BlockType.Air.ID)
+                   {
+                       chunk.SetBlock(new Vector3Int(x, y, z), blockType);
+                   }
                }
            }
        }
+   }
+
+   private int GetMaxHeightInChunk(int worldX, int worldZ)
+   {
+       int maxHeight = int.MinValue;
+       
+       // Check corners and center
+       maxHeight = Mathf.Max(maxHeight, GetHeightAt(worldX, worldZ));
+       maxHeight = Mathf.Max(maxHeight, GetHeightAt(worldX + ChunkData.CHUNK_SIZE, worldZ));
+       maxHeight = Mathf.Max(maxHeight, GetHeightAt(worldX, worldZ + ChunkData.CHUNK_SIZE));
+       maxHeight = Mathf.Max(maxHeight, GetHeightAt(worldX + ChunkData.CHUNK_SIZE, worldZ + ChunkData.CHUNK_SIZE));
+       maxHeight = Mathf.Max(maxHeight, GetHeightAt(worldX + ChunkData.CHUNK_SIZE/2, worldZ + ChunkData.CHUNK_SIZE/2));
+       
+       return maxHeight;
    }
 }
 
