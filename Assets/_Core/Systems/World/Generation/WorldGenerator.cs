@@ -15,9 +15,18 @@ public class WorldGenerator : MonoBehaviour, IWorldSystem
    [SerializeField] private int baseHeight = 32;
    [SerializeField] private float heightVariation = 20f;
     private FastNoiseLite noise;
-    public void Initialize()
+
+   [Header("Gravel Settings")]
+   [SerializeField] private float gravelScale = 0.05f;
+   [SerializeField] private float gravelThreshold = 0.6f;
+   [SerializeField] private int gravelMaxDepth = 3;
+
+   private FastNoiseLite gravelNoise;
+
+   public void Initialize()
    {
        noise = new FastNoiseLite(seed);
+       gravelNoise = new FastNoiseLite(seed + 1); // Different seed for variation
    }
     public void Cleanup() { }
     // Core terrain generation - chunk independent
@@ -33,10 +42,22 @@ public class WorldGenerator : MonoBehaviour, IWorldSystem
            return BlockType.Air.ID;
        
        if (worldY == terrainHeight)
+       {
+           // Check for surface gravel
+           float gravelValue = gravelNoise.GetNoise(worldX, worldZ);
+           if (gravelValue > gravelThreshold)
+               return BlockType.Gravel.ID;
            return BlockType.Grass.ID;
+       }
        
        if (worldY > terrainHeight - 4)
+       {
+           // Check for underground gravel patches
+           float gravelValue = gravelNoise.GetNoise(worldX, worldY * 0.5f, worldZ);
+           if (gravelValue > gravelThreshold && terrainHeight - worldY < gravelMaxDepth)
+               return BlockType.Gravel.ID;
            return BlockType.Dirt.ID;
+       }
        
        return BlockType.Stone.ID;
    }
@@ -110,7 +131,7 @@ public class WorldGenerator : MonoBehaviour, IWorldSystem
 public class FastNoiseLite
 {
     private int seed;
-    private const float NOISE_SCALE = 0.02f;  // Smaller = more gradual changes
+    private const float NOISE_SCALE = 0.02f;
 
     public FastNoiseLite(int seed)
     {
@@ -139,5 +160,17 @@ public class FastNoiseLite
 
         // Normalize to 0-1 range
         return noise / 2f;
+    }
+
+    // Add 3D noise method
+    public float GetNoise(float x, float y, float z)
+    {
+        // Create pseudo-3D noise by combining multiple 2D noise samples
+        float xy = GetNoise(x, y);
+        float yz = GetNoise(y, z);
+        float xz = GetNoise(x, z);
+        
+        // Combine the noise samples
+        return (xy + yz + xz) / 3f;
     }
 } 

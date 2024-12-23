@@ -23,7 +23,7 @@ public class WorldManager : MonoBehaviour
     private Vector3 debugBoxCenter;
     private Vector3 debugBoxSize;
 
-    private Queue<Vector3Int> chunkLoadQueue = new Queue<Vector3Int>();
+    private PriorityQueue<Vector3Int, float> chunkLoadQueue = new PriorityQueue<Vector3Int, float>();
     private HashSet<Vector3Int> chunksInProgress = new HashSet<Vector3Int>();
     [SerializeField] private int chunksPerFrame = 2;
 
@@ -34,6 +34,9 @@ public class WorldManager : MonoBehaviour
 
     // Add a way to track chunks that are "in progress"
     private HashSet<Vector3Int> chunksInQueue = new HashSet<Vector3Int>();
+
+    private Dictionary<Vector3Int, float> chunkExpirationTimes = new Dictionary<Vector3Int, float>();
+    private const float CHUNK_EXPIRATION_TIME = 1f; // 5 seconds grace period
 
     private void Awake()
     {
@@ -73,34 +76,86 @@ public class WorldManager : MonoBehaviour
     private void Update()
     {
         ProcessChunkQueue();
+        
+        // Every 30 frames, clean up expired chunks
+        if (Time.frameCount % 30 == 0)
+        {
+            float currentTime = Time.time;
+            List<Vector3Int> expiredChunks = new List<Vector3Int>();
+            
+            foreach (var kvp in chunkExpirationTimes)
+            {
+                // Only expire chunks that aren't in the active view
+                if (kvp.Value <= currentTime && !activeChunks.Contains(kvp.Key))
+                {
+                    expiredChunks.Add(kvp.Key);
+                }
+            }
+
+            foreach (var chunkPos in expiredChunks)
+            {
+                CleanupChunk(chunkPos);
+                chunkExpirationTimes.Remove(chunkPos);
+            }
+        }
     }
 
     private void ProcessChunkQueue()
     {
-        int chunksThisFrame = 0;
-        
-        while (chunkLoadQueue.Count > 0 && chunksThisFrame < chunksPerFrame)
+        if (chunkLoadQueue.Count == 0) return;
+
+        // If queue is getting too large, clear old requests
+        const int MAX_QUEUE_SIZE = 2000;
+        if (chunkLoadQueue.Count > MAX_QUEUE_SIZE)
         {
-            Vector3Int chunkPos = chunkLoadQueue.Peek();
+            Debug.LogWarning($"Queue too large ({chunkLoadQueue.Count}), clearing old requests");
+            while (chunkLoadQueue.Count > MAX_QUEUE_SIZE / 2)
+            {
+                if (chunkLoadQueue.TryPeek(out Vector3Int pos, out float _))
+                {
+                    chunkLoadQueue.Dequeue();
+                    chunksInQueue.Remove(pos);
+                }
+            }
+        }
+
+        int processedThisFrame = 0;
+        const int MAX_CHUNKS_PER_FRAME = 8;  // Increased from 4
+        
+        while (chunkLoadQueue.Count > 0 && processedThisFrame < MAX_CHUNKS_PER_FRAME)
+        {
+            if (!chunkLoadQueue.TryPeek(out Vector3Int chunkPos, out float priority))
+                break;
             
-            // Skip if chunk is no longer needed
+            chunkLoadQueue.Dequeue();
+            
+            // Skip if no longer needed
             if (!activeChunks.Contains(chunkPos))
             {
-                chunkLoadQueue.Dequeue();
                 chunksInQueue.Remove(chunkPos);
                 continue;
             }
             
-            if (!chunksInProgress.Contains(chunkPos))
+            // Skip if already being processed (don't requeue)
+            if (chunksInProgress.Contains(chunkPos))
             {
-                chunkLoadQueue.Dequeue();
-                StartCoroutine(LoadChunkAsync(chunkPos));
-                chunksThisFrame++;
+                continue;
             }
+            
+            // Start processing this chunk
+            StartCoroutine(LoadChunkAsync(chunkPos));
+            processedThisFrame++;
         }
-
-        // Cleanup any chunks in chunksInQueue that aren't in activeChunks
-        chunksInQueue.RemoveWhere(pos => !activeChunks.Contains(pos));
+        
+        // Periodically clean up tracking collections
+        if (Time.frameCount % 30 == 0)
+        {
+            chunksInQueue.RemoveWhere(pos => !activeChunks.Contains(pos));
+            chunksInProgress.RemoveWhere(pos => !activeChunks.Contains(pos));
+            
+            // Debug info
+            Debug.Log($"Queue: {chunkLoadQueue.Count}, InProgress: {chunksInProgress.Count}, InQueue: {chunksInQueue.Count}, Active: {activeChunks.Count}");
+        }
     }
 
     // Public API for external systems
@@ -110,73 +165,100 @@ public class WorldManager : MonoBehaviour
     /// </summary>
     public void RequestChunkArea(Vector2Int center, int radius, Vector3 cameraPos)
     {
-        Debug.Log($"[WorldManager] Request: Center({center}), Radius({radius}), Camera({cameraPos})");
-        Debug.Log($"[WorldManager] View Size: {radius * 2}x{radius * 2} chunks ({radius * 2 * ChunkData.CHUNK_SIZE}x{radius * 2 * ChunkData.CHUNK_SIZE} blocks)");
+        // Debug.Log($"[WorldManager] Request: Center({center}), Radius({radius}), Camera({cameraPos})");
+        // Debug.Log($"[WorldManager] View Size: {radius * 2}x{radius * 2} chunks ({radius * 2 * ChunkData.CHUNK_SIZE}x{radius * 2 * ChunkData.CHUNK_SIZE} blocks)");
         
+
         // Update debug visualization data
+        // TODO: This is a temporary debug box, remove this later
         float width = radius * 2 * ChunkData.CHUNK_SIZE;
         float height = ChunkData.WORLD_HEIGHT;
         float depth = radius * 2 * ChunkData.CHUNK_SIZE;
-        
         debugBoxCenter = new Vector3(
             center.x * ChunkData.CHUNK_SIZE + (ChunkData.CHUNK_SIZE / 2f),
             height / 2f,
             center.y * ChunkData.CHUNK_SIZE + (ChunkData.CHUNK_SIZE / 2f)
         );
-        
         debugBoxSize = new Vector3(width, height, depth);
 
         HashSet<Vector3Int> newActiveChunks = new HashSet<Vector3Int>();
         List<ChunkRequest> requests = new List<ChunkRequest>();
 
+        // Start from top layer and work down
         for (int x = -radius; x <= radius; x++)
         {
             for (int z = -radius; z <= radius; z++)
             {
-                bool foundOpaque = false;
-                
+                // Queue from top down until we find an existing opaque chunk
                 for (int y = ChunkData.WORLD_HEIGHT / ChunkData.CHUNK_SIZE - 1; y >= 0; y--)
                 {
                     Vector3Int chunkPos = new Vector3Int(center.x + x, y, center.y + z);
-                    ChunkData chunk = chunkManager.GetChunkData(chunkPos);
                     
-                    if (!foundOpaque)
-                    {
-                        newActiveChunks.Add(chunkPos);
-                        
-                        // Only queue if chunk needs generation or visualization
-                        if (chunk == null || !visualizationManager.IsChunkVisualized(chunkPos))
-                        {
-                            // Skip if we're already generating this chunk
-                            if (!chunksInQueue.Contains(chunkPos))
-                            {
-                                float priority = GetChunkPriority(chunkPos, cameraPos);
-                                requests.Add(new ChunkRequest(chunkPos, priority));
-                                chunksInQueue.Add(chunkPos);
-                            }
-                        }
-                    }
+                    // Fast checks only
+                    ChunkData chunk = chunkManager.GetChunkData(chunkPos);
+                    if (chunk != null && chunk.IsEmpty())
+                        continue;
 
+                    // If chunk exists and is opaque, we can stop checking below
                     if (chunk != null && chunk.IsChunkOpaque())
+                        break;
+
+                    // Add to active chunks and queue for VISUALIZATION if needed
+                    newActiveChunks.Add(chunkPos);
+                    
+                    if (!visualizationManager.IsChunkVisualized(chunkPos) &&
+                        !chunksInQueue.Contains(chunkPos) && 
+                        !chunksInProgress.Contains(chunkPos) && 
+                        !chunkLoadQueue.Contains(chunkPos))
                     {
-                        foundOpaque = true;
+                        float priority = GetChunkPriority(chunkPos, cameraPos);
+                        requests.Add(new ChunkRequest(chunkPos, priority));
+                        chunksInQueue.Add(chunkPos);
                     }
                 }
             }
         }
 
-        // Queue only new or unvisualized chunks
+        // Queue only new chunks
         foreach (var request in requests)
         {
-            chunkLoadQueue.Enqueue(request.Position);
+            chunkLoadQueue.Enqueue(request.Position, request.Distance);
         }
 
-        // Cleanup chunks that are no longer active
-        HashSet<Vector3Int> chunksToRemove = new HashSet<Vector3Int>(activeChunks);
-        chunksToRemove.ExceptWith(newActiveChunks);
-        foreach (var chunkPos in chunksToRemove)
+        // Update expiration times for chunks that are in view
+        float currentTime = Time.time;
+        foreach (var chunkPos in newActiveChunks)
+        {
+            // Remove expiration time for chunks in view
+            chunkExpirationTimes.Remove(chunkPos);
+        }
+
+        // Only mark chunks for expiration if they're leaving the view
+        HashSet<Vector3Int> chunksToCheck = new HashSet<Vector3Int>(activeChunks);
+        chunksToCheck.ExceptWith(newActiveChunks);
+        foreach (var chunkPos in chunksToCheck)
+        {
+            if (!chunkExpirationTimes.ContainsKey(chunkPos))
+            {
+                chunkExpirationTimes[chunkPos] = currentTime + CHUNK_EXPIRATION_TIME;
+            }
+        }
+
+        // Check for expired chunks
+        List<Vector3Int> expiredChunks = new List<Vector3Int>();
+        foreach (var kvp in chunkExpirationTimes)
+        {
+            if (kvp.Value <= currentTime)
+            {
+                expiredChunks.Add(kvp.Key);
+            }
+        }
+
+        // Clean up expired chunks
+        foreach (var chunkPos in expiredChunks)
         {
             CleanupChunk(chunkPos);
+            chunkExpirationTimes.Remove(chunkPos);
         }
 
         activeChunks = newActiveChunks;
@@ -205,7 +287,6 @@ public class WorldManager : MonoBehaviour
         chunksInProgress.Remove(chunkPos);
         chunksInQueue.Remove(chunkPos);
         visualizationManager.RemoveChunkMesh(chunkPos);
-        chunkManager.MarkChunkInactive(chunkPos);
         StopCoroutineForChunk(chunkPos);
     }
 
@@ -373,72 +454,139 @@ public class WorldManager : MonoBehaviour
 
     private IEnumerator LoadChunkAsync(Vector3Int chunkPos)
     {
+        if (chunksInProgress.Contains(chunkPos))
+        {
+            yield break;
+        }
+
         chunksInProgress.Add(chunkPos);
         
-        // Store the coroutine reference
-        activeCoroutines[chunkPos] = StartCoroutine(LoadChunkAsyncInternal(chunkPos));
-        yield return activeCoroutines[chunkPos];
-        
-        // Cleanup the reference
-        if (activeCoroutines.ContainsKey(chunkPos))
+        try
         {
-            activeCoroutines.Remove(chunkPos);
+            // Store the coroutine reference
+            activeCoroutines[chunkPos] = StartCoroutine(LoadChunkAsyncInternal(chunkPos));
+            yield return activeCoroutines[chunkPos];
+        }
+        finally
+        {
+            // Cleanup
+            if (activeCoroutines.ContainsKey(chunkPos))
+            {
+                activeCoroutines.Remove(chunkPos);
+            }
+            chunksInProgress.Remove(chunkPos);
+            chunksInQueue.Remove(chunkPos);
         }
     }
 
     private IEnumerator LoadChunkAsyncInternal(Vector3Int chunkPos)
     {        
-        try
+        const float TIMEOUT_SECONDS = 3f;
+        float startTime = Time.realtimeSinceStartup;
+
+        // Early exit only if chunk has expired
+        if (!activeChunks.Contains(chunkPos) && 
+            (!chunkExpirationTimes.ContainsKey(chunkPos) || 
+             chunkExpirationTimes[chunkPos] <= Time.time))
         {
-            // 1. Safety check - exit if chunk is no longer needed
-            if (!activeChunks.Contains(chunkPos))
-            {
-                chunksInProgress.Remove(chunkPos);
-                yield break;
-            }
+            yield break;
+        }
 
-            // 2. Create new chunk and prepare for generation
-            ChunkData chunk = new ChunkData(chunkPos);
+        // Check if we already have this chunk
+        ChunkData chunk = chunkManager.GetChunkData(chunkPos);
+        bool needsGeneration = chunk == null;
+
+        // Only generate if we don't have the chunk
+        if (needsGeneration)
+        {
+            bool generationComplete = false;
+            WaitForThreadedTask threadTask = null;
             
-            // 3. Generate chunk data on a separate thread
-            yield return new WaitForThreadedTask(() => {
-                worldGenerator.GenerateChunk(chunk);
-            });
-
-            // 4. Post-generation validation
-            if (chunk.IsEmpty() || !activeChunks.Contains(chunkPos))
+            try
             {
-                chunksInProgress.Remove(chunkPos);
+                chunk = new ChunkData(chunkPos);
+                threadTask = new WaitForThreadedTask(() => 
+                {
+                    worldGenerator.GenerateChunk(chunk);
+                    generationComplete = true;
+                });
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"Error starting chunk generation {chunkPos}: {e}");
                 yield break;
             }
 
-            // 5. Store the chunk data
-            chunkManager.StoreChunkData(chunkPos, chunk);
-
-            // 6. Occlusion check - see if this chunk should be visible
-            bool shouldRender = true;
-            for (int y = chunkPos.y + 1; y < ChunkData.WORLD_HEIGHT / ChunkData.CHUNK_SIZE; y++)
+            // Wait for generation with timeout
+            while (!generationComplete)
             {
-                Vector3Int abovePos = new Vector3Int(chunkPos.x, y, chunkPos.z);
-                ChunkData aboveChunk = chunkManager.GetChunkData(abovePos);
-                if (aboveChunk != null && aboveChunk.IsChunkOpaque())
+                if (Time.realtimeSinceStartup - startTime > TIMEOUT_SECONDS)
                 {
-                    shouldRender = false;
-                    break;
+                    Debug.LogWarning($"Chunk generation timed out: {chunkPos}");
+                    threadTask?.Cancel();
+                    yield break;
                 }
-            }
-
-            // 7. Create visual mesh if chunk should be visible
-            if (shouldRender)
-            {
-                visualizationManager.CreateChunkMesh(chunk);
+                yield return null;
             }
         }
-        finally
+
+        // Now we can do our checks (whether generated or reused)
+        if (chunk == null || chunk.IsEmpty())
         {
-            // Always clean up tracking collections
-            chunksInProgress.Remove(chunkPos);
-            chunksInQueue.Remove(chunkPos);
+            yield break;
+        }
+
+        // If chunk is opaque, cancel loading chunks below
+        if (chunk.IsChunkOpaque())
+        {
+            CancelChunksBelow(chunkPos);
+        }
+
+        // Only proceed if chunk is still needed
+        if (!activeChunks.Contains(chunkPos) && 
+            (!chunkExpirationTimes.ContainsKey(chunkPos) || 
+             chunkExpirationTimes[chunkPos] <= Time.time))
+        {
+            yield break;
+        }
+
+        // Store (if new) and visualize chunk
+        try
+        {
+            if (needsGeneration)
+            {
+                chunkManager.StoreChunkData(chunkPos, chunk);
+            }
+            visualizationManager.CreateChunkMesh(chunk);
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Error finalizing chunk {chunkPos}: {e}");
+        }
+    }
+
+    private void CancelChunksBelow(Vector3Int chunkPos)
+    {
+        // Get all chunks in queue that are below this position
+        Vector3Int checkPos;
+        for (int y = chunkPos.y - 1; y >= 0; y--)
+        {
+            checkPos = new Vector3Int(chunkPos.x, y, chunkPos.z);
+            
+            // Remove from priority queue if present
+            if (chunksInQueue.Contains(checkPos))
+            {
+                chunksInQueue.Remove(checkPos);
+            }
+            
+            // Cancel active coroutine if present
+            StopCoroutineForChunk(checkPos);
+            
+            // Remove from in-progress tracking
+            chunksInProgress.Remove(checkPos);
+            
+            // Remove from active chunks (since they'll be hidden anyway)
+            activeChunks.Remove(checkPos);
         }
     }
 
@@ -459,7 +607,7 @@ public class WorldManager : MonoBehaviour
         if (viewKey == lastViewKey) return;
         lastViewKey = viewKey;
 
-        Debug.Log($"[WorldManager] New view request: Center({centerChunk}), Radius({radius})");
+        // Debug.Log($"[WorldManager] New view request: Center({centerChunk}), Radius({radius})");
         RequestChunkArea(centerChunk, radius, viewerPos);
     }
 
