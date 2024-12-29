@@ -2,12 +2,19 @@ Shader "Custom/TerrainShadowShader"
 {
     SubShader
     {
-        Tags { "RenderType"="Opaque" "RenderPipeline" = "UniversalPipeline" }
+        Tags { 
+            "RenderType"="Opaque" 
+            "RenderPipeline" = "UniversalPipeline"
+            "Queue"="Geometry" // This is 2000
+        }
         
         // Main pass with colors, shadows, and AO compatibility
         Pass
         {
             Tags { "LightMode" = "UniversalForward" }
+            
+            ZWrite On // Enable depth writing
+            ZTest Less  // Changed from LEqual to Less
             
             HLSLPROGRAM
             #pragma vertex vert
