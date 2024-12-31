@@ -2,12 +2,17 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using VoxelGame.Utilities;
+using Object = UnityEngine.Object;
 
 public class ChunkRenderer
 {
     private readonly Dictionary<Vector3Int, GameObject> _renderedChunks = new Dictionary<Vector3Int, GameObject>();
     private readonly Dictionary<Vector3Int, Mesh> _chunkMeshes = new Dictionary<Vector3Int, Mesh>();
+    private readonly Dictionary<Vector3Int, MaterialPropertyBlock> _propertyBlocks = new Dictionary<Vector3Int, MaterialPropertyBlock>();
     private readonly ObjectPool<Mesh> _meshPool;
+    
+    private const float FADE_DURATION = 0.5f;
+    private static readonly int OpacityProperty = Shader.PropertyToID("_Opacity");
 
     public ChunkRenderer(ObjectPool<Mesh> meshPool)
     {
@@ -47,15 +52,18 @@ public class ChunkRenderer
 
     public void RemoveChunkRender(Vector3Int position)
     {
-        if (_chunkMeshes.TryGetValue(position, out Mesh mesh))
-        {
-            _meshPool.Release(mesh);
-            _chunkMeshes.Remove(position);
-        }
         if (_renderedChunks.TryGetValue(position, out var chunkGO))
         {
-            UnityEngine.Object.Destroy(chunkGO);
-            _renderedChunks.Remove(position);
+            // Update to use FindAnyObjectByType
+            MonoBehaviour runner = Object.FindAnyObjectByType<ChunkQueueProcessor>();
+            if (runner != null)
+            {
+                runner.StartCoroutine(FadeOut(position));
+            }
+            else
+            {
+                CleanupChunk(position);
+            }
         }
     }
 
@@ -93,7 +101,80 @@ public class ChunkRenderer
             MeshRenderer meshRenderer = chunkGO.AddComponent<MeshRenderer>();
             meshRenderer.material = BlockRegistry.TerrainMaterial;
 
+            // Add fade-in animation
+            var propertyBlock = new MaterialPropertyBlock();
+            propertyBlock.SetFloat(OpacityProperty, 0f);
+            meshRenderer.SetPropertyBlock(propertyBlock);
+            _propertyBlocks[chunk.Position] = propertyBlock;
+
             _renderedChunks[chunk.Position] = chunkGO;
+            
+            // Update to use FindAnyObjectByType
+            MonoBehaviour runner = Object.FindAnyObjectByType<ChunkQueueProcessor>();
+            if (runner != null)
+            {
+                runner.StartCoroutine(FadeIn(chunk.Position));
+            }
         }
+    }
+
+    private System.Collections.IEnumerator FadeIn(Vector3Int position)
+    {
+        if (!_renderedChunks.TryGetValue(position, out var chunkGO)) yield break;
+        
+        var meshRenderer = chunkGO.GetComponent<MeshRenderer>();
+        var propertyBlock = _propertyBlocks[position];
+        float elapsed = 0f;
+
+        while (elapsed < FADE_DURATION)
+        {
+            elapsed += Time.deltaTime;
+            float alpha = Mathf.Lerp(0f, 1f, elapsed / FADE_DURATION);
+            
+            propertyBlock.SetFloat(OpacityProperty, alpha);
+            meshRenderer.SetPropertyBlock(propertyBlock);
+            
+            yield return null;
+        }
+
+        propertyBlock.SetFloat(OpacityProperty, 1f);
+        meshRenderer.SetPropertyBlock(propertyBlock);
+    }
+
+    private System.Collections.IEnumerator FadeOut(Vector3Int position)
+    {
+        if (!_renderedChunks.TryGetValue(position, out var chunkGO)) yield break;
+        
+        var meshRenderer = chunkGO.GetComponent<MeshRenderer>();
+        var propertyBlock = _propertyBlocks[position];
+        float elapsed = 0f;
+
+        while (elapsed < FADE_DURATION)
+        {
+            elapsed += Time.deltaTime;
+            float alpha = Mathf.Lerp(1f, 0f, elapsed / FADE_DURATION);
+            
+            propertyBlock.SetFloat(OpacityProperty, alpha);
+            meshRenderer.SetPropertyBlock(propertyBlock);
+            
+            yield return null;
+        }
+
+        CleanupChunk(position);
+    }
+
+    private void CleanupChunk(Vector3Int position)
+    {
+        if (_chunkMeshes.TryGetValue(position, out Mesh mesh))
+        {
+            _meshPool.Release(mesh);
+            _chunkMeshes.Remove(position);
+        }
+        if (_renderedChunks.TryGetValue(position, out var chunkGO))
+        {
+            Object.Destroy(chunkGO);
+            _renderedChunks.Remove(position);
+        }
+        _propertyBlocks.Remove(position);
     }
 }

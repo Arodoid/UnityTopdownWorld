@@ -3,14 +3,15 @@ Shader "Custom/TerrainShadowShader"
     Properties
     {
         _MainTex ("Texture Atlas", 2D) = "white" {}
+        _Opacity ("Opacity", Range(0, 1)) = 1
     }
 
     SubShader
     {
         Tags { 
-            "RenderType"="Opaque" 
+            "RenderType"="Transparent" 
             "RenderPipeline" = "UniversalPipeline"
-            "Queue"="Geometry"
+            "Queue"="Transparent"
         }
         
         Pass
@@ -19,6 +20,7 @@ Shader "Custom/TerrainShadowShader"
             
             ZWrite On
             ZTest Less
+            Blend SrcAlpha OneMinusSrcAlpha
             
             HLSLPROGRAM
             #pragma vertex vert
@@ -31,6 +33,7 @@ Shader "Custom/TerrainShadowShader"
 
             TEXTURE2D(_MainTex);
             SAMPLER(sampler_MainTex);
+            float _Opacity;
 
             struct Attributes
             {
@@ -77,7 +80,7 @@ Shader "Custom/TerrainShadowShader"
                 
                 // Apply lighting
                 float3 litColor = baseColor * mainLight.color * mainLight.distanceAttenuation * mainLight.shadowAttenuation;
-                return float4(litColor, texColor.a * input.color.a);
+                return float4(litColor, texColor.a * input.color.a * _Opacity);
             }
             ENDHLSL
         }
