@@ -4,7 +4,7 @@ using UnityEngine;
 public class Chunk
 {
     // Position of the chunk in chunk coordinates (Vector3Int = {x, y, z})
-    public Vector3Int Position { get; }
+    public Vector3Int Position { get; private set; }
 
     // 3D array that represents the blocks in the chunk. Could be extended to include metadata.
     private readonly Block[,,] _blocks;
@@ -167,5 +167,21 @@ public class Chunk
     public void ClearDirty()
     {
         _isDirty = false;
+    }
+
+    public void Initialize()
+    {
+        // Initialize any internal data structures
+    }
+
+    public void SetPosition(Vector3Int position)
+    {
+        Position = position;
+    }
+
+    public void ClearBlocks()
+    {
+        // Clear block data
+        // Your existing clear logic here
     }
 }

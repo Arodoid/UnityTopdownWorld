@@ -2,6 +2,9 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using VoxelGame.WorldSystem.Generation.Core;  // For WorldGenerator
+using System.Linq;
+using VoxelGame.Utilities;
+
 
 public class ChunkQueueProcessor : MonoBehaviour
 {
@@ -13,6 +16,7 @@ public class ChunkQueueProcessor : MonoBehaviour
     [SerializeField] private int maxPendingChunks = 5000;
     [SerializeField] private bool showDebugInfo = true;
     [SerializeField] private float boundsPadding = 1f; // Chunks beyond visible area
+    [SerializeField] private int batchSize = 8; // Adjust this value as needed
 
     // World height limits
     private int minYLevel;
@@ -50,6 +54,14 @@ public class ChunkQueueProcessor : MonoBehaviour
     private HashSet<Vector3Int> chunksAffectedByYLimit = new HashSet<Vector3Int>();
     private Dictionary<Vector3Int, int> chunkYLevels = new Dictionary<Vector3Int, int>();
 
+    // Add these fields at the class level
+    private HashSet<Vector3Int> markedForRemoval = new HashSet<Vector3Int>();
+    private bool needsQueueCleanup = false;
+
+    // Add to existing fields
+    private ObjectPool<Chunk> chunkPool;
+    private ObjectPool<Mesh> meshPool;
+
     // Public Properties
     public int GenerationQueueCount => generationQueue.Count;
     public int RenderQueueCount => renderQueue.Count;
@@ -62,7 +74,9 @@ public class ChunkQueueProcessor : MonoBehaviour
         worldGenerator = GetComponent<WorldGenerator>();
         chunkManager = GetComponent<ChunkManager>();
         meshGenerator = new ChunkMeshGenerator();
-        chunkRenderer = new ChunkRenderer();
+        
+        InitializePools();
+        chunkRenderer = new ChunkRenderer(meshPool);
         
         if (mainCamera == null)
             mainCamera = Camera.main;
@@ -78,8 +92,36 @@ public class ChunkQueueProcessor : MonoBehaviour
         };
     }
 
+    private void InitializePools()
+    {
+        chunkPool = new ObjectPool<Chunk>(
+            createFunc: () => new Chunk(Vector3Int.zero),
+            onGet: chunk => 
+            {
+                chunk.Initialize();
+                chunk.ClearBlocks();
+            },
+            onRelease: chunk => chunk.ClearBlocks(),
+            initialSize: 100,
+            maxSize: 1000
+        );
+
+        meshPool = new ObjectPool<Mesh>(
+            createFunc: () => new Mesh(),
+            onGet: mesh => 
+            {
+                mesh.Clear();
+                mesh.MarkDynamic();
+            },
+            onRelease: mesh => mesh.Clear(),
+            initialSize: 100,
+            maxSize: 1000
+        );
+    }
+
     private void Update()
     {
+        CleanQueues();
         ProcessGenerationQueue();
         ProcessRenderQueue();
         // chunkManager.UnloadMarkedChunks();
@@ -94,32 +136,45 @@ public class ChunkQueueProcessor : MonoBehaviour
         
         while (generationQueue.Count > 0 && chunksProcessed < maxChunksPerFrame)
         {
-            float genStart = Time.realtimeSinceStartup;
-            
-            Vector3Int pos = generationQueue.Dequeue();
-            queuedForGeneration.Remove(pos);
+            // Process chunks in batches
+            var batch = new List<(Vector3Int pos, Task<Chunk> task)>();
+            int currentBatchSize = Mathf.Min(batchSize, generationQueue.Count);
 
-            // Skip if chunk already exists
-            if (chunkManager.ChunkExists(pos))
-                continue;
-
-            // Generate the chunk
-            float beforeGen = Time.realtimeSinceStartup;
-            Chunk chunk = await worldGenerator.GenerateChunk(pos);
-            generationTime += Time.realtimeSinceStartup - beforeGen;
-
-            if (chunk != null)
+            // Start generation tasks for the batch
+            for (int i = 0; i < currentBatchSize; i++)
             {
-                chunkManager.StoreChunk(pos, chunk);
-                
-                if (!chunk.IsFullyEmpty())
+                Vector3Int pos = generationQueue.Dequeue();
+                queuedForGeneration.Remove(pos);
+
+                if (!chunkManager.ChunkExists(pos))
                 {
-                    QueueChunkRender(chunk);
+                    var generateTask = worldGenerator.GenerateChunkPooled(pos, chunkPool);
+                    batch.Add((pos, generateTask));
                 }
             }
 
-            chunksProcessed++;
-            operationsCount++;
+            // Wait for all chunks in the batch to complete
+            float beforeGen = Time.realtimeSinceStartup;
+            await Task.WhenAll(batch.Select(b => b.task));
+            generationTime += Time.realtimeSinceStartup - beforeGen;
+
+            // Process completed chunks
+            foreach (var (pos, task) in batch)
+            {
+                var chunk = task.Result;
+                if (chunk != null)
+                {
+                    chunkManager.StoreChunk(pos, chunk);
+                    
+                    if (!chunk.IsFullyEmpty())
+                    {
+                        QueueChunkRender(chunk);
+                    }
+                }
+                chunksProcessed++;
+            }
+
+            operationsCount += batch.Count;
         }
 
         LogPerformanceStats();
@@ -136,19 +191,19 @@ public class ChunkQueueProcessor : MonoBehaviour
             Chunk chunk = renderQueue.Dequeue();
             queuedForRender.Remove(chunk.Position);
 
-            // Get the Y-level for this chunk
             int yLimit = currentYLimit;
             if (chunkYLevels.TryGetValue(chunk.Position, out int storedYLimit))
             {
                 yLimit = storedYLimit;
             }
 
-            // Generate mesh with Y-level limit
-            Mesh mesh = meshGenerator.GenerateMesh(chunk, yLimit);
+            // Get mesh from pool
+            Mesh mesh = meshPool.Get();
+            meshGenerator.GenerateMeshPooled(chunk, mesh, yLimit);
             meshGenTime += Time.realtimeSinceStartup - meshStart;
 
             float renderStart = Time.realtimeSinceStartup;
-            chunkRenderer.RenderChunk(chunk, mesh);
+            chunkRenderer.RenderChunkPooled(chunk, mesh, meshPool);
             renderTime += Time.realtimeSinceStartup - renderStart;
             
             chunk.ClearDirty();
@@ -388,33 +443,54 @@ public class ChunkQueueProcessor : MonoBehaviour
 
     private void RemoveChunk(Vector3Int position)
     {
+        // Mark the position for removal and set the cleanup flag
+        markedForRemoval.Add(position);
+        needsQueueCleanup = true;
+        
+        // Immediate removals that don't require queue rebuilding
         queuedForGeneration.Remove(position);
         queuedForRender.Remove(position);
         chunkRenderer.RemoveChunkRender(position);
-        
-        // Clean up generation queue
-        var tempGenerationQueue = new PriorityQueue<Vector3Int>();
+    }
+
+    // Add this method to clean queues efficiently
+    private void CleanQueues()
+    {
+        if (!needsQueueCleanup || markedForRemoval.Count == 0) return;
+
+        // Clean generation queue
+        var genQueue = new List<Vector3Int>();
         while (generationQueue.Count > 0)
         {
-            var pos = generationQueue.Dequeue();
-            if (pos != position)
+            genQueue.Add(generationQueue.Dequeue());
+        }
+        
+        foreach (var item in genQueue)
+        {
+            if (!markedForRemoval.Contains(item))
             {
-                tempGenerationQueue.Enqueue(pos, CalculateChunkPriority(pos, lastCenter));
+                generationQueue.Enqueue(item, CalculateChunkPriority(item, lastCenter));
             }
         }
-        generationQueue = tempGenerationQueue;
 
-        // Clean up render queue
-        var tempRenderQueue = new Queue<Chunk>();
+        // Clean render queue
+        var renderList = new List<Chunk>();
         while (renderQueue.Count > 0)
         {
             var chunk = renderQueue.Dequeue();
-            if (chunk.Position != position)
+            if (!markedForRemoval.Contains(chunk.Position))
             {
-                tempRenderQueue.Enqueue(chunk);
+                renderList.Add(chunk);
             }
         }
-        renderQueue = tempRenderQueue;
+        
+        foreach (var chunk in renderList)
+        {
+            renderQueue.Enqueue(chunk);
+        }
+
+        markedForRemoval.Clear();
+        needsQueueCleanup = false;
     }
 
     private void QueueChunkRender(Chunk chunk)
@@ -485,5 +561,15 @@ public class ChunkQueueProcessor : MonoBehaviour
             $"Queued for Render: {queuedForRender.Count}\n" +
             $"Currently Visible: {currentlyVisibleChunks.Count}",
             debugTextStyle);
+    }
+
+    private void OnDestroy()
+    {
+        // Clean up pools with null checks
+        if (meshPool != null)
+            meshPool.Clear();
+        
+        if (chunkPool != null)
+            chunkPool.Clear();
     }
 }

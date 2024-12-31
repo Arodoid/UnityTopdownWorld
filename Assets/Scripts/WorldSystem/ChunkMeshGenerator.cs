@@ -278,4 +278,56 @@ public class ChunkMeshGenerator
         Vector2[] rotatedUVs = RotateUVs(blockUVs, rotation);
         uvs.AddRange(rotatedUVs);
     }
+
+    public void GenerateMeshPooled(Chunk chunk, Mesh mesh, int yLimit)
+    {
+        List<Vector3> vertices = new List<Vector3>();
+        List<int> triangles = new List<int>();
+        List<Color32> colors = new List<Color32>();
+        List<Vector2> uvs = new List<Vector2>();
+
+        // Calculate effective Y limit within this chunk's space
+        int chunkYOffset = chunk.Position.y * chunkSize;
+        int effectiveYLimit = Mathf.Min(chunkSize, 
+            Mathf.Max(0, yLimit - chunkYOffset));
+
+        for (int x = 0; x < chunkSize; x++)
+        for (int y = 0; y < effectiveYLimit; y++)
+        for (int z = 0; z < chunkSize; z++)
+        {
+            Block block = chunk.GetBlock(x, y, z);
+            if (block != null)
+            {
+                Vector3Int pos = new Vector3Int(x, y, z);
+                
+                switch (block.RenderType)
+                {
+                    case BlockRenderType.Cube:
+                        AddCubeMesh(chunk, block, pos, vertices, triangles, 
+                                  colors, uvs, y == effectiveYLimit - 1);
+                        break;
+                    case BlockRenderType.Flat:
+                        if (y < effectiveYLimit - 1) // Don't add flat meshes at the cut line
+                        {
+                            AddFlatMesh(block, pos, vertices, triangles, colors, uvs);
+                        }
+                        break;
+                }
+            }
+        }
+
+        // Add cap faces at Y-limit if needed
+        if (effectiveYLimit < chunkSize)
+        {
+            AddYLevelCap(chunk, effectiveYLimit, vertices, triangles, colors, uvs);
+        }
+
+        // Update the pooled mesh instead of creating a new one
+        mesh.Clear();
+        mesh.vertices = vertices.ToArray();
+        mesh.triangles = triangles.ToArray();
+        mesh.colors32 = colors.ToArray();
+        mesh.uv = uvs.ToArray();
+        mesh.RecalculateNormals();
+    }
 }

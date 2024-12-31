@@ -4,6 +4,7 @@ using VoxelGame.WorldSystem.Biomes;
 using VoxelGame.WorldSystem.Generation.Terrain;
 using VoxelGame.WorldSystem.Generation.Features;
 using VoxelGame.Core.Debugging;
+using VoxelGame.Utilities;
 
 namespace VoxelGame.WorldSystem.Generation.Core
 {
@@ -50,6 +51,22 @@ namespace VoxelGame.WorldSystem.Generation.Core
             featureGenerator.GenerateCaves(chunk, biomeData);
             featureGenerator.GenerateRavines(chunk, biomeData);
             return Task.FromResult(chunk);
+        }
+
+        public async Task<Chunk> GenerateChunkPooled(Vector3Int position, ObjectPool<Chunk> chunkPool)
+        {
+            Chunk chunk = chunkPool.Get();
+            chunk.SetPosition(position);
+            
+            var biomeData = biomeGenerator.GenerateChunkBiomeData(position);
+            var heightMap = terrainGenerator.GenerateChunkTerrain(chunk, biomeData);
+            await Task.Run(() => 
+            {
+                featureGenerator.GenerateCaves(chunk, biomeData);
+                featureGenerator.GenerateRavines(chunk, biomeData);
+            });
+            
+            return chunk;
         }
     }
 } 
