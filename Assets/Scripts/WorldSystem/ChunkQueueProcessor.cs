@@ -11,8 +11,8 @@ public class ChunkQueueProcessor : MonoBehaviour
     [Header("Performance Settings")]
     [SerializeField] private int maxChunksPerFrame = 30;
     [SerializeField] private int maxPendingChunks = 5000;
-    [SerializeField] private float viewDistance = 128f;
     [SerializeField] private bool showDebugInfo = true;
+    [SerializeField] private float boundsPadding = 1f; // Chunks beyond visible area
 
     // World height limits
     private int minYLevel;
@@ -45,12 +45,16 @@ public class ChunkQueueProcessor : MonoBehaviour
     private const float LOG_INTERVAL = 2f;
     private GUIStyle debugTextStyle;
 
+    // New Y-level tracking
+    private int currentYLimit = int.MaxValue;
+    private HashSet<Vector3Int> chunksAffectedByYLimit = new HashSet<Vector3Int>();
+    private Dictionary<Vector3Int, int> chunkYLevels = new Dictionary<Vector3Int, int>();
+
     // Public Properties
     public int GenerationQueueCount => generationQueue.Count;
     public int RenderQueueCount => renderQueue.Count;
     public int QueuedForGenerationCount => queuedForGeneration.Count;
     public int QueuedForRenderCount => queuedForRender.Count;
-    public float ViewDistance => viewDistance;
     public ICollection<Vector3Int> CurrentlyVisibleChunks => currentlyVisibleChunks;
 
     private void Awake()
@@ -83,6 +87,8 @@ public class ChunkQueueProcessor : MonoBehaviour
 
     private async void ProcessGenerationQueue()
     {
+        if (generationQueue.Count == 0) return;
+
         float startTime = Time.realtimeSinceStartup;
         int chunksProcessed = 0;
         
@@ -93,17 +99,23 @@ public class ChunkQueueProcessor : MonoBehaviour
             Vector3Int pos = generationQueue.Dequeue();
             queuedForGeneration.Remove(pos);
 
+            // Skip if chunk already exists
             if (chunkManager.ChunkExists(pos))
                 continue;
 
+            // Generate the chunk
+            float beforeGen = Time.realtimeSinceStartup;
             Chunk chunk = await worldGenerator.GenerateChunk(pos);
-            chunkManager.StoreChunk(pos, chunk);
+            generationTime += Time.realtimeSinceStartup - beforeGen;
 
-            generationTime += Time.realtimeSinceStartup - genStart;
-            
-            if (!chunk.IsFullyEmpty())
+            if (chunk != null)
             {
-                QueueChunkRender(chunk);
+                chunkManager.StoreChunk(pos, chunk);
+                
+                if (!chunk.IsFullyEmpty())
+                {
+                    QueueChunkRender(chunk);
+                }
             }
 
             chunksProcessed++;
@@ -124,7 +136,15 @@ public class ChunkQueueProcessor : MonoBehaviour
             Chunk chunk = renderQueue.Dequeue();
             queuedForRender.Remove(chunk.Position);
 
-            Mesh mesh = meshGenerator.GenerateMesh(chunk);
+            // Get the Y-level for this chunk
+            int yLimit = currentYLimit;
+            if (chunkYLevels.TryGetValue(chunk.Position, out int storedYLimit))
+            {
+                yLimit = storedYLimit;
+            }
+
+            // Generate mesh with Y-level limit
+            Mesh mesh = meshGenerator.GenerateMesh(chunk, yLimit);
             meshGenTime += Time.realtimeSinceStartup - meshStart;
 
             float renderStart = Time.realtimeSinceStartup;
@@ -136,19 +156,35 @@ public class ChunkQueueProcessor : MonoBehaviour
         }
     }
 
-    public async void ScanChunksAsync(Vector3Int center)
+    public async void ScanChunksAsync(CameraVisibilityController.ViewData viewData)
     {
         if (isScanning) return;
+
+        bool yLevelChanged = currentYLimit != viewData.YLevel;
+        currentYLimit = viewData.YLevel;
         
-        Bounds viewBounds = CalculateViewBounds();
-        if (center == lastCenter && viewBounds.Equals(lastViewBounds)) 
+        // Add padding to bounds to prevent pop-in
+        Bounds paddedBounds = new Bounds(
+            viewData.ViewBounds.center,
+            viewData.ViewBounds.size * (1 + boundsPadding)
+        );
+
+        if (viewData.CenterChunk == lastCenter && 
+            paddedBounds.Equals(lastViewBounds) && 
+            !yLevelChanged) 
             return;
 
         isScanning = true;
-        lastCenter = center;
-        lastViewBounds = viewBounds;
+        lastCenter = viewData.CenterChunk;
+        lastViewBounds = paddedBounds;
 
-        // Clear chunks outside view
+        // Handle Y-level changes for existing chunks
+        if (yLevelChanged)
+        {
+            HandleYLevelChange(viewData.YLevel);
+        }
+
+        // Clear chunks outside view (existing logic)
         lock (lockObject)
         {
             List<Vector3Int> positionsToRemove = new List<Vector3Int>();
@@ -164,32 +200,38 @@ public class ChunkQueueProcessor : MonoBehaviour
             {
                 RemoveChunk(pos);
                 currentlyVisibleChunks.Remove(pos);
+                chunkYLevels.Remove(pos); // Clean up Y-level tracking
             }
         }
 
         // Calculate new chunks to add
-        List<(Vector3Int pos, int priority)> chunksToAdd = await CalculateVisibleChunksAsync(viewBounds, center);
+        List<(Vector3Int pos, int priority)> chunksToAdd = 
+            await CalculateVisibleChunksAsync(viewData.ViewBounds, viewData.CenterChunk);
 
         // Queue new chunks
         lock (lockObject)
         {
             foreach (var (pos, priority) in chunksToAdd)
             {
-                if (!currentlyVisibleChunks.Contains(pos))  // If not currently visible
+                if (!currentlyVisibleChunks.Contains(pos))
                 {
-                    if (chunkManager.ChunkExists(pos))      // If data exists
+                    if (chunkManager.ChunkExists(pos))
                     {
-                        // Re-queue for rendering
-                        QueueChunkRender(chunkManager.GetChunk(pos));
+                        Chunk chunk = chunkManager.GetChunk(pos);
+                        if (!chunk.IsFullyEmpty())  // Only queue if not empty
+                        {
+                            QueueChunkRender(chunk);
+                        }
                         currentlyVisibleChunks.Add(pos);
+                        chunkYLevels[pos] = currentYLimit;
                     }
                     else if (!queuedForGeneration.Contains(pos) && 
                              generationQueue.Count < maxPendingChunks)
                     {
-                        // New chunk needs generation
                         generationQueue.Enqueue(pos, priority);
                         queuedForGeneration.Add(pos);
                         currentlyVisibleChunks.Add(pos);
+                        chunkYLevels[pos] = currentYLimit;
                     }
                 }
             }
@@ -198,57 +240,150 @@ public class ChunkQueueProcessor : MonoBehaviour
         isScanning = false;
     }
 
-    private Bounds CalculateViewBounds()
+    private void HandleYLevelChange(int newYLimit)
     {
-        if (mainCamera == null) return new Bounds();
+        chunksAffectedByYLimit.Clear();
 
-        float height = 2f * mainCamera.orthographicSize;
-        float width = height * mainCamera.aspect;
-        
-        Vector3 center = mainCamera.transform.position;
-        // Now we only care about X/Z for bounds, Y is handled separately
-        Vector3 size = new Vector3(width + viewDistance, 1000f, height + viewDistance);
-        
-        return new Bounds(center, size);
+        // Identify chunks that need remeshing
+        foreach (var pos in currentlyVisibleChunks)
+        {
+            if (chunkYLevels.TryGetValue(pos, out int currentChunkYLevel))
+            {
+                // Skip if chunk exists and is fully empty
+                Chunk chunk = chunkManager.GetChunk(pos);
+                if (chunk != null && chunk.IsFullyEmpty())
+                    continue;
+
+                int chunkYOffset = pos.y * Chunk.ChunkSize;
+                int oldEffectiveY = currentChunkYLevel - chunkYOffset;
+                int newEffectiveY = newYLimit - chunkYOffset;
+
+                // Only requeue if this chunk contains either the old or new Y-level cut
+                bool containsOldCut = oldEffectiveY >= 0 && oldEffectiveY < Chunk.ChunkSize;
+                bool containsNewCut = newEffectiveY >= 0 && newEffectiveY < Chunk.ChunkSize;
+
+                if (containsOldCut || containsNewCut)
+                {
+                    chunksAffectedByYLimit.Add(pos);
+                    chunkYLevels[pos] = newYLimit;
+                }
+            }
+        }
+
+        // Queue affected chunks for remeshing
+        foreach (var pos in chunksAffectedByYLimit)
+        {
+            if (chunkManager.ChunkExists(pos))
+            {
+                Chunk chunk = chunkManager.GetChunk(pos);
+                if (!chunk.IsFullyEmpty())  // Double check in case chunk was modified
+                {
+                    QueueChunkRender(chunk);
+                }
+            }
+        }
     }
 
-    private async Task<List<(Vector3Int pos, int priority)>> CalculateVisibleChunksAsync(Bounds viewBounds, Vector3Int center)
+    private async Task<List<(Vector3Int pos, int priority)>> CalculateVisibleChunksAsync(
+        Bounds viewBounds, Vector3Int center)
     {
         List<(Vector3Int pos, int priority)> chunks = new List<(Vector3Int pos, int priority)>();
         
-        await Task.Run(() =>
-        {
-            // Calculate X/Z bounds from camera view
-            int minChunkX = Mathf.FloorToInt((viewBounds.min.x) / Chunk.ChunkSize);
-            int maxChunkX = Mathf.CeilToInt((viewBounds.max.x) / Chunk.ChunkSize);
-            int minChunkZ = Mathf.FloorToInt((viewBounds.min.z) / Chunk.ChunkSize);
-            int maxChunkZ = Mathf.CeilToInt((viewBounds.max.z) / Chunk.ChunkSize);
+        // Calculate chunk bounds from view bounds
+        int minChunkX = Mathf.FloorToInt(viewBounds.min.x / Chunk.ChunkSize);
+        int maxChunkX = Mathf.CeilToInt(viewBounds.max.x / Chunk.ChunkSize);
+        int minChunkZ = Mathf.FloorToInt(viewBounds.min.z / Chunk.ChunkSize);
+        int maxChunkZ = Mathf.CeilToInt(viewBounds.max.z / Chunk.ChunkSize);
 
-            // For each X/Z position in view
-            for (int x = minChunkX; x <= maxChunkX; x++)
+        // Track which columns we've processed
+        HashSet<Vector2Int> processedColumns = new HashSet<Vector2Int>();
+
+        // Process columns
+        for (int x = minChunkX; x <= maxChunkX; x++)
+        for (int z = minChunkZ; z <= maxChunkZ; z++)
+        {
+            Vector2Int column = new Vector2Int(x, z);
+            if (processedColumns.Contains(column))
+                continue;
+
+            Vector3 chunkWorldPos = new Vector3(
+                x * Chunk.ChunkSize,
+                0,
+                z * Chunk.ChunkSize
+            );
+
+            Bounds chunkBounds = new Bounds(
+                chunkWorldPos + Vector3.one * (Chunk.ChunkSize / 2f),
+                Vector3.one * Chunk.ChunkSize
+            );
+
+            if (chunkBounds.Intersects(viewBounds))
             {
-                for (int z = minChunkZ; z <= maxChunkZ; z++)
+                await ProcessColumnAsync(x, z, center, chunks);
+                processedColumns.Add(column);
+            }
+        }
+
+        return chunks;
+    }
+
+    private async Task ProcessColumnAsync(int x, int z, Vector3Int center, List<(Vector3Int pos, int priority)> chunks)
+    {
+        // Calculate the maximum Y level we should process based on currentYLimit
+        int effectiveMaxY = Mathf.Min(
+            maxYLevel, 
+            Mathf.CeilToInt((float)currentYLimit / Chunk.ChunkSize)
+        );
+
+        // Process from effective max Y down to minYLevel
+        for (int y = effectiveMaxY; y >= minYLevel; y--)
+        {
+            Vector3Int pos = new Vector3Int(x, y, z);
+            
+            // Skip if this chunk is already being processed
+            if (queuedForGeneration.Contains(pos))
+                continue;
+
+            // Skip if this chunk is entirely above the Y limit
+            int chunkBottomY = y * Chunk.ChunkSize;
+            if (chunkBottomY > currentYLimit)
+                continue;
+
+            // Get or generate the chunk
+            Chunk chunk = chunkManager.GetChunk(pos);
+            if (chunk == null)
+            {
+                int priority = CalculateChunkPriority(pos, center);
+                chunks.Add((pos, priority));
+
+                chunk = await worldGenerator.GenerateChunk(pos);
+                if (chunk != null)
                 {
-                    // Calculate XZ distance for view distance check
-                    Vector2 chunkXZ = new Vector2(x * Chunk.ChunkSize, z * Chunk.ChunkSize);
-                    Vector2 centerXZ = new Vector2(center.x * Chunk.ChunkSize, center.z * Chunk.ChunkSize);
+                    chunkManager.StoreChunk(pos, chunk);
                     
-                    if (Vector2.Distance(chunkXZ, centerXZ) <= viewDistance)
+                    if (!chunk.IsFullyEmpty())
                     {
-                        // Add ALL Y levels within our range
-                        for (int y = minYLevel; y <= maxYLevel; y++)
+                        lock (lockObject)
                         {
-                            Vector3Int pos = new Vector3Int(x, y, z);
-                            // Still use 3D distance for priority
-                            int priority = CalculateChunkPriority(pos, center);
-                            chunks.Add((pos, priority));
+                            QueueChunkRender(chunk);
+                            chunkYLevels[pos] = currentYLimit; // Store Y-level for rendering
                         }
                     }
                 }
             }
-        });
+            else if (!chunk.IsFullyEmpty())
+            {
+                int priority = CalculateChunkPriority(pos, center);
+                chunks.Add((pos, priority));
+                chunkYLevels[pos] = currentYLimit; // Update Y-level for existing chunks
+            }
 
-        return chunks;
+            // Stop processing this column if we hit an opaque chunk
+            if (chunk != null && chunk.IsOpaque)
+            {
+                break;
+            }
+        }
     }
 
     private void RemoveChunk(Vector3Int position)
@@ -300,23 +435,22 @@ public class ChunkQueueProcessor : MonoBehaviour
     {
         if (lastViewBounds == null) return false;
 
-        // Convert to world position
-        Vector2 chunkXZ = new Vector2(
+        // Convert chunk position to world space
+        Vector3 chunkWorldPos = new Vector3(
             position.x * Chunk.ChunkSize,
+            position.y * Chunk.ChunkSize,
             position.z * Chunk.ChunkSize
         );
-        
-        Vector2 centerXZ = new Vector2(
-            lastCenter.x * Chunk.ChunkSize,
-            lastCenter.z * Chunk.ChunkSize
+
+        // Create chunk bounds
+        Bounds chunkBounds = new Bounds(
+            chunkWorldPos + Vector3.one * (Chunk.ChunkSize / 2f),
+            Vector3.one * Chunk.ChunkSize
         );
 
-        // Check if within view distance on XZ plane
-        bool withinXZ = Vector2.Distance(chunkXZ, centerXZ) <= viewDistance;
-        // Check if within Y range
+        // Check if within Y range and view bounds
         bool withinY = position.y >= minYLevel && position.y <= maxYLevel;
-
-        return withinXZ && withinY;
+        return withinY && chunkBounds.Intersects(lastViewBounds);
     }
 
     private void LogPerformanceStats()

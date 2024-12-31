@@ -5,15 +5,20 @@ public class ChunkMeshGenerator
 {
     private readonly int chunkSize = Chunk.ChunkSize;
 
-    public Mesh GenerateMesh(Chunk chunk)
+    public Mesh GenerateMesh(Chunk chunk, int yLimit)
     {
         List<Vector3> vertices = new List<Vector3>();
         List<int> triangles = new List<int>();
         List<Color32> colors = new List<Color32>();
         List<Vector2> uvs = new List<Vector2>();
 
+        // Calculate effective Y limit within this chunk's space
+        int chunkYOffset = chunk.Position.y * chunkSize;
+        int effectiveYLimit = Mathf.Min(chunkSize, 
+            Mathf.Max(0, yLimit - chunkYOffset));
+
         for (int x = 0; x < chunkSize; x++)
-        for (int y = 0; y < chunkSize; y++)
+        for (int y = 0; y < effectiveYLimit; y++) // Only iterate to Y limit
         for (int z = 0; z < chunkSize; z++)
         {
             Block block = chunk.GetBlock(x, y, z);
@@ -24,13 +29,23 @@ public class ChunkMeshGenerator
                 switch (block.RenderType)
                 {
                     case BlockRenderType.Cube:
-                        AddCubeMesh(chunk, block, pos, vertices, triangles, colors, uvs);
+                        AddCubeMesh(chunk, block, pos, vertices, triangles, 
+                                  colors, uvs, y == effectiveYLimit - 1);
                         break;
                     case BlockRenderType.Flat:
-                        AddFlatMesh(block, pos, vertices, triangles, colors, uvs);
+                        if (y < effectiveYLimit - 1) // Don't add flat meshes at the cut line
+                        {
+                            AddFlatMesh(block, pos, vertices, triangles, colors, uvs);
+                        }
                         break;
                 }
             }
+        }
+
+        // Add cap faces at Y-limit if needed
+        if (effectiveYLimit < chunkSize)
+        {
+            AddYLevelCap(chunk, effectiveYLimit, vertices, triangles, colors, uvs);
         }
 
         Mesh mesh = new Mesh();
@@ -44,22 +59,11 @@ public class ChunkMeshGenerator
 
     private void AddCubeMesh(Chunk chunk, Block block, Vector3Int position,
                            List<Vector3> vertices, List<int> triangles, 
-                           List<Color32> colors, List<Vector2> uvs)
+                           List<Color32> colors, List<Vector2> uvs,
+                           bool isAtYLimit)
     {
         int vertexIndex = vertices.Count;
-        Vector2[] blockUVs = block.UVs;
-        
-        if (blockUVs == null || blockUVs.Length < 4)
-        {
-            blockUVs = new Vector2[]
-            {
-                Vector2.zero,
-                Vector2.zero,
-                Vector2.zero,
-                Vector2.zero
-            };
-            // Debug.LogWarning($"Missing UVs for block: {block.Name}, falling back to color only");
-        }
+        Vector2[] blockUVs = block.UVs ?? GetDefaultUVs();
 
         // Get world position for deterministic rotation
         Vector3Int worldPos = chunk.Position * Chunk.ChunkSize + position;
@@ -67,38 +71,70 @@ public class ChunkMeshGenerator
         for (int i = 0; i < 6; i++)
         {
             Vector3Int neighborPos = position + BlockFaceNormals[i];
+            bool isTopFace = i == 2; // Top face index
 
-            if (!IsBlockOpaque(chunk, neighborPos))
+            // Special handling for faces at Y-limit
+            if (isAtYLimit && isTopFace)
             {
-                // Add vertices for this face
-                for (int v = 0; v < 4; v++)
-                {
-                    vertices.Add(BlockFaceVertices[i][v] + position);
-                    colors.Add(block.Color);
-                }
+                // Always show top face at Y-limit
+                AddFace(i, position, block, blockUVs, worldPos,
+                       vertices, triangles, colors, uvs);
+            }
+            else if (!IsBlockOpaque(chunk, neighborPos))
+            {
+                AddFace(i, position, block, blockUVs, worldPos,
+                       vertices, triangles, colors, uvs);
+            }
+        }
+    }
 
-                // Handle UV rotation
-                Vector2[] faceUVs = blockUVs;
-                if (block.UseRandomRotation)
-                {
-                    int rotations = GetDeterministicRotation(worldPos, i);
-                    faceUVs = RotateUVs(blockUVs, rotations);
-                }
+    private void AddYLevelCap(Chunk chunk, int yLevel,
+                            List<Vector3> vertices, List<int> triangles,
+                            List<Color32> colors, List<Vector2> uvs)
+    {
+        // Add a semi-transparent cap at the Y-level cut
+        Color32 capColor = new Color32(128, 128, 128, 128); // Semi-transparent grey
 
-                // Add rotated UVs
-                for (int v = 0; v < 4; v++)
-                {
-                    uvs.Add(faceUVs[v]);
-                }
+        for (int x = 0; x < chunkSize; x++)
+        for (int z = 0; z < chunkSize; z++)
+        {
+            // Skip if we're at the bottom of the chunk
+            if (yLevel <= 0) continue;
 
-                // Add triangles
-                triangles.AddRange(new int[]
+            // Only add cap face if there's a block below
+            Block blockBelow = null;
+            if (yLevel > 0) // Check if we can safely look below
+            {
+                blockBelow = chunk.GetBlock(x, yLevel - 1, z);
+            }
+
+            if (blockBelow != null)
+            {
+                int vertexIndex = vertices.Count;
+                Vector3 pos = new Vector3(x, yLevel, z);
+
+                // Add vertices for cap face
+                vertices.AddRange(new[]
+                {
+                    pos,
+                    pos + Vector3.right,
+                    pos + Vector3.right + Vector3.forward,
+                    pos + Vector3.forward
+                });
+
+                // Add cap face triangles
+                triangles.AddRange(new[]
                 {
                     vertexIndex, vertexIndex + 1, vertexIndex + 2,
                     vertexIndex + 2, vertexIndex + 3, vertexIndex
                 });
 
-                vertexIndex += 4;
+                // Add colors and UVs for cap face
+                for (int i = 0; i < 4; i++)
+                {
+                    colors.Add(capColor);
+                    uvs.Add(Vector2.zero); // Use a specific texture for the cap if desired
+                }
             }
         }
     }
@@ -200,5 +236,48 @@ public class ChunkMeshGenerator
         int seed = worldPos.x * 73856093 ^ worldPos.y * 19349663 ^ worldPos.z * 83492791 ^ face;
         System.Random random = new System.Random(seed);
         return random.Next(0, 4); // 0, 1, 2, or 3 rotations (90° each)
+    }
+
+    private Vector2[] GetDefaultUVs()
+    {
+        return new Vector2[]
+        {
+            new Vector2(0, 0),
+            new Vector2(1, 0),
+            new Vector2(1, 1),
+            new Vector2(0, 1)
+        };
+    }
+
+    private void AddFace(int faceIndex, Vector3Int position, Block block, 
+                        Vector2[] blockUVs, Vector3Int worldPos,
+                        List<Vector3> vertices, List<int> triangles, 
+                        List<Color32> colors, List<Vector2> uvs)
+    {
+        int vertexIndex = vertices.Count;
+
+        // Add the four vertices for this face
+        for (int i = 0; i < 4; i++)
+        {
+            vertices.Add(position + BlockFaceVertices[faceIndex][i]);
+        }
+
+        // Add triangles
+        triangles.AddRange(new int[]
+        {
+            vertexIndex, vertexIndex + 1, vertexIndex + 2,
+            vertexIndex + 2, vertexIndex + 3, vertexIndex
+        });
+
+        // Add colors
+        for (int i = 0; i < 4; i++)
+        {
+            colors.Add(block.Color);
+        }
+
+        // Get rotated UVs based on world position
+        int rotation = GetDeterministicRotation(worldPos, faceIndex);
+        Vector2[] rotatedUVs = RotateUVs(blockUVs, rotation);
+        uvs.AddRange(rotatedUVs);
     }
 }

@@ -15,6 +15,9 @@ public class Chunk
     // Dimension of the chunk in blocks (e.g., 16x16x16)
     public const int ChunkSize = 16;
 
+    private bool? _isOpaque = null; // null = not calculated yet
+    private bool? _isEmpty = null;  // Also cache isEmpty for performance
+
     // Constructor: initializes the chunk at the specified chunk position
     public Chunk(Vector3Int position)
     {
@@ -58,7 +61,10 @@ public class Chunk
         if (IsValidBlockPosition(x, y, z))
         {
             _blocks[x, y, z] = block;
-            MarkDirty(); // Mark the chunk as dirty if a block is modified
+            // Invalidate cached states
+            _isOpaque = null;
+            _isEmpty = null;
+            MarkDirty();
         }
         else
         {
@@ -81,13 +87,19 @@ public class Chunk
     /// </summary>
     public bool IsFullyEmpty()
     {
+        if (!_isEmpty.HasValue)
+        {
+            _isEmpty = CalculateIsEmpty();
+        }
+        return _isEmpty.Value;
+    }
+
+    private bool CalculateIsEmpty()
+    {
         foreach (var block in _blocks)
         {
-            // Just check for null since null represents air
             if (block != null)
-            {
                 return false;
-            }
         }
         return true;
     }
@@ -96,36 +108,41 @@ public class Chunk
     /// Returns true if the chunk is fully opaque when viewed from above.
     /// Each vertical column must have at least one opaque block to block vision.
     /// </summary>
-    public bool IsFullyOpaque()
+    public bool IsOpaque
+    {
+        get
+        {
+            if (!_isOpaque.HasValue)
+            {
+                _isOpaque = CalculateOpacity();
+            }
+            return _isOpaque.Value;
+        }
+    }
+
+    private bool CalculateOpacity()
     {
         // Check each column from top to bottom
         for (int x = 0; x < ChunkSize; x++)
+        for (int z = 0; z < ChunkSize; z++)
         {
-            for (int z = 0; z < ChunkSize; z++)
+            bool columnIsFullyOpaque = true;
+            
+            // Check each block in this column from top to bottom
+            for (int y = ChunkSize - 1; y >= 0; y--)
             {
-                bool columnHasOpaqueBlock = false;
-                
-                // Check each block in this column from top to bottom
-                for (int y = ChunkSize - 1; y >= 0; y--)
+                Block block = _blocks[x, y, z];
+                if (block == null || !block.IsOpaque)
                 {
-                    Block block = _blocks[x, y, z];
-                    if (block != null && block.IsOpaque)
-                    {
-                        columnHasOpaqueBlock = true;
-                        break;  // Found an opaque block, this column is blocked
-                    }
-                }
-                
-                // If we found no opaque blocks in this column, the chunk isn't fully opaque
-                if (!columnHasOpaqueBlock)
-                {
-                    return false;  // Found a see-through column, chunk isn't opaque
+                    columnIsFullyOpaque = false;
+                    break;
                 }
             }
+            
+            if (columnIsFullyOpaque)
+                return true;  // If any column is fully opaque, the chunk blocks vision
         }
-        
-        // All columns had at least one opaque block
-        return true;
+        return false;
     }
 
     /// <summary>
