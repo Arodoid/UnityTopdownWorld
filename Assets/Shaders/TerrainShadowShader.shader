@@ -3,15 +3,16 @@ Shader "Custom/TerrainShadowShader"
     Properties
     {
         _MainTex ("Texture Atlas", 2D) = "white" {}
-        _Opacity ("Opacity", Range(0, 1)) = 1
+        _FadeAmount ("Fade Amount", Range(0, 1)) = 1
+        [Toggle] _UseDither ("Use Dither", Float) = 1
     }
 
     SubShader
     {
         Tags { 
-            "RenderType"="Transparent" 
+            "RenderType"="Opaque" 
             "RenderPipeline" = "UniversalPipeline"
-            "Queue"="Transparent"
+            "Queue"="Geometry"
         }
         
         Pass
@@ -20,20 +21,31 @@ Shader "Custom/TerrainShadowShader"
             
             ZWrite On
             ZTest Less
-            Blend SrcAlpha OneMinusSrcAlpha
             
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
+            #pragma multi_compile _ _ADDITIONAL_LIGHTS
+            #pragma multi_compile _ _ADDITIONAL_LIGHT_SHADOWS
+            #pragma multi_compile _ _SHADOWS_SOFT
             
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
             TEXTURE2D(_MainTex);
             SAMPLER(sampler_MainTex);
-            float _Opacity;
+            float _FadeAmount;
+            float _UseDither;
+
+            // Dithering pattern (4x4 Bayer matrix)
+            static const float4x4 DITHER_PATTERN = {
+                0.0f,  0.5f,  0.125f, 0.625f,
+                0.75f, 0.25f, 0.875f, 0.375f,
+                0.1875f, 0.6875f, 0.0625f, 0.5625f,
+                0.9375f, 0.4375f, 0.8125f, 0.3125f
+            };
 
             struct Attributes
             {
@@ -50,6 +62,7 @@ Shader "Custom/TerrainShadowShader"
                 float4 color : COLOR;
                 float4 positionWS : TEXCOORD1;
                 float2 uv : TEXCOORD2;
+                float4 screenPos : TEXCOORD3;
             };
 
             Varyings vert(Attributes input)
@@ -60,27 +73,35 @@ Shader "Custom/TerrainShadowShader"
                 output.normalWS = TransformObjectToWorldNormal(input.normalOS);
                 output.color = input.color;
                 output.uv = input.uv;
+                output.screenPos = ComputeScreenPos(output.positionCS);
                 return output;
             }
 
             float4 frag(Varyings input) : SV_Target
             {
-                // Sample texture with the correct UVs
+                // Sample texture
                 float4 texColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv);
                 
                 // Get shadow coordinates
                 float4 shadowCoord = TransformWorldToShadowCoord(input.positionWS.xyz);
                 Light mainLight = GetMainLight(shadowCoord);
                 
-                // Combine texture color with vertex color
+                // Calculate base color
                 float3 baseColor = texColor.rgb * input.color.rgb;
-                
-                // Debug UV coordinates
-                //return float4(input.uv.x, input.uv.y, 0, 1); // Uncomment to visualize UVs
                 
                 // Apply lighting
                 float3 litColor = baseColor * mainLight.color * mainLight.distanceAttenuation * mainLight.shadowAttenuation;
-                return float4(litColor, texColor.a * input.color.a * _Opacity);
+
+                // Calculate dither threshold
+                float2 screenPos = input.screenPos.xy / input.screenPos.w * _ScreenParams.xy;
+                float2 ditherCoord = screenPos % 4;
+                float dither = DITHER_PATTERN[ditherCoord.x][ditherCoord.y];
+
+                // Apply fade using dither pattern
+                float fadeThreshold = _UseDither ? dither : 0.5f;
+                clip(_FadeAmount - fadeThreshold);
+
+                return float4(litColor, 1.0);
             }
             ENDHLSL
         }

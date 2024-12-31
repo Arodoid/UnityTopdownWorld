@@ -1,6 +1,7 @@
 using UnityEngine;
 using VoxelGame.Entities;
 using VoxelGame.Core.Debugging;
+using UnityEngine.UI;
 
 public class CameraVisibilityController : MonoBehaviour
 {
@@ -27,6 +28,10 @@ public class CameraVisibilityController : MonoBehaviour
     private Vector3Int lastChunkPosition;
     private float updateTimer;
 
+    [Header("UI Elements")]
+    [SerializeField] private Slider yLevelSlider;
+    [SerializeField] private Text yLevelText;
+
     public struct ViewData
     {
         public Vector3Int CenterChunk;
@@ -43,6 +48,15 @@ public class CameraVisibilityController : MonoBehaviour
         entityManager = Object.FindAnyObjectByType<EntityObjectManager>();
         currentYLevel = defaultYLevel;
         UpdateVisibleWorld();
+        
+        // Initialize the slider
+        if (yLevelSlider != null)
+        {
+            yLevelSlider.minValue = minYLevel;
+            yLevelSlider.maxValue = maxYLevel;
+            yLevelSlider.value = currentYLevel;
+            yLevelSlider.onValueChanged.AddListener(OnSliderValueChanged);
+        }
     }
 
     private void Update()
@@ -99,6 +113,12 @@ public class CameraVisibilityController : MonoBehaviour
         {
             ChangeYLevel(-yLevelKeySpeed);
         }
+
+        // Update slider value when Y-level changes through other means
+        if (yLevelSlider != null && yLevelSlider.value != currentYLevel)
+        {
+            yLevelSlider.SetValueWithoutNotify(currentYLevel);
+        }
     }
 
     private void ChangeYLevel(int delta)
@@ -142,5 +162,29 @@ public class CameraVisibilityController : MonoBehaviour
         // Update entity manager with the same view data
         entityManager.UpdateVisibleEntities(currentChunkPosition, 
             Mathf.CeilToInt(Mathf.Max(viewWidth, viewHeight) / Chunk.ChunkSize));
+    }
+
+    private void UpdateYLevelText()
+    {
+        if (yLevelText != null)
+        {
+            yLevelText.text = $"Y: {currentYLevel}";
+        }
+    }
+
+    private void OnSliderValueChanged(float value)
+    {
+        currentYLevel = Mathf.RoundToInt(value);
+        UpdateYLevelText();
+        UpdateVisibleWorld();
+        updateTimer = 0f;
+    }
+
+    private void OnDestroy()
+    {
+        if (yLevelSlider != null)
+        {
+            yLevelSlider.onValueChanged.RemoveListener(OnSliderValueChanged);
+        }
     }
 }

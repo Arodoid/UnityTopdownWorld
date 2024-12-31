@@ -76,7 +76,7 @@ public class ChunkQueueProcessor : MonoBehaviour
         meshGenerator = new ChunkMeshGenerator();
         
         InitializePools();
-        chunkRenderer = new ChunkRenderer(meshPool);
+        chunkRenderer = new ChunkRenderer(meshPool, this);
         
         if (mainCamera == null)
             mainCamera = Camera.main;
