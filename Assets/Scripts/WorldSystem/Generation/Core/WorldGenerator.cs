@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Threading.Tasks;
 using VoxelGame.WorldSystem.Biomes;
 using VoxelGame.WorldSystem.Generation.Terrain;
+using VoxelGame.WorldSystem.Generation.Features;
 using VoxelGame.Core.Debugging;
 
 namespace VoxelGame.WorldSystem.Generation.Core
@@ -13,6 +14,7 @@ namespace VoxelGame.WorldSystem.Generation.Core
         private NoiseGenerator noiseGenerator;
         private BiomeGenerator biomeGenerator;
         private TerrainGenerator terrainGenerator;
+        private TerrainFeatureGenerator featureGenerator;
 
         public BiomeGenerator BiomeGenerator => biomeGenerator;
 
@@ -35,6 +37,7 @@ namespace VoxelGame.WorldSystem.Generation.Core
             biomeGenerator.Initialize(noiseGenerator);
             
             terrainGenerator = new TerrainGenerator(noiseGenerator);
+            featureGenerator = new TerrainFeatureGenerator(noiseGenerator);
 
             GameLogger.LogInfo($"WorldGenerator initialized with seed: {worldSeed}");
         }
@@ -44,6 +47,8 @@ namespace VoxelGame.WorldSystem.Generation.Core
             var chunk = new Chunk(position);
             var biomeData = biomeGenerator.GenerateChunkBiomeData(position);
             var heightMap = terrainGenerator.GenerateChunkTerrain(chunk, biomeData);
+            featureGenerator.GenerateCaves(chunk, biomeData);
+            featureGenerator.GenerateRavines(chunk, biomeData);
             return Task.FromResult(chunk);
         }
     }

@@ -27,6 +27,10 @@ namespace VoxelGame.WorldSystem.Generation.Core
             public const float HILLS_STRENGTH = 4f;
             public const float MOUNTAINS_STRENGTH = 32f;
             public const float ROUGHNESS_STRENGTH = 2f;
+            
+            // Biome Border Noise
+            public const float BIOME_BORDER_SCALE = 0.1f;    // Higher = more frequent variations
+            public const float BIOME_BORDER_STRENGTH = 0.1f; // Higher = wider transition zones
         }
         
         // Biome Thresholds

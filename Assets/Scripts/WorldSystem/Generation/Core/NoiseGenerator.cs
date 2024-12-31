@@ -12,13 +12,19 @@ namespace VoxelGame.WorldSystem.Generation.Core
         {
             this.seed = seed;
             random = new System.Random(seed);
-            offsets = GenerateOffsets(8); // 4 pairs of offsets
+            offsets = GenerateOffsets(10); // Increased from 8 to 10 to accommodate border noise
         }
         
         // Get consistent noise value for any world position
         public float GetNoise(float x, float z, int offsetIndex, float scale)
         {
             int index = offsetIndex * 2;
+            if (index >= offsets.Length)
+            {
+                Debug.LogError($"Offset index {offsetIndex} (array index {index}) is out of bounds. Array length: {offsets.Length}");
+                return 0f;
+            }
+            
             float nx = (x + offsets[index]) * scale;
             float nz = (z + offsets[index + 1]) * scale;
             return Mathf.PerlinNoise(nx, nz);

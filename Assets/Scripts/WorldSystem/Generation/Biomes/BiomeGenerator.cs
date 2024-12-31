@@ -42,6 +42,8 @@ namespace VoxelGame.WorldSystem.Biomes
     {
         private readonly NoiseGenerator noiseGenerator;
         private readonly float temperatureScale = GenerationConstants.Noise.BIOME_SCALE;
+        private readonly float borderNoiseScale = GenerationConstants.Noise.BIOME_BORDER_SCALE;
+        private readonly float borderNoiseStrength = GenerationConstants.Noise.BIOME_BORDER_STRENGTH;
 
         public BiomeGeneratorCore(NoiseGenerator noiseGenerator)
         {
@@ -68,7 +70,18 @@ namespace VoxelGame.WorldSystem.Biomes
 
         private float GetTemperature(float worldX, float worldZ)
         {
-            return noiseGenerator.GetNoise(worldX, worldZ, 0, temperatureScale);
+            // Get base temperature
+            float baseTemp = noiseGenerator.GetNoise(worldX, worldZ, 0, temperatureScale);
+            
+            // Add border noise
+            float borderNoise = noiseGenerator.GetNoise(worldX, worldZ, 4, borderNoiseScale);
+            borderNoise = (borderNoise * 2 - 1) * borderNoiseStrength;
+            
+            // Apply border noise to temperature
+            float noisyTemp = baseTemp + borderNoise;
+            
+            // Clamp to valid range
+            return Mathf.Clamp01(noisyTemp);
         }
 
         public BiomeType GetDominantBiome(BiomeData biomeData)
