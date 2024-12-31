@@ -68,7 +68,8 @@ public class ChunkMeshGenerator
         // Get world position for deterministic rotation
         Vector3Int worldPos = chunk.Position * Chunk.ChunkSize + position;
 
-        for (int i = 0; i < 6; i++)
+        // Iterate through all faces except bottom
+        for (int i = 0; i < BlockFaceNormals.Length; i++)
         {
             Vector3Int neighborPos = position + BlockFaceNormals[i];
             bool isTopFace = i == 2; // Top face index
@@ -199,7 +200,6 @@ public class ChunkMeshGenerator
         new Vector3Int(0, 0, 1),  // Front
         new Vector3Int(0, 0, -1), // Back
         new Vector3Int(0, 1, 0),  // Top
-        new Vector3Int(0, -1, 0), // Bottom
         new Vector3Int(1, 0, 0),  // Right
         new Vector3Int(-1, 0, 0)  // Left
     };
@@ -212,8 +212,6 @@ public class ChunkMeshGenerator
         new [] { new Vector3(1, 0, 0), new Vector3(0, 0, 0), new Vector3(0, 1, 0), new Vector3(1, 1, 0) },
         // Top face (+y)
         new [] { new Vector3(0, 1, 0), new Vector3(0, 1, 1), new Vector3(1, 1, 1), new Vector3(1, 1, 0) },
-        // Bottom face (-y)
-        new [] { new Vector3(0, 0, 0), new Vector3(1, 0, 0), new Vector3(1, 0, 1), new Vector3(0, 0, 1) },
         // Right face (+x)
         new [] { new Vector3(1, 0, 1), new Vector3(1, 0, 0), new Vector3(1, 1, 0), new Vector3(1, 1, 1) },
         // Left face (-x)

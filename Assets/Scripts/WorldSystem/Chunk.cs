@@ -122,27 +122,27 @@ public class Chunk
 
     private bool CalculateOpacity()
     {
-        // Check each column from top to bottom
+        // Check each column
         for (int x = 0; x < ChunkSize; x++)
         for (int z = 0; z < ChunkSize; z++)
         {
-            bool columnIsFullyOpaque = true;
+            bool hasOpaqueBlock = false;
             
             // Check each block in this column from top to bottom
             for (int y = ChunkSize - 1; y >= 0; y--)
             {
                 Block block = _blocks[x, y, z];
-                if (block == null || !block.IsOpaque)
+                if (block != null && block.IsOpaque)
                 {
-                    columnIsFullyOpaque = false;
-                    break;
+                    hasOpaqueBlock = true;
+                    break;  // Found an opaque block in this column, move to next column
                 }
             }
             
-            if (columnIsFullyOpaque)
-                return true;  // If any column is fully opaque, the chunk blocks vision
+            if (!hasOpaqueBlock)
+                return false;  // If any column has no opaque blocks, the chunk doesn't block vision
         }
-        return false;
+        return true;  // All columns have at least one opaque block
     }
 
     /// <summary>
