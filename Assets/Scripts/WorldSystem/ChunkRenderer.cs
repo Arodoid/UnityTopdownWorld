@@ -4,12 +4,6 @@ using UnityEngine;
 public class ChunkRenderer
 {
     private readonly Dictionary<Vector3Int, GameObject> _renderedChunks = new Dictionary<Vector3Int, GameObject>();
-    private Material terrainMaterial;
-
-    public ChunkRenderer()
-    {
-        terrainMaterial = new Material(Shader.Find("Custom/TerrainShadowShader"));
-    }
 
     public void RenderChunk(Chunk chunk, Mesh mesh)
     {
@@ -29,7 +23,7 @@ public class ChunkRenderer
             meshFilter.mesh = mesh;
 
             MeshRenderer meshRenderer = chunkGO.AddComponent<MeshRenderer>();
-            meshRenderer.material = terrainMaterial;
+            meshRenderer.material = BlockRegistry.TerrainMaterial;
 
             _renderedChunks[position] = chunkGO;
         }

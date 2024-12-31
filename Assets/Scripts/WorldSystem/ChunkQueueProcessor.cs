@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using VoxelGame.WorldSystem.Generation.Core;  // For WorldGenerator
 
 public class ChunkQueueProcessor : MonoBehaviour
 {
@@ -12,15 +13,16 @@ public class ChunkQueueProcessor : MonoBehaviour
     [SerializeField] private int maxPendingChunks = 5000;
     [SerializeField] private float viewDistance = 128f;
     [SerializeField] private bool showDebugInfo = true;
-    
-    private int minYLevel = 0;
+
+    // World height limits
+    private int minYLevel;
     private int maxYLevel;
 
     private WorldGenerator worldGenerator;
     private ChunkManager chunkManager;
     private ChunkRenderer chunkRenderer;
     private ChunkMeshGenerator meshGenerator;
-    
+
     // Queue Management
     private PriorityQueue<Vector3Int> generationQueue = new PriorityQueue<Vector3Int>();    
     private Queue<Chunk> renderQueue = new Queue<Chunk>();
@@ -49,6 +51,7 @@ public class ChunkQueueProcessor : MonoBehaviour
     public int QueuedForGenerationCount => queuedForGeneration.Count;
     public int QueuedForRenderCount => queuedForRender.Count;
     public float ViewDistance => viewDistance;
+    public ICollection<Vector3Int> CurrentlyVisibleChunks => currentlyVisibleChunks;
 
     private void Awake()
     {
@@ -60,8 +63,7 @@ public class ChunkQueueProcessor : MonoBehaviour
         if (mainCamera == null)
             mainCamera = Camera.main;
 
-        // Set Y levels based on world height
-        minYLevel = 0;  // Usually start at ground level
+        minYLevel = 0;
         maxYLevel = WorldDataManager.WORLD_HEIGHT_IN_CHUNKS - 1;
 
         debugTextStyle = new GUIStyle
@@ -79,7 +81,7 @@ public class ChunkQueueProcessor : MonoBehaviour
         // chunkManager.UnloadMarkedChunks();
     }
 
-    private void ProcessGenerationQueue()
+    private async void ProcessGenerationQueue()
     {
         float startTime = Time.realtimeSinceStartup;
         int chunksProcessed = 0;
@@ -94,7 +96,7 @@ public class ChunkQueueProcessor : MonoBehaviour
             if (chunkManager.ChunkExists(pos))
                 continue;
 
-            Chunk chunk = worldGenerator.GenerateChunk(pos);
+            Chunk chunk = await worldGenerator.GenerateChunk(pos);
             chunkManager.StoreChunk(pos, chunk);
 
             generationTime += Time.realtimeSinceStartup - genStart;

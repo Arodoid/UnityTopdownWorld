@@ -128,10 +128,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 47835247}
+  - component: {fileID: 47835248}
+  - component: {fileID: 47835253}
+  - component: {fileID: 47835252}
   - component: {fileID: 47835251}
   - component: {fileID: 47835250}
   - component: {fileID: 47835249}
-  - component: {fileID: 47835248}
   m_Layer: 0
   m_Name: WorldManager
   m_TagString: Untagged
@@ -163,10 +165,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 47835246}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01ce82c40adffea42a8a142cf604fec6, type: 3}
+  m_Script: {fileID: 11500000, guid: 493a4051991aa4498b47a85e55ebf536, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blockMaterial: {fileID: 2100000, guid: 79fef82204a4b524f8a77acc88d4c2f1, type: 2}
 --- !u!114 &47835249
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -176,9 +177,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 47835246}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b8b1480e6f9bf944c91f300a1c4d2c0e, type: 3}
+  m_Script: {fileID: 11500000, guid: 14c8fcd9b507c44528c7f5dd94d8b6a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  atlas: {fileID: 100100200, guid: 9853344f6b64c4f4fa8b7b81217fd442, type: 3}
+  terrainShader: {fileID: 4800000, guid: ee0797825429dba42b65eb359c1ed454, type: 3}
 --- !u!114 &47835250
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -188,11 +191,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 47835246}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d381dc9526e1694f88b10157e818b4a, type: 3}
+  m_Script: {fileID: 11500000, guid: 5f1c852b383db4d6a992c96f71d60554, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  worldSeed: 12345
-  chunksPerFrame: 2
 --- !u!114 &47835251
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -202,13 +203,38 @@ MonoBehaviour:
   m_GameObject: {fileID: 47835246}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a858890ee291734cbcdb149cb12adf5, type: 3}
+  m_Script: {fileID: 11500000, guid: aca3c274887464ba2a664732f4d09418, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  seed: 12345
-  terrainScale: 0.02
-  baseHeight: 32
-  heightVariation: 20
+  mainCamera: {fileID: 1488966428}
+  maxChunksPerFrame: 30
+  maxPendingChunks: 5000
+  viewDistance: 128
+  showDebugInfo: 1
+--- !u!114 &47835252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 47835246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 493a4051991aa4498b47a85e55ebf536, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &47835253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 47835246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e45ce5e82daa549f5a46fb56a3adb2fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &146263172
 GameObject:
   m_ObjectHideFlags: 0
@@ -359,9 +385,57 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 952874370}
   - {fileID: 47835247}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &952874369
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 952874370}
+  - component: {fileID: 952874371}
+  m_Layer: 0
+  m_Name: EntityManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &952874370
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 952874369}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -18.992176, y: 48.245163, z: -12.371303}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 350196172}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &952874371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 952874369}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7781ea0e38f364123afda65ab5301640, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefabConfig: {fileID: 11400000, guid: d694b9a155524480d8a951357bef7974, type: 2}
+  entityContainer: {fileID: 952874370}
+  defaultPoolSize: 20
 --- !u!1 &1488966424
 GameObject:
   m_ObjectHideFlags: 0
@@ -373,8 +447,8 @@ GameObject:
   - component: {fileID: 1488966429}
   - component: {fileID: 1488966428}
   - component: {fileID: 1488966427}
-  - component: {fileID: 1488966426}
   - component: {fileID: 1488966425}
+  - component: {fileID: 1488966430}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -426,23 +500,6 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
---- !u!114 &1488966426
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1488966424}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1eb418799762a7b4faaa730f50229bd6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 100
-  zoomSpeed: 10
-  minZoom: 5
-  maxZoom: 500
-  worldManager: {fileID: 47835250}
 --- !u!81 &1488966427
 AudioListener:
   m_ObjectHideFlags: 0
@@ -517,6 +574,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 80, y: 0, z: 0}
+--- !u!114 &1488966430
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1488966424}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3094905561a1d48889cd90c8b59eae3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 20
+  zoomSpeed: 2
+  minOrthographicSize: 5
+  maxOrthographicSize: 30
+  updateInterval: 0.5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

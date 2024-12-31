@@ -1,22 +1,25 @@
 using UnityEngine;
 
-namespace VoxelGame.WorldSystem.Generation
+namespace VoxelGame.WorldSystem.Biomes
 {
     public class BiomeData
     {
         private readonly float[,] temperatureMap;
+        private readonly BiomeType[,] biomeTypeMap;
         private readonly int size;
 
         public BiomeData(int size)
         {
             this.size = size;
             temperatureMap = new float[size, size];
+            biomeTypeMap = new BiomeType[size, size];
         }
 
-        public void SetBiomeData(int x, int z, float temperature)
+        public void SetData(int x, int z, float temperature, BiomeType biomeType)
         {
             if (!IsValidPosition(x, z)) return;
             temperatureMap[x, z] = temperature;
+            biomeTypeMap[x, z] = biomeType;
         }
 
         public float GetTemperature(int x, int z)
@@ -26,11 +29,7 @@ namespace VoxelGame.WorldSystem.Generation
 
         public BiomeType GetBiomeType(int x, int z)
         {
-            float temperature = GetTemperature(x, z);
-            if (temperature > 0.6f) return BiomeType.Desert;
-            if (temperature < 0.4f) return BiomeType.Grassland;
-            // Smooth transition zone between 0.4 and 0.6
-            return temperature > 0.5f ? BiomeType.Desert : BiomeType.Grassland;
+            return IsValidPosition(x, z) ? biomeTypeMap[x, z] : BiomeType.Grassland;
         }
 
         private bool IsValidPosition(int x, int z)
@@ -39,11 +38,5 @@ namespace VoxelGame.WorldSystem.Generation
         }
 
         public int Size => size;
-    }
-
-    public enum BiomeType
-    {
-        Grassland,
-        Desert
     }
 }

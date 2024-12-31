@@ -13,9 +13,6 @@ public class CameraVisibilityController : MonoBehaviour
     [Header("World Loading")]
     [SerializeField] private float updateInterval = 0.5f;
     
-    [Header("Debug")]
-    [SerializeField] private bool debugVisualization = true;
-    
     private Camera mainCamera;
     private ChunkQueueProcessor chunkProcessor;
     private EntityObjectManager entityManager;

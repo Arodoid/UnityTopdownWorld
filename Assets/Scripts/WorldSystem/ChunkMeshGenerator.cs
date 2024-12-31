@@ -47,6 +47,22 @@ public class ChunkMeshGenerator
                            List<Color32> colors, List<Vector2> uvs)
     {
         int vertexIndex = vertices.Count;
+        Vector2[] blockUVs = block.UVs;
+        
+        if (blockUVs == null || blockUVs.Length < 4)
+        {
+            blockUVs = new Vector2[]
+            {
+                Vector2.zero,
+                Vector2.zero,
+                Vector2.zero,
+                Vector2.zero
+            };
+            // Debug.LogWarning($"Missing UVs for block: {block.Name}, falling back to color only");
+        }
+
+        // Get world position for deterministic rotation
+        Vector3Int worldPos = chunk.Position * Chunk.ChunkSize + position;
 
         for (int i = 0; i < 6; i++)
         {
@@ -54,13 +70,28 @@ public class ChunkMeshGenerator
 
             if (!IsBlockOpaque(chunk, neighborPos))
             {
-                foreach (Vector3 vertex in BlockFaceVertices[i])
+                // Add vertices for this face
+                for (int v = 0; v < 4; v++)
                 {
-                    vertices.Add(vertex + position);
+                    vertices.Add(BlockFaceVertices[i][v] + position);
                     colors.Add(block.Color);
-                    uvs.Add(Vector2.zero); // Solid blocks don't use UVs
                 }
 
+                // Handle UV rotation
+                Vector2[] faceUVs = blockUVs;
+                if (block.UseRandomRotation)
+                {
+                    int rotations = GetDeterministicRotation(worldPos, i);
+                    faceUVs = RotateUVs(blockUVs, rotations);
+                }
+
+                // Add rotated UVs
+                for (int v = 0; v < 4; v++)
+                {
+                    uvs.Add(faceUVs[v]);
+                }
+
+                // Add triangles
                 triangles.AddRange(new int[]
                 {
                     vertexIndex, vertexIndex + 1, vertexIndex + 2,
@@ -79,24 +110,28 @@ public class ChunkMeshGenerator
         int vertexIndex = vertices.Count;
         float height = 1f;
 
-        // Get UV coordinates from sprite if available
-        Rect uvRect = block.Sprite != null ? block.Sprite.rect : new Rect(0, 0, 1, 1);
-        Vector2 uvScale = block.Sprite != null ? 
-            new Vector2(1f / block.Sprite.texture.width, 1f / block.Sprite.texture.height) : 
-            Vector2.one;
-
-        // Add vertices with UVs
+        // Add vertices
         vertices.Add(new Vector3(position.x, position.y, position.z));
-        uvs.Add(new Vector2(uvRect.x * uvScale.x, uvRect.y * uvScale.y));
-
         vertices.Add(new Vector3(position.x + 1, position.y, position.z));
-        uvs.Add(new Vector2((uvRect.x + uvRect.width) * uvScale.x, uvRect.y * uvScale.y));
-
         vertices.Add(new Vector3(position.x + 1, position.y + height, position.z));
-        uvs.Add(new Vector2((uvRect.x + uvRect.width) * uvScale.x, (uvRect.y + uvRect.height) * uvScale.y));
-
         vertices.Add(new Vector3(position.x, position.y + height, position.z));
-        uvs.Add(new Vector2(uvRect.x * uvScale.x, (uvRect.y + uvRect.height) * uvScale.y));
+
+        // Add UVs
+        if (block.UVs != null && block.UVs.Length >= 4)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                uvs.Add(block.UVs[i]);
+            }
+        }
+        else
+        {
+            // Fallback UVs
+            uvs.Add(new Vector2(0, 0));
+            uvs.Add(new Vector2(1, 0));
+            uvs.Add(new Vector2(1, 1));
+            uvs.Add(new Vector2(0, 1));
+        }
 
         // Add colors
         for (int i = 0; i < 4; i++)
@@ -148,4 +183,22 @@ public class ChunkMeshGenerator
         // Left face (-x)
         new [] { new Vector3(0, 0, 0), new Vector3(0, 0, 1), new Vector3(0, 1, 1), new Vector3(0, 1, 0) }
     };
+
+    private Vector2[] RotateUVs(Vector2[] originalUVs, int rotations)
+    {
+        Vector2[] rotatedUVs = new Vector2[4];
+        for (int i = 0; i < 4; i++)
+        {
+            rotatedUVs[i] = originalUVs[(i + rotations) % 4];
+        }
+        return rotatedUVs;
+    }
+
+    private int GetDeterministicRotation(Vector3Int worldPos, int face)
+    {
+        // Create a deterministic but seemingly random rotation based on position
+        int seed = worldPos.x * 73856093 ^ worldPos.y * 19349663 ^ worldPos.z * 83492791 ^ face;
+        System.Random random = new System.Random(seed);
+        return random.Next(0, 4); // 0, 1, 2, or 3 rotations (90° each)
+    }
 }

@@ -1,20 +1,24 @@
 Shader "Custom/TerrainShadowShader"
 {
+    Properties
+    {
+        _MainTex ("Texture Atlas", 2D) = "white" {}
+    }
+
     SubShader
     {
         Tags { 
             "RenderType"="Opaque" 
             "RenderPipeline" = "UniversalPipeline"
-            "Queue"="Geometry" // This is 2000
+            "Queue"="Geometry"
         }
         
-        // Main pass with colors, shadows, and AO compatibility
         Pass
         {
             Tags { "LightMode" = "UniversalForward" }
             
-            ZWrite On // Enable depth writing
-            ZTest Less  // Changed from LEqual to Less
+            ZWrite On
+            ZTest Less
             
             HLSLPROGRAM
             #pragma vertex vert
@@ -25,19 +29,24 @@ Shader "Custom/TerrainShadowShader"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
+            TEXTURE2D(_MainTex);
+            SAMPLER(sampler_MainTex);
+
             struct Attributes
             {
                 float4 positionOS : POSITION;
-                float3 normalOS : NORMAL; // Add normal attribute
+                float3 normalOS : NORMAL;
                 float4 color : COLOR;
+                float2 uv : TEXCOORD0;
             };
 
             struct Varyings
             {
                 float4 positionCS : SV_POSITION;
-                float3 normalWS : TEXCOORD0; // Pass world-space normals
+                float3 normalWS : TEXCOORD0;
                 float4 color : COLOR;
                 float4 positionWS : TEXCOORD1;
+                float2 uv : TEXCOORD2;
             };
 
             Varyings vert(Attributes input)
@@ -45,27 +54,30 @@ Shader "Custom/TerrainShadowShader"
                 Varyings output;
                 output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
                 output.positionWS = mul(unity_ObjectToWorld, input.positionOS);
-                output.normalWS = TransformObjectToWorldNormal(input.normalOS); // Transform normals to world space
+                output.normalWS = TransformObjectToWorldNormal(input.normalOS);
                 output.color = input.color;
+                output.uv = input.uv;
                 return output;
             }
 
             float4 frag(Varyings input) : SV_Target
             {
+                // Sample texture with the correct UVs
+                float4 texColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv);
+                
                 // Get shadow coordinates
                 float4 shadowCoord = TransformWorldToShadowCoord(input.positionWS.xyz);
-                
-                // Get main light and shadow attenuation
                 Light mainLight = GetMainLight(shadowCoord);
                 
-                // Calculate final color with light intensity and color
-                float3 litColor = input.color.rgb * mainLight.color * mainLight.distanceAttenuation * mainLight.shadowAttenuation;
-
-                // Include normals in lighting calculations (AO uses normals indirectly)
-                float3 normal = normalize(input.normalWS);
-
-                // Final output
-                return float4(litColor, input.color.a);
+                // Combine texture color with vertex color
+                float3 baseColor = texColor.rgb * input.color.rgb;
+                
+                // Debug UV coordinates
+                //return float4(input.uv.x, input.uv.y, 0, 1); // Uncomment to visualize UVs
+                
+                // Apply lighting
+                float3 litColor = baseColor * mainLight.color * mainLight.distanceAttenuation * mainLight.shadowAttenuation;
+                return float4(litColor, texColor.a * input.color.a);
             }
             ENDHLSL
         }

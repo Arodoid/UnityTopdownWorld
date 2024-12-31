@@ -16,6 +16,7 @@ namespace VoxelGame.Entities.Definitions
 
         public EntityPrefabEntry[] entityConfigs;
 
+        
         public EntityPrefabEntry GetConfigForType(EntityType type)
         {
             return Array.Find(entityConfigs, config => config.type == type);
