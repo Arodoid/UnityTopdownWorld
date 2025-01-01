@@ -129,13 +129,12 @@ GameObject:
   m_Component:
   - component: {fileID: 47835247}
   - component: {fileID: 47835248}
-  - component: {fileID: 47835255}
-  - component: {fileID: 47835253}
+  - component: {fileID: 47835249}
   - component: {fileID: 47835252}
   - component: {fileID: 47835251}
   - component: {fileID: 47835250}
-  - component: {fileID: 47835249}
   - component: {fileID: 47835254}
+  - component: {fileID: 47835255}
   m_Layer: 0
   m_Name: WorldManager
   m_TagString: Untagged
@@ -209,11 +208,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 1488966428}
-  maxChunksPerFrame: 200
-  maxPendingChunks: 500
-  showDebugInfo: 1
-  boundsPadding: 4
-  batchSize: 20
+  maxChunksPerFrame: 30
+  maxPendingChunks: 300
+  boundsPadding: 2
+  batchSize: 32
+  maxColumnsPerFrame: 32
 --- !u!114 &47835252
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -226,19 +225,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 493a4051991aa4498b47a85e55ebf536, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &47835253
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 47835246}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e45ce5e82daa549f5a46fb56a3adb2fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  worldSeed: 0
 --- !u!114 &47835254
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -251,7 +237,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efa6ad62180534d919484d468df2e544, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enableVisualizations: 0
+  enableVisualizations: 1
   chunkWireframes:
     enabled: 1
     color: {r: 1, g: 1, b: 1, a: 1}
@@ -269,30 +255,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 47835246}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72203325a56be413ab4cef66d3a2fea2, type: 3}
+  m_Script: {fileID: 11500000, guid: ea85d175254484551a139ba68d3a1340, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  seaLevel: 128
-  minHeight: 0
-  maxHeight: 256
-  biomeScale: 0.005
-  temperatureOffset: 0.5
-  baseTerrainScale: 0
-  hillsScale: 0
-  mountainsScale: 0
-  roughnessScale: 0
-  baseStrength: 100
-  hillsStrength: 0
-  mountainsStrength: 0
-  roughnessStrength: 0
-  biomeBorderScale: 0.02
-  biomeBorderStrength: 0.02
-  coldThreshold: 0.3
-  temperateThreshold: 0.6
-  hotThreshold: 0.7
-  mountainThreshold: 0.6
-  desertHeightModifier: 0.8
-  snowHeightModifier: 1.1
+  worldSeed: 123123
+  defaultBiome: 0
 --- !u!1 &237080962
 GameObject:
   m_ObjectHideFlags: 0
@@ -1120,7 +1087,7 @@ Transform:
   m_GameObject: {fileID: 1488966424}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 150, z: 0}
+  m_LocalPosition: {x: 0, y: 257, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

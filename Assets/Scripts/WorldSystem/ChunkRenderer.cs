@@ -10,13 +10,15 @@ public class ChunkRenderer
     private readonly Dictionary<Vector3Int, Mesh> _chunkMeshes = new Dictionary<Vector3Int, Mesh>();
     private readonly Dictionary<Vector3Int, MaterialPropertyBlock> _propertyBlocks = new Dictionary<Vector3Int, MaterialPropertyBlock>();
     private readonly ObjectPool<Mesh> _meshPool;
+    private readonly MonoBehaviour _coroutineRunner;
     
     private const float FADE_DURATION = 0.5f;
     private static readonly int OpacityProperty = Shader.PropertyToID("_Opacity");
 
-    public ChunkRenderer(ObjectPool<Mesh> meshPool)
+    public ChunkRenderer(ObjectPool<Mesh> meshPool, MonoBehaviour coroutineRunner)
     {
         _meshPool = meshPool ?? throw new ArgumentNullException(nameof(meshPool));
+        _coroutineRunner = coroutineRunner ?? throw new ArgumentNullException(nameof(coroutineRunner));
     }
 
     public void RenderChunk(Chunk chunk, Mesh mesh)
@@ -54,16 +56,7 @@ public class ChunkRenderer
     {
         if (_renderedChunks.TryGetValue(position, out var chunkGO))
         {
-            // Update to use FindAnyObjectByType
-            MonoBehaviour runner = Object.FindAnyObjectByType<ChunkQueueProcessor>();
-            if (runner != null)
-            {
-                runner.StartCoroutine(FadeOut(position));
-            }
-            else
-            {
-                CleanupChunk(position);
-            }
+            _coroutineRunner.StartCoroutine(FadeOut(position));
         }
     }
 
@@ -79,6 +72,12 @@ public class ChunkRenderer
 
     public void RenderChunkPooled(Chunk chunk, Mesh mesh, ObjectPool<Mesh> meshPool)
     {
+        if (!BlockRegistry.IsInitialized || BlockRegistry.TerrainMaterial == null)
+        {
+            Debug.LogError("Cannot render chunk: BlockRegistry not properly initialized!");
+            return;
+        }
+
         if (_chunkMeshes.TryGetValue(chunk.Position, out Mesh oldMesh))
         {
             meshPool.Release(oldMesh);
@@ -99,9 +98,16 @@ public class ChunkRenderer
             meshFilter.mesh = mesh;
 
             MeshRenderer meshRenderer = chunkGO.AddComponent<MeshRenderer>();
-            meshRenderer.material = BlockRegistry.TerrainMaterial;
+            Material material = BlockRegistry.TerrainMaterial;
+            
+            if (material.mainTexture == null)
+            {
+                Debug.LogError("Terrain material has no texture assigned!");
+                material.color = Color.magenta;
+            }
+            
+            meshRenderer.material = material;
 
-            // Add fade-in animation
             var propertyBlock = new MaterialPropertyBlock();
             propertyBlock.SetFloat(OpacityProperty, 0f);
             meshRenderer.SetPropertyBlock(propertyBlock);
@@ -109,12 +115,7 @@ public class ChunkRenderer
 
             _renderedChunks[chunk.Position] = chunkGO;
             
-            // Update to use FindAnyObjectByType
-            MonoBehaviour runner = Object.FindAnyObjectByType<ChunkQueueProcessor>();
-            if (runner != null)
-            {
-                runner.StartCoroutine(FadeIn(chunk.Position));
-            }
+            _coroutineRunner.StartCoroutine(FadeIn(chunk.Position));
         }
     }
 

@@ -8,6 +8,7 @@ public class BlockRegistry : MonoBehaviour
     private static Material terrainMaterial;
     private static SpriteAtlas blockAtlas;
     private static bool isInitialized = false;
+    private static bool isInitializing = false;
 
     public static Material TerrainMaterial => terrainMaterial;
     public static bool IsInitialized => isInitialized;
@@ -16,79 +17,121 @@ public class BlockRegistry : MonoBehaviour
     {
         Debug.Log("BlockRegistry Awake starting...");
         
-        if (atlas == null)
+        // Reset initialization state on Awake
+        isInitialized = false;
+        isInitializing = false;
+        
+        if (!ValidateReferences())
         {
-            Debug.LogError("Block Atlas not assigned!");
+            Debug.LogError("BlockRegistry initialization failed due to missing references!");
             return;
         }
+        
+        Initialize();
+        Debug.Log("BlockRegistry Awake completed.");
+    }
 
-        // Assign to static field
-        blockAtlas = atlas;
+    private bool ValidateReferences()
+    {
+        if (atlas == null)
+        {
+            Debug.LogError("Block Atlas not assigned in BlockRegistry!");
+            return false;
+        }
 
-        // Create shared terrain material
+        blockAtlas = atlas; // Store the atlas reference statically
+
         if (terrainShader == null)
         {
             terrainShader = Shader.Find("Custom/TerrainShadowShader");
+            if (terrainShader == null)
+            {
+                Debug.LogError("Could not find TerrainShadowShader!");
+                return false;
+            }
         }
-        
-        if (terrainShader == null)
+
+        return true;
+    }
+
+    public void Initialize()
+    {
+        if (isInitialized)
         {
-            Debug.LogError("Could not find TerrainShadowShader!");
+            Debug.Log("BlockRegistry already initialized, skipping.");
             return;
         }
 
-        terrainMaterial = new Material(terrainShader);
-        
-        // Set the texture atlas
-        Sprite[] sprites = new Sprite[1];
-        blockAtlas.GetSprites(sprites);
-        if (sprites[0] != null)
+        if (isInitializing)
         {
-            terrainMaterial.mainTexture = sprites[0].texture;
-            Debug.Log($"Set terrain material texture: {sprites[0].texture.width}x{sprites[0].texture.height}");
-        }
-        else
-        {
-            Debug.LogError("No sprites found in atlas!");
+            Debug.Log("BlockRegistry initialization in progress, skipping.");
             return;
         }
 
-        // Set initialized BEFORE initializing blocks
-        isInitialized = true;
+        isInitializing = true;
 
-        // Initialize block types
-        Block.Types.Initialize(blockAtlas);
-        
-        Debug.Log("BlockRegistry initialization complete!");
+        try
+        {
+            Debug.Log("Creating terrain material...");
+            terrainMaterial = new Material(terrainShader);
+            
+            // Get sprites from atlas with proper error handling
+            Sprite[] sprites = new Sprite[atlas.spriteCount];
+            atlas.GetSprites(sprites);
+            
+            if (sprites.Length == 0)
+            {
+                Debug.LogError("No sprites found in atlas!");
+                isInitializing = false;
+                return;
+            }
+
+            // Set the texture
+            Texture2D atlasTexture = sprites[0].texture;
+            terrainMaterial.mainTexture = atlasTexture;
+            Debug.Log($"Set terrain material texture: {atlasTexture.width}x{atlasTexture.height}");
+
+            // Initialize block types
+            Block.Types.Initialize(atlas);
+            Debug.Log("Block types initialized successfully!");
+            
+            isInitialized = true;
+            isInitializing = false;
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Failed to initialize block types: {e.Message}");
+            isInitialized = false;
+            isInitializing = false;
+        }
     }
 
     public static Vector2[] GetUVsForSprite(string spriteName)
     {
-        if (!isInitialized)
-        {
-            Debug.LogError("BlockRegistry not initialized when requesting UVs!");
-            return null;
-        }
-
         if (blockAtlas == null)
         {
-            Debug.LogError("Block Atlas not initialized!");
-            return null;
+            Debug.LogError($"Block Atlas not initialized when getting UVs for {spriteName}!");
+            return GetDefaultUVs();
         }
 
         Sprite sprite = blockAtlas.GetSprite(spriteName);
         if (sprite == null)
         {
-            sprite = blockAtlas.GetSprite(spriteName + "(Clone)");
-        }
-        
-        if (sprite == null)
-        {
-            Debug.LogError($"Could not find sprite: {spriteName} or {spriteName}(Clone)");
-            return null;
+            Debug.LogError($"Could not find sprite: {spriteName}");
+            return GetDefaultUVs();
         }
 
-        // Simply return the sprite's UVs - Unity handles all the atlas calculations for us!
         return sprite.uv;
+    }
+
+    private static Vector2[] GetDefaultUVs()
+    {
+        return new Vector2[]
+        {
+            new Vector2(0, 0),
+            new Vector2(1, 0),
+            new Vector2(1, 1),
+            new Vector2(0, 1)
+        };
     }
 } 

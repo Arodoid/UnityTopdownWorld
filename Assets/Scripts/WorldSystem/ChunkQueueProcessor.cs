@@ -14,9 +14,9 @@ public class ChunkQueueProcessor : MonoBehaviour
     [Header("Performance Settings")]
     [SerializeField] private int maxChunksPerFrame = 30;
     [SerializeField] private int maxPendingChunks = 5000;
-    [SerializeField] private bool showDebugInfo = true;
     [SerializeField] private float boundsPadding = 1f; // Chunks beyond visible area
     [SerializeField] private int batchSize = 8; // Adjust this value as needed
+    [SerializeField] private int maxColumnsPerFrame = 8; // Add this field
 
     // World height limits
     private int minYLevel;
@@ -47,7 +47,6 @@ public class ChunkQueueProcessor : MonoBehaviour
     private int operationsCount = 0;
     private float nextLogTime = 0f;
     private const float LOG_INTERVAL = 2f;
-    private GUIStyle debugTextStyle;
 
     // New Y-level tracking
     private int currentYLimit = int.MaxValue;
@@ -83,13 +82,6 @@ public class ChunkQueueProcessor : MonoBehaviour
 
         minYLevel = 0;
         maxYLevel = WorldDataManager.WORLD_HEIGHT_IN_CHUNKS - 1;
-
-        debugTextStyle = new GUIStyle
-        {
-            normal = { textColor = Color.white },
-            fontSize = 14,
-            padding = new RectOffset(10, 10, 10, 10)
-        };
     }
 
     private void InitializePools()
@@ -132,56 +124,46 @@ public class ChunkQueueProcessor : MonoBehaviour
         if (generationQueue.Count == 0) return;
 
         float startTime = Time.realtimeSinceStartup;
-        int chunksProcessed = 0;
         
-        while (generationQueue.Count > 0 && chunksProcessed < maxChunksPerFrame)
+        // Group chunks by column
+        Dictionary<Vector2Int, List<Vector3Int>> columnGroups = new();
+        int processedColumns = 0;
+
+        while (generationQueue.Count > 0 && processedColumns < maxColumnsPerFrame)
         {
-            // Process chunks in batches
-            var batch = new List<(Vector3Int pos, Task<Chunk> task)>();
-            int currentBatchSize = Mathf.Min(batchSize, generationQueue.Count);
+            // Dequeue first, then use the position
+            Vector3Int pos = generationQueue.Dequeue();
+            Vector2Int column = new Vector2Int(pos.x, pos.z);
 
-            // Start generation tasks for the batch
-            for (int i = 0; i < currentBatchSize; i++)
+            if (!columnGroups.ContainsKey(column))
             {
-                Vector3Int pos = generationQueue.Dequeue();
-                queuedForGeneration.Remove(pos);
-
-                if (!chunkManager.ChunkExists(pos))
-                {
-                    var generateTask = worldGenerator.GenerateChunkPooled(pos, chunkPool);
-                    batch.Add((pos, generateTask));
-                }
+                columnGroups[column] = new List<Vector3Int>();
+                processedColumns++;
             }
-
-            // Wait for all chunks in the batch to complete
-            float beforeGen = Time.realtimeSinceStartup;
-            await Task.WhenAll(batch.Select(b => b.task));
-            generationTime += Time.realtimeSinceStartup - beforeGen;
-
-            // Process completed chunks
-            foreach (var (pos, task) in batch)
-            {
-                var chunk = task.Result;
-                if (chunk != null)
-                {
-                    chunkManager.StoreChunk(pos, chunk);
-                    
-                    if (!chunk.IsFullyEmpty())
-                    {
-                        QueueChunkRender(chunk);
-                    }
-                }
-                chunksProcessed++;
-            }
-
-            operationsCount += batch.Count;
+            
+            columnGroups[column].Add(pos);
+            queuedForGeneration.Remove(pos);
         }
+
+        // Process each column in parallel
+        var columnTasks = columnGroups.Select(kvp => 
+            ProcessColumnAsync(kvp.Key.x, kvp.Key.y, lastCenter, new List<(Vector3Int, int)>())
+        ).ToList();
+
+        // Wait for all columns to complete
+        await Task.WhenAll(columnTasks);
 
         LogPerformanceStats();
     }
 
     private void ProcessRenderQueue()
     {
+        if (!BlockRegistry.IsInitialized)
+        {
+            Debug.LogWarning("Waiting for BlockRegistry initialization...");
+            return;
+        }
+
         int chunksProcessed = 0;
 
         while (renderQueue.Count > 0 && chunksProcessed < maxChunksPerFrame)
@@ -350,17 +332,15 @@ public class ChunkQueueProcessor : MonoBehaviour
         int minChunkZ = Mathf.FloorToInt(viewBounds.min.z / Chunk.ChunkSize);
         int maxChunkZ = Mathf.CeilToInt(viewBounds.max.z / Chunk.ChunkSize);
 
-        // Track which columns we've processed
-        HashSet<Vector2Int> processedColumns = new HashSet<Vector2Int>();
+        // Create a list to store all column tasks
+        var columnTasks = new List<Task>();
+        var columnResults = new List<List<(Vector3Int pos, int priority)>>();
 
         // Process columns
         for (int x = minChunkX; x <= maxChunkX; x++)
         for (int z = minChunkZ; z <= maxChunkZ; z++)
         {
             Vector2Int column = new Vector2Int(x, z);
-            if (processedColumns.Contains(column))
-                continue;
-
             Vector3 chunkWorldPos = new Vector3(
                 x * Chunk.ChunkSize,
                 0,
@@ -374,9 +354,31 @@ public class ChunkQueueProcessor : MonoBehaviour
 
             if (chunkBounds.Intersects(viewBounds))
             {
-                await ProcessColumnAsync(x, z, center, chunks);
-                processedColumns.Add(column);
+                var columnChunks = new List<(Vector3Int pos, int priority)>();
+                columnResults.Add(columnChunks);
+                
+                // Start the column processing without awaiting
+                columnTasks.Add(ProcessColumnAsync(x, z, center, columnChunks));
+                
+                // Limit parallel columns if needed
+                if (columnTasks.Count >= maxColumnsPerFrame)
+                {
+                    await Task.WhenAll(columnTasks);
+                    columnTasks.Clear();
+                }
             }
+        }
+
+        // Wait for any remaining columns
+        if (columnTasks.Count > 0)
+        {
+            await Task.WhenAll(columnTasks);
+        }
+
+        // Combine all results
+        foreach (var columnResult in columnResults)
+        {
+            chunks.AddRange(columnResult);
         }
 
         return chunks;
@@ -390,54 +392,55 @@ public class ChunkQueueProcessor : MonoBehaviour
             Mathf.CeilToInt((float)currentYLimit / Chunk.ChunkSize)
         );
 
-        // Process from effective max Y down to minYLevel
+        // Create a local list for thread safety
+        var columnChunks = new List<(Vector3Int pos, int priority)>();
+
+        // Process from top to bottom, but one at a time to respect opacity
         for (int y = effectiveMaxY; y >= minYLevel; y--)
         {
             Vector3Int pos = new Vector3Int(x, y, z);
             
-            // Skip if this chunk is already being processed
-            if (queuedForGeneration.Contains(pos))
-                continue;
+            // Skip if already being processed
+            bool isQueued;
+            lock (lockObject)
+            {
+                isQueued = queuedForGeneration.Contains(pos);
+            }
+            if (isQueued) continue;
 
-            // Skip if this chunk is entirely above the Y limit
+            // Skip if entirely above Y limit
             int chunkBottomY = y * Chunk.ChunkSize;
             if (chunkBottomY > currentYLimit)
                 continue;
 
-            // Get or generate the chunk
-            Chunk chunk = chunkManager.GetChunk(pos);
-            if (chunk == null)
+            // Generate this chunk
+            Chunk chunk = await worldGenerator.GenerateChunkPooled(pos, chunkPool);
+            
+            if (chunk != null)
             {
-                int priority = CalculateChunkPriority(pos, center);
-                chunks.Add((pos, priority));
-
-                chunk = await worldGenerator.GenerateChunk(pos);
-                if (chunk != null)
+                lock (lockObject)
                 {
                     chunkManager.StoreChunk(pos, chunk);
                     
                     if (!chunk.IsFullyEmpty())
                     {
-                        lock (lockObject)
-                        {
-                            QueueChunkRender(chunk);
-                            chunkYLevels[pos] = currentYLimit; // Store Y-level for rendering
-                        }
+                        int priority = CalculateChunkPriority(pos, center);
+                        columnChunks.Add((pos, priority));
+                        QueueChunkRender(chunk);
+                        chunkYLevels[pos] = currentYLimit;
                     }
                 }
-            }
-            else if (!chunk.IsFullyEmpty())
-            {
-                int priority = CalculateChunkPriority(pos, center);
-                chunks.Add((pos, priority));
-                chunkYLevels[pos] = currentYLimit; // Update Y-level for existing chunks
-            }
 
-            // Stop processing this column if we hit an opaque chunk
-            if (chunk != null && chunk.IsOpaque)
-            {
-                break;
+                // Stop processing this column if we hit an opaque chunk
+                if (chunk.IsOpaque)
+                    break;
             }
+        }
+
+        // Add all chunks from this column at once
+        lock (lockObject)
+        {
+            chunks.AddRange(columnChunks);
         }
     }
 
@@ -547,20 +550,6 @@ public class ChunkQueueProcessor : MonoBehaviour
             operationsCount = 0;
             nextLogTime = Time.time + LOG_INTERVAL;
         }
-    }
-
-    private void OnGUI()
-    {
-        if (!showDebugInfo) return;
-
-        GUI.Label(new Rect(Screen.width - 300, 10, 300, 160),
-            $"=== Chunk Processing ===\n" +
-            $"Generation Queue: {generationQueue.Count}\n" +
-            $"Render Queue: {renderQueue.Count}\n" +
-            $"Queued for Generation: {queuedForGeneration.Count}\n" +
-            $"Queued for Render: {queuedForRender.Count}\n" +
-            $"Currently Visible: {currentlyVisibleChunks.Count}",
-            debugTextStyle);
     }
 
     private void OnDestroy()

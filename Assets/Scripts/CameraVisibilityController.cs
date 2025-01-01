@@ -154,14 +154,13 @@ public class CameraVisibilityController : MonoBehaviour
             ViewWidth = viewWidth,
             ViewHeight = viewHeight
         };
-
         // Pass all view data to chunk processor
         chunkProcessor.ScanChunksAsync(viewData);
         lastChunkPosition = currentChunkPosition;
 
         // Update entity manager with the same view data
-        entityManager.UpdateVisibleEntities(currentChunkPosition, 
-            Mathf.CeilToInt(Mathf.Max(viewWidth, viewHeight) / Chunk.ChunkSize));
+        // entityManager.UpdateVisibleEntities(currentChunkPosition, 
+        //     Mathf.CeilToInt(Mathf.Max(viewWidth, viewHeight) / Chunk.ChunkSize));
     }
 
     private void UpdateYLevelText()
