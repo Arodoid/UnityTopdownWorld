@@ -128,13 +128,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 47835247}
-  - component: {fileID: 47835248}
   - component: {fileID: 47835249}
-  - component: {fileID: 47835252}
-  - component: {fileID: 47835251}
+  - component: {fileID: 47835248}
   - component: {fileID: 47835250}
-  - component: {fileID: 47835254}
   - component: {fileID: 47835255}
+  - component: {fileID: 47835257}
+  - component: {fileID: 47835256}
+  - component: {fileID: 47835251}
   m_Layer: 0
   m_Name: WorldManager
   m_TagString: Untagged
@@ -207,45 +207,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aca3c274887464ba2a664732f4d09418, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainCamera: {fileID: 1488966428}
   maxChunksPerFrame: 30
-  maxPendingChunks: 300
-  boundsPadding: 2
-  batchSize: 32
-  maxColumnsPerFrame: 32
---- !u!114 &47835252
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 47835246}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 493a4051991aa4498b47a85e55ebf536, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &47835254
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 47835246}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: efa6ad62180534d919484d468df2e544, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enableVisualizations: 1
-  chunkWireframes:
-    enabled: 1
-    color: {r: 1, g: 1, b: 1, a: 1}
-    opacity: 0.8
-  columnOverlays:
-    enabled: 1
-    color: {r: 1, g: 1, b: 1, a: 1}
-    opacity: 0.8
 --- !u!114 &47835255
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -260,6 +222,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   worldSeed: 123123
   defaultBiome: 0
+--- !u!114 &47835256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 47835246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 376c054e671a2495db82efb54e02267f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &47835257
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 47835246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b5a86dc945f24165bf09a2eefed5176, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &237080962
 GameObject:
   m_ObjectHideFlags: 0
@@ -344,6 +330,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 350196172}
+  - component: {fileID: 350196173}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -368,6 +355,20 @@ Transform:
   - {fileID: 47835247}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &350196173
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 350196171}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e19105a295249e44b57c7f90ab4ede2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  logFilePath: Assets/Extra/log.txt
+  outputFilePath: Assets/Extra/logfiltered.txt
 --- !u!1 &455308476
 GameObject:
   m_ObjectHideFlags: 0
@@ -795,9 +796,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7781ea0e38f364123afda65ab5301640, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefabConfig: {fileID: 11400000, guid: d694b9a155524480d8a951357bef7974, type: 2}
-  entityContainer: {fileID: 952874370}
-  defaultPoolSize: 20
 --- !u!1 &1057455901
 GameObject:
   m_ObjectHideFlags: 0
@@ -1086,14 +1084,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1488966424}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: 0.67559016, y: 0, z: 0, w: 0.7372774}
   m_LocalPosition: {x: 0, y: 257, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 581730726}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 85, y: 0, z: 0}
 --- !u!114 &1488966430
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1106,18 +1104,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3094905561a1d48889cd90c8b59eae3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 20
-  zoomSpeed: 2
-  minOrthographicSize: 3
-  maxOrthographicSize: 100
-  updateInterval: 0.1
-  defaultYLevel: 256
-  minYLevel: 1
-  maxYLevel: 256
-  yLevelScrollSpeed: 1
-  yLevelKeySpeed: 1
-  yLevelSlider: {fileID: 545503672}
+  moveSpeed: 200
+  zoomSpeed: 20
+  minZoom: 5
+  maxZoom: 3000
   yLevelText: {fileID: 649741773}
+  updateThresholdDistance: 8
 --- !u!1 &1527284393
 GameObject:
   m_ObjectHideFlags: 0

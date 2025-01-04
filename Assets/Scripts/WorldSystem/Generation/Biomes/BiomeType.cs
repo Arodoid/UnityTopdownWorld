@@ -20,26 +20,30 @@ namespace VoxelGame.WorldSystem.Generation.Biomes
             Type = BiomeType.Plains;
             Name = "Plains";
             Color = Color.green;
-            MinTemperature = 0.3f;
+            MinTemperature = 0.0f;  // Start from absolute cold
             MaxTemperature = 0.7f;
         }
         
         // Initialize sets "what this biome DOES"
         protected override void InitializeDefaultSettings()
         {
-            base.InitializeDefaultSettings();
-
-            terrainSettings.baseHeight = 64f;
-            terrainSettings.baseVariation = 0f;
-            terrainSettings.generateHills = true;
-            terrainSettings.hillsHeight = 12f;
-            terrainSettings.hillsFrequency = 0.02f;
-            terrainSettings.generateMountains = false;
-
-            // Set block types
-            terrainSettings.surfaceBlock = Block.Types.Grass;
-            terrainSettings.subsurfaceBlock = Block.Types.Dirt;
-            terrainSettings.deepBlock = Block.Types.Stone;
+            terrainSettings = new TerrainSettings
+            {
+                enabled = true,
+                scale = 1f,
+                strength = 1f,
+                baseHeight = 64f,
+                baseVariation = 0f,
+                generateHills = true,
+                hillsHeight = 12f,
+                hillsFrequency = 0.02f,
+                generateMountains = false,
+                surfaceBlock = Block.Types.Grass,
+                subsurfaceBlock = Block.Types.Dirt,
+                deepBlock = Block.Types.Stone,
+                surfaceDepth = 1,
+                subsurfaceDepth = 4
+            };
 
             featureSettings[typeof(TerrainSettings)] = terrainSettings;
         }
@@ -53,26 +57,30 @@ namespace VoxelGame.WorldSystem.Generation.Biomes
             Type = BiomeType.Desert;
             Name = "Desert";
             Color = new Color(0.76f, 0.7f, 0.5f); // Sandy color
-            MinTemperature = 0.7f;  // Hotter than plains
-            MaxTemperature = 1.0f;
+            MinTemperature = 0.5f;  // Overlap with Plains for smooth transition
+            MaxTemperature = 1.0f;  // Go to absolute hot
         }
         
         // Initialize sets "what this biome DOES"
         protected override void InitializeDefaultSettings()
         {
-            base.InitializeDefaultSettings();
-
-            terrainSettings.baseHeight = 62f;
-            terrainSettings.baseVariation = 2f;      // Slight variation for dunes
-            terrainSettings.generateHills = true;
-            terrainSettings.hillsHeight = 8f;        // Sand dunes
-            terrainSettings.hillsFrequency = 0.05f;  // Spread out dunes
-            terrainSettings.generateMountains = false;
-
-            // Set block types
-            terrainSettings.surfaceBlock = Block.Types.Sand;
-            terrainSettings.subsurfaceBlock = Block.Types.Sand;
-            terrainSettings.deepBlock = Block.Types.Sandstone;
+            terrainSettings = new TerrainSettings
+            {
+                enabled = true,
+                scale = 1f,
+                strength = 1f,
+                baseHeight = 50f,
+                baseVariation = 0f,
+                generateHills = true,
+                hillsHeight = 12f,
+                hillsFrequency = 0.02f,
+                generateMountains = false,
+                surfaceBlock = Block.Types.Sand,
+                subsurfaceBlock = Block.Types.Sand,
+                deepBlock = Block.Types.Stone,
+                surfaceDepth = 1,
+                subsurfaceDepth = 4
+            };
 
             featureSettings[typeof(TerrainSettings)] = terrainSettings;
         }

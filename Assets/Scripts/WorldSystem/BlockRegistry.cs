@@ -121,7 +121,9 @@ public class BlockRegistry : MonoBehaviour
             return GetDefaultUVs();
         }
 
-        return sprite.uv;
+        var uvs = sprite.uv;
+        Debug.Log($"UVs for {spriteName}: ({uvs[0]}, {uvs[1]}, {uvs[2]}, {uvs[3]})");
+        return uvs;
     }
 
     private static Vector2[] GetDefaultUVs()

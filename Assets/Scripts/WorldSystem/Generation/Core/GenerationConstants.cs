@@ -49,39 +49,40 @@ namespace VoxelGame.WorldSystem.Generation.Core
 
             public static class Biomes
             {
-                public const float SCALE = 0.0001f;
-                public const float BLEND_RANGE = 0.35f;
+                public const float SCALE = 0.005f;
+                public const float BLEND_RANGE = 0.2f;
             }
         }
 
         public static class Features
         {
-            public static class Trees
-            {
-                public const float DENSITY = 0.1f;    // Higher = more trees
-                public const int MIN_HEIGHT = 4;
-                public const int MAX_HEIGHT = 8;
-            }
+            // TODO: Add features func
+            // public static class Trees
+            // {
+            //     public const float DENSITY = 0.1f;    // Higher = more trees
+            //     public const int MIN_HEIGHT = 4;
+            //     public const int MAX_HEIGHT = 8;
+            // }
 
-            public static class Ores
-            {
-                public const float SCALE = 0.05f;
-                public const float DENSITY = 0.6f;    // Higher = more ore veins
+            // public static class Ores
+            // {
+            //     public const float SCALE = 0.05f;
+            //     public const float DENSITY = 0.6f;    // Higher = more ore veins
                 
-                public static class Height
-                {
-                    public const int COAL_MAX = 128;
-                    public const int IRON_MAX = 64;
-                    public const int GOLD_MAX = 32;
-                    public const int DIAMOND_MAX = 16;
-                }
-            }
+            //     public static class Height
+            //     {
+            //         public const int COAL_MAX = 128;
+            //         public const int IRON_MAX = 64;
+            //         public const int GOLD_MAX = 32;
+            //         public const int DIAMOND_MAX = 16;
+            //     }
+            // }
 
-            public static class Flowers
-            {
-                public const float DENSITY = 0.05f;   // Higher = more flowers
-                public const float SCALE = 0.1f;      // Scale of flower patches
-            }
+            // public static class Flowers
+            // {
+            //     public const float DENSITY = 0.05f;   // Higher = more flowers
+            //     public const float SCALE = 0.1f;      // Scale of flower patches
+            // }
         }
     }
 }

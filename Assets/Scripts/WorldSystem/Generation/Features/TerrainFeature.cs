@@ -41,131 +41,119 @@ namespace VoxelGame.WorldSystem.Generation.Features
     /// </summary>
     public class TerrainFeature : WorldFeature
     {
-        private readonly TerrainSettings terrainSettings;
+        private readonly TerrainSettings defaultSettings;
         private const int BASE_NOISE_INDEX = 0;
         private const int HILLS_NOISE_INDEX = 1;
         private const int MOUNTAIN_NOISE_INDEX = 2;
 
         public TerrainFeature(TerrainSettings settings) : base(settings)
         {
-            this.terrainSettings = settings;
+            this.defaultSettings = settings;
         }
 
         public override void Apply(Chunk chunk, NoiseGenerator noise)
         {
-            // Generate heightmap for this chunk
-            float[,] heightMap = GenerateHeightMap(chunk.Position, noise);
+            var heightMap = new float[Chunk.ChunkSize, Chunk.ChunkSize];
+            var blockTypeMap = new BlockColumn[Chunk.ChunkSize, Chunk.ChunkSize];
 
-            // Apply heightmap to chunk
+            // First pass: Calculate heights and block types
             for (int x = 0; x < Chunk.ChunkSize; x++)
             for (int z = 0; z < Chunk.ChunkSize; z++)
             {
-                float height = heightMap[x, z];
-                GenerateTerrainColumn(chunk, x, z, height);
-            }
-        }
+                float worldX = chunk.Position.x * Chunk.ChunkSize + x;
+                float worldZ = chunk.Position.z * Chunk.ChunkSize + z;
 
-        private float[,] GenerateHeightMap(Vector3Int chunkPos, NoiseGenerator noise)
-        {
-            float[,] heightMap = new float[Chunk.ChunkSize, Chunk.ChunkSize];
+                // Get temperature and settings once per column
+                float temperature = noise.GetNoise(worldX, worldZ, 0, GenerationConstants.Noise.Biomes.SCALE);
+                var settings = BiomeBlending.GetBlendedSettings<TerrainSettings>(temperature);
 
-            for (int x = 0; x < Chunk.ChunkSize; x++)
-            for (int z = 0; z < Chunk.ChunkSize; z++)
-            {
-                float worldX = chunkPos.x * Chunk.ChunkSize + x;
-                float worldZ = chunkPos.z * Chunk.ChunkSize + z;
-
-                // Get temperature for biome blending
-                float temperature = noise.GetNoise(
-                    worldX,
-                    worldZ,
-                    0,
-                    GenerationConstants.Noise.Biomes.SCALE
-                );
-
-                // Get blended terrain settings
-                TerrainSettings blendedSettings = BiomeBlending.GetBlendedSettings<TerrainSettings>(
-                    temperature,
-                    GenerationConstants.Noise.Biomes.BLEND_RANGE
-                );
-
-                // Start with base height
-                float height = blendedSettings.baseHeight;
-
-                // Apply base variation if enabled
-                if (blendedSettings.baseVariation > 0)
-                {
-                    float baseTerrainNoise = noise.GetOctaveNoise(
-                        worldX,
-                        worldZ,
-                        BASE_NOISE_INDEX,
-                        blendedSettings.scale,  // Use biome's scale instead of hardcoded value
-                        1,  // Single octave for simpler control
-                        1f  // Full persistence
-                    );
-                    height += baseTerrainNoise * blendedSettings.baseVariation;
-                }
-
-                // Apply hills if enabled
-                if (blendedSettings.generateHills && blendedSettings.hillsHeight > 0)
-                {
-                    float hillNoise = noise.GetOctaveNoise(
-                        worldX,
-                        worldZ,
-                        HILLS_NOISE_INDEX,
-                        blendedSettings.hillsFrequency,
-                        1,  // Single octave
-                        1f  // Full persistence
-                    );
-                    height += hillNoise * blendedSettings.hillsHeight * blendedSettings.hillsScale;
-                }
-
-                // Apply mountains if enabled
-                if (blendedSettings.generateMountains && blendedSettings.mountainHeight > 0)
-                {
-                    float mountainNoise = noise.GetRidgedNoise(
-                        worldX,
-                        worldZ,
-                        MOUNTAIN_NOISE_INDEX,
-                        blendedSettings.mountainFrequency
-                    );
-                    height += mountainNoise * blendedSettings.mountainHeight * blendedSettings.mountainScale;
-                }
-
+                // Calculate height
+                float height = CalculateColumnHeight(worldX, worldZ, settings, noise);
                 heightMap[x, z] = height;
+
+                // Store just the block types instead of entire settings
+                blockTypeMap[x, z] = new BlockColumn(
+                    settings.surfaceBlock,
+                    settings.subsurfaceBlock,
+                    settings.deepBlock,
+                    settings.surfaceDepth,
+                    settings.subsurfaceDepth
+                );
             }
 
-            return heightMap;
+            // Second pass: Generate terrain using cached data
+            for (int x = 0; x < Chunk.ChunkSize; x++)
+            for (int z = 0; z < Chunk.ChunkSize; z++)
+            {
+                GenerateTerrainColumn(chunk, x, z, heightMap[x, z], blockTypeMap[x, z]);
+            }
         }
 
-        private void GenerateTerrainColumn(Chunk chunk, int x, int z, float height)
+        private float CalculateColumnHeight(float worldX, float worldZ, TerrainSettings settings, NoiseGenerator noise)
+        {
+            float height = settings.baseHeight;
+
+            if (settings.baseVariation > 0)
+            {
+                height += noise.GetOctaveNoise(worldX, worldZ, BASE_NOISE_INDEX, settings.scale, 1, 1f) 
+                         * settings.baseVariation;
+            }
+
+            if (settings.generateHills)
+            {
+                height += noise.GetOctaveNoise(worldX, worldZ, HILLS_NOISE_INDEX, settings.hillsFrequency, 1, 1f) 
+                         * settings.hillsHeight * settings.hillsScale;
+            }
+
+            if (settings.generateMountains)
+            {
+                height += noise.GetRidgedNoise(worldX, worldZ, MOUNTAIN_NOISE_INDEX, settings.mountainFrequency) 
+                         * settings.mountainHeight * settings.mountainScale;
+            }
+
+            return height;
+        }
+
+        private readonly struct BlockColumn
+        {
+            public readonly Block Surface;
+            public readonly Block Subsurface;
+            public readonly Block Deep;
+            public readonly int SurfaceDepth;
+            public readonly int SubsurfaceDepth;
+
+            public BlockColumn(Block surface, Block subsurface, Block deep, int surfaceDepth, int subsurfaceDepth)
+            {
+                Surface = surface;
+                Subsurface = subsurface;
+                Deep = deep;
+                SurfaceDepth = surfaceDepth;
+                SubsurfaceDepth = subsurfaceDepth;
+            }
+        }
+
+        private void GenerateTerrainColumn(Chunk chunk, int x, int z, float height, BlockColumn blocks)
         {
             int localY = Mathf.FloorToInt(height) - (chunk.Position.y * Chunk.ChunkSize);
             
-            // If height is below this chunk, fill with solid blocks
             if (localY >= Chunk.ChunkSize)
             {
                 for (int y = 0; y < Chunk.ChunkSize; y++)
                 {
-                    Block blockType = DetermineBlockType(y, localY);
-                    chunk.SetBlock(x, y, z, blockType);
+                    chunk.SetBlock(x, y, z, DetermineBlockType(y, localY, blocks));
                 }
             }
-            // If height is within this chunk, fill up to height
             else if (localY >= 0)
             {
                 for (int y = 0; y <= localY; y++)
                 {
-                    Block blockType = DetermineBlockType(y, localY);
-                    chunk.SetBlock(x, y, z, blockType);
+                    chunk.SetBlock(x, y, z, DetermineBlockType(y, localY, blocks));
                 }
-                // Fill rest with air
                 for (int y = localY + 1; y < Chunk.ChunkSize; y++)
                 {
                     chunk.SetBlock(x, y, z, null);
                 }
             }
-            // If height is above this chunk, fill with air
             else
             {
                 for (int y = 0; y < Chunk.ChunkSize; y++)
@@ -175,18 +163,43 @@ namespace VoxelGame.WorldSystem.Generation.Features
             }
         }
 
-        private Block DetermineBlockType(int currentHeight, int surfaceHeight)
+        private Block DetermineBlockType(int currentHeight, int surfaceHeight, BlockColumn blocks)
         {
             int depthFromSurface = surfaceHeight - currentHeight;
 
             if (depthFromSurface == 0)
-                return terrainSettings.surfaceBlock;
-            if (depthFromSurface <= terrainSettings.surfaceDepth)
-                return terrainSettings.subsurfaceBlock;
-            if (depthFromSurface <= terrainSettings.surfaceDepth + terrainSettings.subsurfaceDepth)
-                return terrainSettings.subsurfaceBlock;
+                return blocks.Surface;
+            if (depthFromSurface <= blocks.SurfaceDepth)
+                return blocks.Subsurface;
+            if (depthFromSurface <= blocks.SurfaceDepth + blocks.SubsurfaceDepth)
+                return blocks.Subsurface;
             
-            return terrainSettings.deepBlock;
+            return blocks.Deep;
+        }
+
+        private TerrainSettings BlendSettings(TerrainSettings a, TerrainSettings b, float blend)
+        {
+            return new TerrainSettings
+            {
+                enabled = blend < 0.5f ? a.enabled : b.enabled,
+                scale = Mathf.Lerp(a.scale, b.scale, blend),
+                strength = Mathf.Lerp(a.strength, b.strength, blend),
+                baseHeight = Mathf.Lerp(a.baseHeight, b.baseHeight, blend),
+                baseVariation = Mathf.Lerp(a.baseVariation, b.baseVariation, blend),
+                generateHills = blend < 0.5f ? a.generateHills : b.generateHills,
+                hillsFrequency = Mathf.Lerp(a.hillsFrequency, b.hillsFrequency, blend),
+                hillsHeight = Mathf.Lerp(a.hillsHeight, b.hillsHeight, blend),
+                hillsScale = Mathf.Lerp(a.hillsScale, b.hillsScale, blend),
+                generateMountains = blend < 0.5f ? a.generateMountains : b.generateMountains,
+                mountainFrequency = Mathf.Lerp(a.mountainFrequency, b.mountainFrequency, blend),
+                mountainHeight = Mathf.Lerp(a.mountainHeight, b.mountainHeight, blend),
+                mountainScale = Mathf.Lerp(a.mountainScale, b.mountainScale, blend),
+                surfaceBlock = blend < 0.5f ? a.surfaceBlock : b.surfaceBlock,
+                subsurfaceBlock = blend < 0.5f ? a.subsurfaceBlock : b.subsurfaceBlock,
+                deepBlock = blend < 0.5f ? a.deepBlock : b.deepBlock,
+                surfaceDepth = Mathf.RoundToInt(Mathf.Lerp(a.surfaceDepth, b.surfaceDepth, blend)),
+                subsurfaceDepth = Mathf.RoundToInt(Mathf.Lerp(a.subsurfaceDepth, b.subsurfaceDepth, blend))
+            };
         }
     }
 } 

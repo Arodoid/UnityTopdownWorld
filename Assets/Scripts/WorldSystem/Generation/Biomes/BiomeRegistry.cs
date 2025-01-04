@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace VoxelGame.WorldSystem.Generation.Biomes
 {
@@ -29,13 +30,19 @@ namespace VoxelGame.WorldSystem.Generation.Biomes
 
         private static void RegisterBiome(BiomeBase biome)
         {
+            biome.Initialize();
             biomes[biome.Type] = biome;
         }
 
         public static BiomeBase GetBiome(BiomeType type)
         {
             if (!initialized) Initialize();
-            return biomes.TryGetValue(type, out var biome) ? biome : biomes[BiomeType.Plains];
+            if (!biomes.TryGetValue(type, out var biome))
+            {
+                Debug.LogWarning($"No biome found for type {type}, using first available biome");
+                biome = biomes.Values.First();
+            }
+            return biome;
         }
 
         public static Color GetBiomeColor(BiomeType type)

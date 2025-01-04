@@ -8,10 +8,13 @@ public class CameraVisibilityController : MonoBehaviour
     [SerializeField] private float minZoom = 5f;
     [SerializeField] private float maxZoom = 30f;
     [SerializeField] private Text yLevelText;
+    [SerializeField] private float updateThresholdDistance = 8f; // Distance in world units before triggering update
     
     private Camera mainCamera;
     private ChunkQueueProcessor chunkProcessor;
     private int currentYLevel = WorldDataManager.WORLD_MAX_Y;
+    private Vector3 lastUpdatePosition;
+    private float lastUpdateSize;
 
     public struct ViewData
     {
@@ -31,51 +34,71 @@ public class CameraVisibilityController : MonoBehaviour
             return;
         }
         
-        // Force initial update
+        // Initialize last update position
+        lastUpdatePosition = transform.position;
+        lastUpdateSize = mainCamera.orthographicSize;
         UpdateWorld();
     }
 
     private void Update()
     {
         bool needsUpdate = false;
+        Vector3 currentPos = transform.position;
 
-        // Handle movement
-        Vector3 movement = new Vector3(
-            Input.GetAxis("Horizontal"),
-            0f,
-            Input.GetAxis("Vertical")
-        ) * (moveSpeed * Time.deltaTime);
+        // Batch movement checks
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
         
-        if (movement != Vector3.zero)
+        if (horizontal != 0f || vertical != 0f)
         {
+            Vector3 movement = new Vector3(horizontal, 0f, vertical) * (moveSpeed * Time.deltaTime);
             transform.Translate(movement, Space.World);
-            needsUpdate = true;
+            
+            // Use sqrMagnitude instead of Distance for performance
+            if ((currentPos - lastUpdatePosition).sqrMagnitude >= updateThresholdDistance * updateThresholdDistance)
+            {
+                needsUpdate = true;
+            }
         }
 
-        // Handle zoom and Y-level
+        // Handle zoom and Y-level with early exits
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (scroll != 0)
         {
             if (Input.GetKey(KeyCode.LeftShift))
             {
-                currentYLevel = Mathf.Clamp(currentYLevel + (int)Mathf.Sign(scroll), 
+                int newYLevel = Mathf.Clamp(currentYLevel + (int)Mathf.Sign(scroll), 
                     WorldDataManager.WORLD_MIN_Y, WorldDataManager.WORLD_MAX_Y);
-                if (yLevelText) yLevelText.text = $"Y: {currentYLevel}";
+                    
+                if (newYLevel != currentYLevel)
+                {
+                    currentYLevel = newYLevel;
+                    if (yLevelText) yLevelText.text = $"Y: {currentYLevel}";
+                    needsUpdate = true;
+                }
             }
             else
             {
-                mainCamera.orthographicSize = Mathf.Clamp(
+                float newSize = Mathf.Clamp(
                     mainCamera.orthographicSize - scroll * zoomSpeed,
                     minZoom,
                     maxZoom
                 );
+                
+                // Only update if change is significant
+                if (Mathf.Abs(newSize - mainCamera.orthographicSize) > minZoom * 0.1f)
+                {
+                    mainCamera.orthographicSize = newSize;
+                    needsUpdate = true;
+                }
             }
-            needsUpdate = true;
         }
 
         if (needsUpdate)
         {
             UpdateWorld();
+            lastUpdatePosition = transform.position;
+            lastUpdateSize = mainCamera.orthographicSize;
         }
     }
 
@@ -96,8 +119,6 @@ public class CameraVisibilityController : MonoBehaviour
             YLevel = currentYLevel,
             ViewBounds = viewBounds
         };
-
-        Debug.Log($"Camera requesting update: Pos={transform.position}, Size={mainCamera.orthographicSize}, Bounds={viewBounds.min}-{viewBounds.max}");
         chunkProcessor.UpdateVisibleChunks(viewData);
     }
 }

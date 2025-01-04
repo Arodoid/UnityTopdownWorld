@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using VoxelGame.Interfaces;
+using VoxelGame.WorldSystem;
+using VoxelGame.WorldSystem.Generation.Core;  // For WorldGenerator
 
 public class ChunkQueueProcessor : MonoBehaviour
 {
@@ -13,77 +15,111 @@ public class ChunkQueueProcessor : MonoBehaviour
     private IChunkMeshGenerator meshGenerator;
     private IChunkRenderer chunkRenderer;
 
-    // Simple queues for processing
     private Queue<Vector2Int> columnGenerationQueue = new Queue<Vector2Int>();
     private Queue<Chunk> renderQueue = new Queue<Chunk>();
     private HashSet<Vector2Int> columnsInProgress = new HashSet<Vector2Int>();
     private HashSet<Vector2Int> completedColumns = new HashSet<Vector2Int>();
-    
     private int currentYLimit = int.MaxValue;
 
-    private List<Task> activeColumnTasks = new List<Task>();
-
-    private void Awake()
+    private class DynamicProcessingLimits
     {
-        worldGenerator = GetComponent<IChunkGenerator>();
-        chunkManager = GetComponent<IChunkManager>();
-        meshGenerator = GetComponent<IChunkMeshGenerator>();
-        chunkRenderer = GetComponent<IChunkRenderer>();
+        public int MaxColumnsPerFrame { get; private set; } = 16;
+        public int MaxMeshesPerFrame { get; private set; } = 64;
+        private float lastUpdateTime;
+        private const float UPDATE_INTERVAL = 0.1f;
+        private const float TARGET_FRAME_TIME = 1f / 60f;
 
-        if (worldGenerator == null || chunkManager == null || 
-            meshGenerator == null || chunkRenderer == null)
+        public void UpdateLimits()
         {
-            Debug.LogError("Missing required components on ChunkQueueProcessor");
+            if (Time.realtimeSinceStartup - lastUpdateTime < UPDATE_INTERVAL) return;
+            
+            float frameTime = Time.deltaTime;
+            float headroom = TARGET_FRAME_TIME - frameTime;
+            
+            if (frameTime > TARGET_FRAME_TIME * 1.2f)
+            {
+                MaxColumnsPerFrame = Mathf.Max(4, MaxColumnsPerFrame - 4);
+                MaxMeshesPerFrame = Mathf.Max(16, MaxMeshesPerFrame - 8);
+            }
+            else if (headroom > TARGET_FRAME_TIME * 0.3f)
+            {
+                MaxColumnsPerFrame = Mathf.Min(32, MaxColumnsPerFrame + 2);
+                MaxMeshesPerFrame = Mathf.Min(128, MaxMeshesPerFrame + 4);
+            }
+            
+            lastUpdateTime = Time.realtimeSinceStartup;
         }
     }
 
-    private void Update()
+    private DynamicProcessingLimits processingLimits = new DynamicProcessingLimits();
+
+    private void Awake()
     {
-        ProcessQueues();
+        // Get concrete implementations first
+        var worldGeneratorComponent = GetComponent<WorldGenerator>();
+        var chunkManagerComponent = GetComponent<ChunkManager>();
+        var meshGeneratorComponent = GetComponent<ChunkMeshGenerator>();
+        var chunkRendererComponent = GetComponent<ChunkRenderer>();
+
+        // Then assign them to the interface references
+        worldGenerator = worldGeneratorComponent;
+        chunkManager = chunkManagerComponent;
+        meshGenerator = meshGeneratorComponent;
+        chunkRenderer = chunkRendererComponent;
+
+        string missingComponents = "";
+        if (worldGeneratorComponent == null) missingComponents += "WorldGenerator, ";
+        if (chunkManagerComponent == null) missingComponents += "ChunkManager, ";
+        if (meshGeneratorComponent == null) missingComponents += "ChunkMeshGenerator, ";
+        if (chunkRendererComponent == null) missingComponents += "ChunkRenderer, ";
+
+        if (!string.IsNullOrEmpty(missingComponents))
+        {
+            missingComponents = missingComponents.TrimEnd(',', ' ');
+            Debug.LogError($"Missing required components on ChunkQueueProcessor: {missingComponents}");
+        }
     }
+
+    private void Update() => ProcessQueues();
 
     public void UpdateVisibleChunks(CameraVisibilityController.ViewData viewData)
     {
-        // Clear existing queues when view changes
         columnGenerationQueue.Clear();
         renderQueue.Clear();
-        columnsInProgress.Clear();
-
+        
         currentYLimit = viewData.YLevel;
         var columnsInView = GetColumnsInView(viewData.ViewBounds);
         var columnsToKeep = new HashSet<Vector2Int>(columnsInView);
 
-        // Mark chunks for unloading if they're no longer in view
-        foreach (var chunkPos in chunkManager.GetAllChunkPositions())
+        // Clean up chunks outside view
+        foreach (var chunkPos in chunkManager.GetAllChunkPositions().ToList())
         {
             Vector2Int columnPos = new Vector2Int(chunkPos.x, chunkPos.z);
             if (!columnsToKeep.Contains(columnPos))
             {
-                chunkManager.MarkForUnloading(chunkPos);
+                // Cancel any pending mesh generation jobs before removing the chunk
+                if (meshGenerator.HasPendingJob(chunkPos))
+                {
+                    meshGenerator.CancelJob(chunkPos);
+                }
                 chunkRenderer.RemoveChunkRender(chunkPos);
-                completedColumns.Remove(columnPos); // Remove from completed when unloading
+                chunkManager.RemoveChunk(chunkPos);
+                completedColumns.Remove(columnPos);
             }
         }
 
-        // Process unloading
-        chunkManager.UnloadMarkedChunks();
-
-        // Queue new chunks for generation (skip completed columns)
+        // Queue new chunks for generation
         foreach (var columnPos in columnsInView)
         {
-            if (!completedColumns.Contains(columnPos))
+            if (!completedColumns.Contains(columnPos) && !columnsInProgress.Contains(columnPos))
             {
                 columnGenerationQueue.Enqueue(columnPos);
-                columnsInProgress.Add(columnPos);
             }
         }
     }
 
-    private bool ShouldRenderChunk(Chunk chunk)
-    {
-        return !chunk.IsFullyEmpty() && 
-               (!chunkRenderer.IsChunkRendered(chunk.Position) || chunk.IsDirty());
-    }
+    private bool ShouldRenderChunk(Chunk chunk) =>
+        !chunk.IsFullyEmpty() && (!chunkRenderer.IsChunkRendered(chunk.Position) || chunk.IsDirty());
 
     private IEnumerable<Vector2Int> GetColumnsInView(Bounds viewBounds)
     {
@@ -92,13 +128,11 @@ public class ChunkQueueProcessor : MonoBehaviour
         int minZ = Mathf.FloorToInt(viewBounds.min.z / Chunk.ChunkSize);
         int maxZ = Mathf.CeilToInt(viewBounds.max.z / Chunk.ChunkSize);
 
-        // Get center point in chunk coordinates
         Vector2Int center = new Vector2Int(
             Mathf.RoundToInt(viewBounds.center.x / Chunk.ChunkSize),
             Mathf.RoundToInt(viewBounds.center.z / Chunk.ChunkSize)
         );
 
-        // Create list of all columns with their distances
         var columns = new List<(Vector2Int pos, float dist)>();
         
         for (int x = minX; x <= maxX; x++)
@@ -109,110 +143,123 @@ public class ChunkQueueProcessor : MonoBehaviour
             columns.Add((pos, dist));
         }
 
-        // Sort by distance from center and return positions
-        return columns
-            .OrderBy(c => c.dist)
-            .Select(c => c.pos);
+        return columns.OrderBy(c => c.dist).Select(c => c.pos);
     }
 
-    private async void ProcessQueues()
+    private void ProcessQueues()
     {
-        // Start new column tasks
-        while (columnGenerationQueue.Count > 0 && activeColumnTasks.Count < 64)
-        {
-            Vector2Int columnPos = columnGenerationQueue.Dequeue();
-            var task = ProcessColumnAsync(columnPos);
-            activeColumnTasks.Add(task);
-        }
+        processingLimits.UpdateLimits();
 
-        // Wait for any completed tasks
-        if (activeColumnTasks.Count > 0)
-        {
-            await Task.WhenAny(activeColumnTasks);
-            activeColumnTasks.RemoveAll(t => t.IsCompleted);
-        }
-
-        // Process render queue
-        int meshProcessed = 0;
-        int maxMeshes = Mathf.Max(32, renderQueue.Count / 4);
-        
-        while (renderQueue.Count > 0 && meshProcessed < maxMeshes)
+        // Process render queue first (non-async)
+        int meshesProcessed = 0;
+        while (renderQueue.Count > 0 && meshesProcessed < processingLimits.MaxMeshesPerFrame)
         {
             Chunk chunk = renderQueue.Dequeue();
-            var mesh = new Mesh();
-            meshGenerator.GenerateMeshData(chunk, mesh, currentYLimit);
-            chunkRenderer.RenderChunk(chunk, mesh);
-            chunk.ClearDirty();
-            
-            meshProcessed++;
+            if (chunk != null && !chunk.IsFullyEmpty())
+            {
+                if (!meshGenerator.HasPendingJob(chunk.Position))
+                {
+                    // Create a new mesh for this chunk
+                    var mesh = new Mesh();
+                    
+                    // If rejected, put back in queue
+                    if (!meshGenerator.GenerateMeshData(chunk, mesh, currentYLimit))
+                    {
+                        renderQueue.Enqueue(chunk);
+                        Object.Destroy(mesh);
+                        break; // Stop processing if we're hitting limits
+                    }
+                    
+                    // Render the chunk with the new mesh
+                    chunkRenderer.RenderChunk(chunk, mesh);
+                    meshesProcessed++;
+                }
+                else
+                {
+                    renderQueue.Enqueue(chunk);
+                    break;
+                }
+            }
+        }
+
+        // Then process column generation (async)
+        ProcessColumnGeneration();
+    }
+
+    private async void ProcessColumnGeneration()
+    {
+        var columnBatch = new List<Vector2Int>();
+        int batchSize = Mathf.Min(4, processingLimits.MaxColumnsPerFrame);
+        
+        while (columnGenerationQueue.Count > 0 && columnBatch.Count < batchSize)
+        {
+            var columnPos = columnGenerationQueue.Dequeue();
+            if (!columnsInProgress.Contains(columnPos))
+            {
+                columnBatch.Add(columnPos);
+            }
+        }
+
+        if (columnBatch.Count > 0)
+        {
+            var tasks = columnBatch.Select(columnPos => ProcessColumnAsync(columnPos));
+            await Task.WhenAll(tasks);
         }
     }
 
     private async Task ProcessColumnAsync(Vector2Int columnPos)
     {
+        if (columnsInProgress.Contains(columnPos) || worldGenerator == null)
+            return;
+
         columnsInProgress.Add(columnPos);
 
         try
         {
-            var chunksToRender = new List<Chunk>();
+            var chunksToRender = new List<Chunk>(8); // Preallocate with expected size
             bool foundOpaque = false;
             
-            // Start from the Y-level limit and work down
-            int startY = Mathf.Min(
-                WorldDataManager.WORLD_HEIGHT_IN_CHUNKS - 1, 
-                currentYLimit / Chunk.ChunkSize
+            int maxY = Mathf.Min(
+                WorldDataManager.WORLD_HEIGHT_IN_CHUNKS - 1,
+                Mathf.CeilToInt(currentYLimit / (float)Chunk.ChunkSize)
             );
 
-            for (int y = startY; y >= 0; y--)
+            // Process from top down and exit early if we find an opaque chunk
+            for (int y = maxY; y >= 0 && !foundOpaque; y--)
             {
                 Vector3Int chunkPos = new Vector3Int(columnPos.x, y, columnPos.y);
+                Chunk chunk = chunkManager.GetChunk(chunkPos);
                 
-                // Check existing chunk first
-                Chunk existingChunk = chunkManager.GetChunk(chunkPos);
-                if (existingChunk != null)
+                if (chunk == null)
                 {
-                    // If chunk exists and is opaque, stop processing this column
-                    if (existingChunk.IsOpaque)
-                    {
-                        foundOpaque = true;
-                        break;
-                    }
-                        
-                    // If chunk exists but needs rendering, add it to render queue
-                    if (!chunkRenderer.IsChunkRendered(chunkPos) || existingChunk.IsDirty())
-                    {
-                        chunksToRender.Add(existingChunk);
-                    }
-                    continue;  // Skip generation, we already have data
-                }
-                
-                // Only generate if chunk doesn't exist
-                Chunk chunk = await worldGenerator.GenerateChunk(chunkPos);
-                
-                if (chunk != null && !chunk.IsFullyEmpty())
-                {
+                    chunk = await worldGenerator.GenerateChunk(chunkPos);
+                    if (chunk == null) continue;
                     chunkManager.StoreChunk(chunk.Position, chunk);
+                }
+                
+                if (!chunk.IsFullyEmpty())
+                {
                     chunksToRender.Add(chunk);
-                    
-                    // If chunk is opaque, stop processing this column
-                    if (chunk.IsOpaque)
-                    {
-                        foundOpaque = true;
-                        break;
-                    }
+                    foundOpaque = chunk.IsOpaque;
                 }
             }
 
-            // If we found an opaque chunk, mark this column as complete
-            if (foundOpaque)
+            // Batch process chunks that need rendering
+            if (chunksToRender.Count > 0)
             {
-                completedColumns.Add(columnPos);
-            }
+                foreach (var chunk in chunksToRender)
+                {
+                    renderQueue.Enqueue(chunk);
+                }
 
-            // Add chunks to render queue (they're already in top-down order)
-            foreach (var chunk in chunksToRender)
+                if (foundOpaque)
+                {
+                    completedColumns.Add(columnPos);
+                }
+            }
+            else
             {
-                renderQueue.Enqueue(chunk);
+                completedColumns.Add(columnPos); // Mark empty columns as completed
             }
         }
         finally

@@ -27,6 +27,11 @@ namespace VoxelGame.WorldSystem.Generation.Biomes
         protected BiomeBase()
         {
             featureSettings = new Dictionary<System.Type, FeatureSettings>();
+        }
+
+        // Add this method to be called after constructor
+        public void Initialize()
+        {
             InitializeDefaultSettings();
         }
 

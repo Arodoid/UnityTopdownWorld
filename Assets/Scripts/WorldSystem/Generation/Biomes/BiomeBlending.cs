@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using VoxelGame.WorldSystem.Generation.Features;
+using System.Linq;
 
 namespace VoxelGame.WorldSystem.Generation.Biomes
 {
@@ -23,21 +24,62 @@ namespace VoxelGame.WorldSystem.Generation.Biomes
             if (biomeWeights.Count == 1)
                 return biomeWeights[0].biome.GetFeatureSettings<T>();
 
-            // Create new settings instance to store blended values
+            // Normalize weights first
+            float totalWeight = biomeWeights.Sum(bw => bw.weight);
+            var normalizedWeights = biomeWeights.Select(bw => 
+                (bw.biome, weight: bw.weight / totalWeight)).ToList();
+
+            // Create new settings instance
             var blendedSettings = new T();
-            float totalWeight = 0f;
 
-            // Blend all numeric fields based on biome weights
-            foreach (var (biome, weight) in biomeWeights)
+            // Get all fields that need blending
+            var fields = typeof(T).GetFields();
+            foreach (var field in fields)
             {
-                var biomeSettings = biome.GetFeatureSettings<T>();
-                BlendSettings(blendedSettings, biomeSettings, weight);
-                totalWeight += weight;
+                if (field.FieldType == typeof(float))
+                {
+                    // Blend float values
+                    float blendedValue = 0f;
+                    foreach (var (biome, weight) in normalizedWeights)
+                    {
+                        var biomeSettings = biome.GetFeatureSettings<T>();
+                        float value = (float)field.GetValue(biomeSettings);
+                        blendedValue += value * weight;
+                    }
+                    field.SetValue(blendedSettings, blendedValue);
+                }
+                else if (field.FieldType == typeof(int))
+                {
+                    // Blend integer values
+                    float blendedValue = 0f;
+                    foreach (var (biome, weight) in normalizedWeights)
+                    {
+                        var biomeSettings = biome.GetFeatureSettings<T>();
+                        int value = (int)field.GetValue(biomeSettings);
+                        blendedValue += value * weight;
+                    }
+                    field.SetValue(blendedSettings, Mathf.RoundToInt(blendedValue));
+                }
+                else if (field.FieldType == typeof(bool))
+                {
+                    // Use weighted majority for boolean values
+                    float trueWeight = 0f;
+                    foreach (var (biome, weight) in normalizedWeights)
+                    {
+                        var biomeSettings = biome.GetFeatureSettings<T>();
+                        bool value = (bool)field.GetValue(biomeSettings);
+                        if (value) trueWeight += weight;
+                    }
+                    field.SetValue(blendedSettings, trueWeight > 0.5f);
+                }
+                else if (field.FieldType == typeof(Block))
+                {
+                    // Use highest weight for block types
+                    var dominantBiome = normalizedWeights.OrderByDescending(bw => bw.weight).First();
+                    var dominantSettings = dominantBiome.biome.GetFeatureSettings<T>();
+                    field.SetValue(blendedSettings, field.GetValue(dominantSettings));
+                }
             }
-
-            // Normalize blended values
-            if (totalWeight > 0)
-                NormalizeSettings(blendedSettings, totalWeight);
 
             return blendedSettings;
         }
@@ -47,59 +89,23 @@ namespace VoxelGame.WorldSystem.Generation.Biomes
         /// </summary>
         private static List<(BiomeBase biome, float weight)> GetBiomeWeights(float temperature, float blendRange)
         {
-            return BiomeRegistry.GetBiomesForTemperature(temperature);
-        }
-
-        /// <summary>
-        /// Blend settings from source into target based on weight
-        /// </summary>
-        private static void BlendSettings<T>(T target, T source, float weight) where T : FeatureSettings
-        {
-            var fields = typeof(T).GetFields();
-            foreach (var field in fields)
+            var weights = BiomeRegistry.GetBiomesForTemperature(temperature);
+            
+            // Ensure weights are reasonable
+            if (weights.Count > 0)
             {
-                if (field.FieldType == typeof(float))
+                float totalWeight = weights.Sum(w => w.weight);
+                if (totalWeight <= 0)
                 {
-                    float sourceValue = (float)field.GetValue(source);
-                    float currentValue = (float)field.GetValue(target);
-                    field.SetValue(target, currentValue + sourceValue * weight);
-                }
-                else if (field.FieldType == typeof(int))
-                {
-                    int sourceValue = (int)field.GetValue(source);
-                    int currentValue = (int)field.GetValue(target);
-                    field.SetValue(target, currentValue + (int)(sourceValue * weight));
-                }
-                else if (field.FieldType == typeof(bool))
-                {
-                    // For booleans, use highest weight as deciding factor
-                    bool sourceValue = (bool)field.GetValue(source);
-                    bool currentValue = (bool)field.GetValue(target);
-                    if (sourceValue && weight > 0.5f)
-                        field.SetValue(target, true);
+                    // If no valid weights, use nearest biome
+                    var nearestBiome = BiomeRegistry.GetAllBiomes()
+                        .OrderBy(b => Mathf.Abs(temperature - (b.MinTemperature + b.MaxTemperature) * 0.5f))
+                        .First();
+                    return new List<(BiomeBase, float)> { (nearestBiome, 1f) };
                 }
             }
-        }
-
-        /// <summary>
-        /// Normalize blended settings by dividing by total weight
-        /// </summary>
-        private static void NormalizeSettings<T>(T settings, float totalWeight) where T : FeatureSettings
-        {
-            var fields = typeof(T).GetFields();
-            foreach (var field in fields)
-            {
-                if (field.FieldType == typeof(float))
-                {
-                    float value = (float)field.GetValue(settings);
-                    field.SetValue(settings, value / totalWeight);
-                }
-                else if (field.FieldType == typeof(int))
-                {
-                    int value = (int)field.GetValue(settings);
-                    field.SetValue(settings, Mathf.RoundToInt(value / totalWeight));
-                }
-            }
+            
+            return weights;
         }
     }
 }

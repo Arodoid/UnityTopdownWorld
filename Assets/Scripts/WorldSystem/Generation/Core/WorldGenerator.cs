@@ -58,31 +58,31 @@ namespace VoxelGame.WorldSystem.Generation.Core
         /// <summary>
         /// Generate a chunk immediately (synchronously) using the object pool
         /// </summary>
-        public Chunk GenerateChunkImmediate(Vector3Int position, ObjectPool<Chunk> chunkPool)
-        {
-            if (!initialized) Initialize();
+        // public Chunk GenerateChunkImmediate(Vector3Int position, ObjectPool<Chunk> chunkPool)
+        // {
+        //     if (!initialized) Initialize();
 
-            Chunk chunk = chunkPool.Get();
-            chunk.SetPosition(position);
-            GenerateChunkData(chunk);
-            return chunk;
-        }
+        //     Chunk chunk = chunkPool.Get();
+        //     chunk.SetPosition(position);
+        //     GenerateChunkData(chunk);
+        //     return chunk;
+        // }
 
         /// <summary>
         /// Generate a new chunk at the given position using the object pool (async version)
         /// </summary>
-        public async Task<Chunk> GenerateChunkPooled(Vector3Int position, ObjectPool<Chunk> chunkPool)
-        {
-            if (!initialized) Initialize();
+        // public async Task<Chunk> GenerateChunkPooled(Vector3Int position, ObjectPool<Chunk> chunkPool)
+        // {
+        //     if (!initialized) Initialize();
 
-            return await Task.Run(() =>
-            {
-                Chunk chunk = chunkPool.Get();
-                chunk.SetPosition(position);
-                GenerateChunkData(chunk);
-                return chunk;
-            });
-        }
+        //     return await Task.Run(() =>
+        //     {
+        //         Chunk chunk = chunkPool.Get();
+        //         chunk.SetPosition(position);
+        //         GenerateChunkData(chunk);
+        //         return chunk;
+        //     });
+        // }
 
         /// <summary>
         /// Generate a new chunk at the given position without pooling
@@ -115,19 +115,19 @@ namespace VoxelGame.WorldSystem.Generation.Core
             });
         }
 
-        private void GenerateChunkData(Chunk chunk)
-        {
-            float temperature = GetTemperature(chunk.Position.x, chunk.Position.z);
+        // private void GenerateChunkData(Chunk chunk)
+        // {
+        //     float temperature = GetTemperature(chunk.Position.x, chunk.Position.z);
             
-            foreach (var feature in features)
-            {
-                var settings = BiomeBlending.GetBlendedSettings<FeatureSettings>(temperature);
-                if (settings.enabled)
-                {
-                    feature.Apply(chunk, noiseGenerator);
-                }
-            }
-        }
+        //     foreach (var feature in features)
+        //     {
+        //         var settings = BiomeBlending.GetBlendedSettings<FeatureSettings>(temperature);
+        //         if (settings.enabled)
+        //         {
+        //             feature.Apply(chunk, noiseGenerator);
+        //         }
+        //     }
+        // }
 
         /// <summary>
         /// Get temperature value for world position
@@ -144,11 +144,11 @@ namespace VoxelGame.WorldSystem.Generation.Core
         /// <summary>
         /// Get the biome type at a world position
         /// </summary>
-        public BiomeType GetBiomeAt(Vector3Int position)
-        {
-            float temperature = GetTemperature(position.x, position.z);
-            return BiomeRegistry.GetBiomeType(temperature);
-        }
+        // public BiomeType GetBiomeAt(Vector3Int position)
+        // {
+        //     float temperature = GetTemperature(position.x, position.z);
+        //     return BiomeRegistry.GetBiomeType(temperature);
+        // }
 
         /// <summary>
         /// Get the world seed

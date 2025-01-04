@@ -1,1161 +1,132 @@
-Currently visible chunks: 0
+Active Jobs: 6 when trying to generate for chunk (-8, 3, -1)
 UnityEngine.Debug:Log (object)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:176)
+ChunkMeshGenerator:GenerateMeshData (Chunk,UnityEngine.Mesh,int) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:86)
+ChunkQueueProcessor:ProcessQueues () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:148)
+ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:68)
 
-Currently tracking 0 rendered chunks:
+Active Jobs: 7 when trying to generate for chunk (0, 4, -9)
 UnityEngine.Debug:Log (object)
-ChunkRenderer:DebugPrintRenderedChunks () (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:146)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:177)
+ChunkMeshGenerator:GenerateMeshData (Chunk,UnityEngine.Mesh,int) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:86)
+ChunkQueueProcessor:ProcessQueues () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:148)
+ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:68)
 
-IsChunkRendered check for (0, 16, 0): False
+Active Jobs: 8 when trying to generate for chunk (5, 4, 9)
 UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
+ChunkMeshGenerator:GenerateMeshData (Chunk,UnityEngine.Mesh,int) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:86)
+ChunkQueueProcessor:ProcessQueues () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:148)
+ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:68)
 
-IsChunkRendered check for (-1, 16, 0): False
+Start of Update - Active Jobs: 8
 UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
+ChunkMeshGenerator:Update () (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:193)
 
-IsChunkRendered check for (0, 16, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (0, 16, 1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (1, 16, 0): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-1, 16, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-1, 16, 1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (1, 16, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (1, 16, 1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-1, 4, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor:QueueChunkRender (Chunk) (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:602)
-ChunkQueueProcessor/<ProcessColumnAsync>d__69:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:543)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<Chunk>:SetResult (Chunk)
-VoxelGame.WorldSystem.Generation.Core.WorldGenerator/<GenerateChunkPooled>d__9:MoveNext () (at Assets/Scripts/WorldSystem/Generation/Core/WorldGenerator.cs:84)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-1, 4, 0): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor:QueueChunkRender (Chunk) (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:602)
-ChunkQueueProcessor/<ProcessColumnAsync>d__69:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:543)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<Chunk>:SetResult (Chunk)
-VoxelGame.WorldSystem.Generation.Core.WorldGenerator/<GenerateChunkPooled>d__9:MoveNext () (at Assets/Scripts/WorldSystem/Generation/Core/WorldGenerator.cs:84)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (0, 4, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor:QueueChunkRender (Chunk) (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:602)
-ChunkQueueProcessor/<ProcessColumnAsync>d__69:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:543)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<Chunk>:SetResult (Chunk)
-VoxelGame.WorldSystem.Generation.Core.WorldGenerator/<GenerateChunkPooled>d__9:MoveNext () (at Assets/Scripts/WorldSystem/Generation/Core/WorldGenerator.cs:84)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (0, 4, 0): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor:QueueChunkRender (Chunk) (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:602)
-ChunkQueueProcessor/<ProcessColumnAsync>d__69:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:543)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<Chunk>:SetResult (Chunk)
-VoxelGame.WorldSystem.Generation.Core.WorldGenerator/<GenerateChunkPooled>d__9:MoveNext () (at Assets/Scripts/WorldSystem/Generation/Core/WorldGenerator.cs:84)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-RenderChunkPooled called for position (-1, 4, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:112)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-Creating new GameObject at (-1, 4, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:129)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-Added GameObject to _renderedChunks at (-1, 4, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:140)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-RenderChunkPooled called for position (-1, 4, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:112)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-Creating new GameObject at (-1, 4, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:129)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-Added GameObject to _renderedChunks at (-1, 4, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:140)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-RenderChunkPooled called for position (0, 4, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:112)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-Creating new GameObject at (0, 4, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:129)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-Added GameObject to _renderedChunks at (0, 4, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:140)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-RenderChunkPooled called for position (0, 4, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:112)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-Creating new GameObject at (0, 4, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:129)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-Added GameObject to _renderedChunks at (0, 4, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:140)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-IsChunkRendered check for (-1, 16, 0): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-1, 16, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-1, 16, 1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (0, 16, 0): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (0, 16, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (0, 16, 1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (1, 16, 0): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (1, 16, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (1, 16, 1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-2, 16, 0): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-2, 16, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-2, 16, 1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-1, 16, 0): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-1, 16, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-1, 16, 1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (0, 16, 0): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (0, 16, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (0, 16, 1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-RemoveChunk called for position (0, 16, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:53)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-No mesh found to remove at (0, 16, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:64)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-No GameObject found to remove at (0, 16, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:84)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-RemoveChunk called for position (0, 16, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:53)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-No mesh found to remove at (0, 16, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:64)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-No GameObject found to remove at (0, 16, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:84)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-2, 4, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor:QueueChunkRender (Chunk) (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:602)
-ChunkQueueProcessor/<ProcessColumnAsync>d__69:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:543)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<Chunk>:SetResult (Chunk)
-VoxelGame.WorldSystem.Generation.Core.WorldGenerator/<GenerateChunkPooled>d__9:MoveNext () (at Assets/Scripts/WorldSystem/Generation/Core/WorldGenerator.cs:84)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-2, 4, 0): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor:QueueChunkRender (Chunk) (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:602)
-ChunkQueueProcessor/<ProcessColumnAsync>d__69:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:543)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<Chunk>:SetResult (Chunk)
-VoxelGame.WorldSystem.Generation.Core.WorldGenerator/<GenerateChunkPooled>d__9:MoveNext () (at Assets/Scripts/WorldSystem/Generation/Core/WorldGenerator.cs:84)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-RenderChunkPooled called for position (-2, 4, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:112)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-Creating new GameObject at (-2, 4, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:129)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-Added GameObject to _renderedChunks at (-2, 4, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:140)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-RenderChunkPooled called for position (-2, 4, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:112)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-Creating new GameObject at (-2, 4, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:129)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-Added GameObject to _renderedChunks at (-2, 4, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:140)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-IsChunkRendered check for (-3, 16, 0): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-3, 16, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-3, 16, 1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-2, 16, 0): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-2, 16, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-2, 16, 1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-1, 16, 0): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-1, 16, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-1, 16, 1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-RemoveChunk called for position (-1, 16, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:53)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-No mesh found to remove at (-1, 16, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:64)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-No GameObject found to remove at (-1, 16, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:84)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-RemoveChunk called for position (-1, 16, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:53)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-No mesh found to remove at (-1, 16, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:64)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-No GameObject found to remove at (-1, 16, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:84)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-3, 4, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor:QueueChunkRender (Chunk) (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:602)
-ChunkQueueProcessor/<ProcessColumnAsync>d__69:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:543)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<Chunk>:SetResult (Chunk)
-VoxelGame.WorldSystem.Generation.Core.WorldGenerator/<GenerateChunkPooled>d__9:MoveNext () (at Assets/Scripts/WorldSystem/Generation/Core/WorldGenerator.cs:84)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-3, 4, 0): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor:QueueChunkRender (Chunk) (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:602)
-ChunkQueueProcessor/<ProcessColumnAsync>d__69:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:543)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<Chunk>:SetResult (Chunk)
-VoxelGame.WorldSystem.Generation.Core.WorldGenerator/<GenerateChunkPooled>d__9:MoveNext () (at Assets/Scripts/WorldSystem/Generation/Core/WorldGenerator.cs:84)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-RenderChunkPooled called for position (-3, 4, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:112)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-Creating new GameObject at (-3, 4, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:129)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-Added GameObject to _renderedChunks at (-3, 4, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:140)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-RenderChunkPooled called for position (-3, 4, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:112)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-Creating new GameObject at (-3, 4, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:129)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-Added GameObject to _renderedChunks at (-3, 4, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:140)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
+Error processing completed job: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can read from the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
+UnityEngine.Debug:LogError (object)
+ChunkMeshGenerator:ProcessCompletedJob (int) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:252)
+ChunkMeshGenerator:Update () (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:208)
 
-IsChunkRendered check for (-4, 16, 0): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-4, 16, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-4, 16, 1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-3, 16, 0): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-3, 16, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-3, 16, 1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-2, 16, 0): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-2, 16, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-2, 16, 1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-RemoveChunk called for position (-2, 16, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:53)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-No mesh found to remove at (-2, 16, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:64)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-No GameObject found to remove at (-2, 16, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:84)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-RemoveChunk called for position (-2, 16, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:53)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-No mesh found to remove at (-2, 16, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:64)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-No GameObject found to remove at (-2, 16, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:84)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-4, 4, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor:QueueChunkRender (Chunk) (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:602)
-ChunkQueueProcessor/<ProcessColumnAsync>d__69:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:543)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<Chunk>:SetResult (Chunk)
-VoxelGame.WorldSystem.Generation.Core.WorldGenerator/<GenerateChunkPooled>d__9:MoveNext () (at Assets/Scripts/WorldSystem/Generation/Core/WorldGenerator.cs:84)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-4, 4, 0): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor:QueueChunkRender (Chunk) (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:602)
-ChunkQueueProcessor/<ProcessColumnAsync>d__69:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:543)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<Chunk>:SetResult (Chunk)
-VoxelGame.WorldSystem.Generation.Core.WorldGenerator/<GenerateChunkPooled>d__9:MoveNext () (at Assets/Scripts/WorldSystem/Generation/Core/WorldGenerator.cs:84)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-RenderChunkPooled called for position (-4, 4, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:112)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-Creating new GameObject at (-4, 4, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:129)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-Added GameObject to _renderedChunks at (-4, 4, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:140)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-RenderChunkPooled called for position (-4, 4, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:112)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-Creating new GameObject at (-4, 4, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:129)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-Added GameObject to _renderedChunks at (-4, 4, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:140)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-IsChunkRendered check for (-5, 16, 0): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-5, 16, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-5, 16, 1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-4, 16, 0): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-4, 16, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-4, 16, 1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-3, 16, 0): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-3, 16, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-3, 16, 1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-RemoveChunk called for position (-3, 16, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:53)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-No mesh found to remove at (-3, 16, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:64)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-No GameObject found to remove at (-3, 16, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:84)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-RemoveChunk called for position (-3, 16, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:53)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-No mesh found to remove at (-3, 16, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:64)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-No GameObject found to remove at (-3, 16, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:84)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-5, 4, 0): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor:QueueChunkRender (Chunk) (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:602)
-ChunkQueueProcessor/<ProcessColumnAsync>d__69:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:543)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<Chunk>:SetResult (Chunk)
-VoxelGame.WorldSystem.Generation.Core.WorldGenerator/<GenerateChunkPooled>d__9:MoveNext () (at Assets/Scripts/WorldSystem/Generation/Core/WorldGenerator.cs:84)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
+InvalidOperationException: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can deallocate the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
+Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle.CheckDeallocateAndThrow (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle handle) (at <44f3679c53d1477a9c6e72f269e3a3a9>:0)
+Unity.Collections.CollectionHelper.DisposeSafetyHandle (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle& handle) (at ./Library/PackageCache/com.unity.collections/Unity.Collections/CollectionHelper.cs:602)
+Unity.Collections.NativeList`1[T].Dispose () (at ./Library/PackageCache/com.unity.collections/Unity.Collections/NativeList.cs:513)
+ChunkMeshGenerator.DisposePendingJob (ChunkMeshGenerator+PendingJobData jobData) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:296)
+ChunkMeshGenerator.ProcessCompletedJob (System.Int32 jobIndex) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:256)
+ChunkMeshGenerator.Update () (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:208)
 
-IsChunkRendered check for (-5, 4, -1): False
+Active Jobs: 8 when trying to generate for chunk (6, 4, 9)
 UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor:QueueChunkRender (Chunk) (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:602)
-ChunkQueueProcessor/<ProcessColumnAsync>d__69:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:543)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<Chunk>:SetResult (Chunk)
-VoxelGame.WorldSystem.Generation.Core.WorldGenerator/<GenerateChunkPooled>d__9:MoveNext () (at Assets/Scripts/WorldSystem/Generation/Core/WorldGenerator.cs:84)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
+ChunkMeshGenerator:GenerateMeshData (Chunk,UnityEngine.Mesh,int) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:86)
+ChunkQueueProcessor:ProcessQueues () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:148)
+ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:68)
 
-RenderChunkPooled called for position (-5, 4, 0)
+Start of Update - Active Jobs: 8
 UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:112)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
+ChunkMeshGenerator:Update () (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:193)
 
-Creating new GameObject at (-5, 4, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:129)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-Added GameObject to _renderedChunks at (-5, 4, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:140)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-RenderChunkPooled called for position (-5, 4, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:112)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-Creating new GameObject at (-5, 4, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:129)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-Added GameObject to _renderedChunks at (-5, 4, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:140)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-IsChunkRendered check for (-6, 16, 0): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-6, 16, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-6, 16, 1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-5, 16, 0): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-5, 16, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-5, 16, 1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-4, 16, 0): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-4, 16, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-4, 16, 1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-RemoveChunk called for position (-4, 16, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:53)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-No mesh found to remove at (-4, 16, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:64)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-No GameObject found to remove at (-4, 16, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:84)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-RemoveChunk called for position (-4, 16, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:53)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-No mesh found to remove at (-4, 16, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:64)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-No GameObject found to remove at (-4, 16, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:84)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
+Error processing completed job: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can read from the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
+UnityEngine.Debug:LogError (object)
+ChunkMeshGenerator:ProcessCompletedJob (int) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:252)
+ChunkMeshGenerator:Update () (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:208)
 
-IsChunkRendered check for (-6, 4, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor:QueueChunkRender (Chunk) (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:602)
-ChunkQueueProcessor/<ProcessColumnAsync>d__69:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:543)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<Chunk>:SetResult (Chunk)
-VoxelGame.WorldSystem.Generation.Core.WorldGenerator/<GenerateChunkPooled>d__9:MoveNext () (at Assets/Scripts/WorldSystem/Generation/Core/WorldGenerator.cs:84)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-6, 4, 0): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor:QueueChunkRender (Chunk) (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:602)
-ChunkQueueProcessor/<ProcessColumnAsync>d__69:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:543)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<Chunk>:SetResult (Chunk)
-VoxelGame.WorldSystem.Generation.Core.WorldGenerator/<GenerateChunkPooled>d__9:MoveNext () (at Assets/Scripts/WorldSystem/Generation/Core/WorldGenerator.cs:84)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-RenderChunkPooled called for position (-6, 4, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:112)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-Creating new GameObject at (-6, 4, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:129)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-Added GameObject to _renderedChunks at (-6, 4, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:140)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-RenderChunkPooled called for position (-6, 4, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:112)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-Creating new GameObject at (-6, 4, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:129)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-Added GameObject to _renderedChunks at (-6, 4, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:140)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
-
-IsChunkRendered check for (-7, 16, 0): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-7, 16, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
+InvalidOperationException: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can deallocate the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
+Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle.CheckDeallocateAndThrow (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle handle) (at <44f3679c53d1477a9c6e72f269e3a3a9>:0)
+Unity.Collections.CollectionHelper.DisposeSafetyHandle (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle& handle) (at ./Library/PackageCache/com.unity.collections/Unity.Collections/CollectionHelper.cs:602)
+Unity.Collections.NativeList`1[T].Dispose () (at ./Library/PackageCache/com.unity.collections/Unity.Collections/NativeList.cs:513)
+ChunkMeshGenerator.DisposePendingJob (ChunkMeshGenerator+PendingJobData jobData) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:296)
+ChunkMeshGenerator.ProcessCompletedJob (System.Int32 jobIndex) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:256)
+ChunkMeshGenerator.Update () (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:208)
 
-IsChunkRendered check for (-7, 16, 1): False
+Active Jobs: 8 when trying to generate for chunk (-4, 3, -8)
 UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
+ChunkMeshGenerator:GenerateMeshData (Chunk,UnityEngine.Mesh,int) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:86)
+ChunkQueueProcessor:ProcessQueues () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:148)
+ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:68)
 
-IsChunkRendered check for (-6, 16, 0): False
+Start of Update - Active Jobs: 8
 UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
+ChunkMeshGenerator:Update () (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:193)
 
-IsChunkRendered check for (-6, 16, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-6, 16, 1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-5, 16, 0): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-5, 16, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-IsChunkRendered check for (-5, 16, 1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:444)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-RemoveChunk called for position (-5, 16, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:53)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-No mesh found to remove at (-5, 16, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:64)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-No GameObject found to remove at (-5, 16, -1)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:84)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
+Error processing completed job: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can read from the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
+UnityEngine.Debug:LogError (object)
+ChunkMeshGenerator:ProcessCompletedJob (int) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:252)
+ChunkMeshGenerator:Update () (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:208)
 
-RemoveChunk called for position (-5, 16, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:53)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
-
-No mesh found to remove at (-5, 16, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:64)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
+InvalidOperationException: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can deallocate the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
+Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle.CheckDeallocateAndThrow (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle handle) (at <44f3679c53d1477a9c6e72f269e3a3a9>:0)
+Unity.Collections.CollectionHelper.DisposeSafetyHandle (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle& handle) (at ./Library/PackageCache/com.unity.collections/Unity.Collections/CollectionHelper.cs:602)
+Unity.Collections.NativeList`1[T].Dispose () (at ./Library/PackageCache/com.unity.collections/Unity.Collections/NativeList.cs:513)
+ChunkMeshGenerator.DisposePendingJob (ChunkMeshGenerator+PendingJobData jobData) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:296)
+ChunkMeshGenerator.ProcessCompletedJob (System.Int32 jobIndex) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:256)
+ChunkMeshGenerator.Update () (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:208)
 
-No GameObject found to remove at (-5, 16, 0)
+Active Jobs: 8 when trying to generate for chunk (-8, 3, -3)
 UnityEngine.Debug:Log (object)
-ChunkRenderer:RemoveChunk (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:84)
-ChunkQueueProcessor/<ScanChunksAsync>d__66:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:333)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>>:SetResult (System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Vector3Int, int>>)
-ChunkQueueProcessor/<CalculateVisibleChunksAsync>d__68:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:475)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
+ChunkMeshGenerator:GenerateMeshData (Chunk,UnityEngine.Mesh,int) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:86)
+ChunkQueueProcessor:ProcessQueues () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:148)
+ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:68)
 
-IsChunkRendered check for (-7, 4, 0): False
+Start of Update - Active Jobs: 8
 UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor:QueueChunkRender (Chunk) (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:602)
-ChunkQueueProcessor/<ProcessColumnAsync>d__69:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:543)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<Chunk>:SetResult (Chunk)
-VoxelGame.WorldSystem.Generation.Core.WorldGenerator/<GenerateChunkPooled>d__9:MoveNext () (at Assets/Scripts/WorldSystem/Generation/Core/WorldGenerator.cs:84)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
+ChunkMeshGenerator:Update () (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:193)
 
-IsChunkRendered check for (-7, 4, -1): False
-UnityEngine.Debug:Log (object)
-ChunkRenderer:IsChunkRendered (UnityEngine.Vector3Int) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:91)
-ChunkQueueProcessor:QueueChunkRender (Chunk) (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:602)
-ChunkQueueProcessor/<ProcessColumnAsync>d__69:MoveNext () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:543)
-System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<Chunk>:SetResult (Chunk)
-VoxelGame.WorldSystem.Generation.Core.WorldGenerator/<GenerateChunkPooled>d__9:MoveNext () (at Assets/Scripts/WorldSystem/Generation/Core/WorldGenerator.cs:84)
-UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
+Error processing completed job: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can read from the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
+UnityEngine.Debug:LogError (object)
+ChunkMeshGenerator:ProcessCompletedJob (int) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:252)
+ChunkMeshGenerator:Update () (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:208)
 
-RenderChunkPooled called for position (-7, 4, 0)
-UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:112)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
+InvalidOperationException: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can deallocate the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
+Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle.CheckDeallocateAndThrow (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle handle) (at <44f3679c53d1477a9c6e72f269e3a3a9>:0)
+Unity.Collections.CollectionHelper.DisposeSafetyHandle (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle& handle) (at ./Library/PackageCache/com.unity.collections/Unity.Collections/CollectionHelper.cs:602)
+Unity.Collections.NativeList`1[T].Dispose () (at ./Library/PackageCache/com.unity.collections/Unity.Collections/NativeList.cs:513)
+ChunkMeshGenerator.DisposePendingJob (ChunkMeshGenerator+PendingJobData jobData) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:296)
+ChunkMeshGenerator.ProcessCompletedJob (System.Int32 jobIndex) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:256)
+ChunkMeshGenerator.Update () (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:208)
 
-Creating new GameObject at (-7, 4, 0)
+Active Jobs: 8 when trying to generate for chunk (4, 4, 10)
 UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:129)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
+ChunkMeshGenerator:GenerateMeshData (Chunk,UnityEngine.Mesh,int) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:86)
+ChunkQueueProcessor:ProcessQueues () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:148)
+ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:68)
 
-Added GameObject to _renderedChunks at (-7, 4, 0)
+Start of Update - Active Jobs: 8
 UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:140)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
+ChunkMeshGenerator:Update () (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:193)
 
-RenderChunkPooled called for position (-7, 4, -1)
+Active Jobs: 0 when trying to generate for chunk (4, 4, -7)
 UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:112)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
+ChunkMeshGenerator:GenerateMeshData (Chunk,UnityEngine.Mesh,int) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:86)
+ChunkQueueProcessor:ProcessQueues () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:148)
+ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:68)
 
-Creating new GameObject at (-7, 4, -1)
+Active Jobs: 1 when trying to generate for chunk (-6, 4, -9)
 UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:129)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
+ChunkMeshGenerator:GenerateMeshData (Chunk,UnityEngine.Mesh,int) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:86)
+ChunkQueueProcessor:ProcessQueues () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:148)
+ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:68)
 
-Added GameObject to _renderedChunks at (-7, 4, -1)
+Active Jobs: 2 when trying to generate for chunk (-6, 3, -9)
 UnityEngine.Debug:Log (object)
-ChunkRenderer:RenderChunkPooled (Chunk,UnityEngine.Mesh,VoxelGame.Utilities.ObjectPool`1<UnityEngine.Mesh>) (at Assets/Scripts/WorldSystem/ChunkRenderer.cs:140)
-ChunkQueueProcessor:ProcessRenderQueue () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:281)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:169)
+ChunkMeshGenerator:GenerateMeshData (Chunk,UnityEngine.Mesh,int) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:86)
+ChunkQueueProcessor:ProcessQueues () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:148)
+ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:68)
 

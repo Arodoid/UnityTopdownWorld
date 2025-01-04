@@ -15,15 +15,26 @@ public class Chunk
     // Dimension of the chunk in blocks (e.g., 16x16x16)
     public const int ChunkSize = 16;
 
-    // Remove nullable since we'll track it directly
-    private bool _isEmpty = true;  // Start empty
-    private bool? _isOpaque = null;
+    // Replace bool? with direct flags
+    private const byte FLAG_EMPTY = 1;
+    private const byte FLAG_OPAQUE = 2;
+    private const byte FLAG_OPACITY_CALCULATED = 4;
+    private byte _flags = FLAG_EMPTY; // Start empty, opacity not calculated
+
+    // Fast flag operations
+    private bool HasFlag(byte flag) => (_flags & flag) == flag;
+    private void SetFlag(byte flag) => _flags |= flag;
+    private void ClearFlag(byte flag) => _flags &= (byte)~flag;
+
+    // Add this field at the top with other fields
+    private bool[,] _opaqueColumns; // Cache for column opacity
 
     // Constructor: initializes the chunk at the specified chunk position
     public Chunk(Vector3Int position)
     {
         Position = position;
         _blocks = new Block[ChunkSize, ChunkSize, ChunkSize];
+        _opaqueColumns = new bool[ChunkSize, ChunkSize]; // Initialize the cache
         InitializeBlocks();
     }
 
@@ -61,19 +72,19 @@ public class Chunk
             Block oldBlock = _blocks[x, y, z];
             _blocks[x, y, z] = block;
 
-            // Update emptiness state
+            // Update flags
             if (block != null)
             {
-                _isEmpty = false;
+                ClearFlag(FLAG_EMPTY);
+                // Only invalidate opacity for the affected column
+                _opaqueColumns[x, z] = false;
+                ClearFlag(FLAG_OPACITY_CALCULATED);
             }
-            else if (oldBlock != null)
+            else if (oldBlock != null && CheckIsEmpty())
             {
-                // Only need to recheck if we removed a block
-                _isEmpty = CheckIsEmpty();
+                SetFlag(FLAG_EMPTY);
             }
 
-            // Invalidate opacity cache
-            _isOpaque = null;
             MarkDirty();
         }
         else
@@ -95,10 +106,7 @@ public class Chunk
     /// <summary>
     /// Returns true if the chunk is fully empty (all blocks are null).
     /// </summary>
-    public bool IsFullyEmpty()
-    {
-        return _isEmpty;
-    }
+    public bool IsFullyEmpty() => HasFlag(FLAG_EMPTY);
 
     // Only called when we need to recheck after removing a block
     private bool CheckIsEmpty()
@@ -121,41 +129,64 @@ public class Chunk
     {
         get
         {
-            // Short circuit if empty
-            if (_isEmpty) return false;
-
-            if (!_isOpaque.HasValue)
+            if (HasFlag(FLAG_EMPTY)) return false;
+            if (!HasFlag(FLAG_OPACITY_CALCULATED))
             {
-                _isOpaque = CalculateOpacity();
+                CalculateOpacity();
             }
-            return _isOpaque.Value;
+            return HasFlag(FLAG_OPAQUE);
         }
     }
 
-    private bool CalculateOpacity()
+    private void CalculateOpacity()
     {
-        // Skip calculation if chunk is empty
-        if (_isEmpty) return false;
-
-        for (int x = 0; x < ChunkSize; x++)
-        for (int z = 0; z < ChunkSize; z++)
+        if (HasFlag(FLAG_EMPTY))
         {
-            bool hasOpaqueBlock = false;
-            
-            for (int y = ChunkSize - 1; y >= 0; y--)
+            ClearFlag(FLAG_OPAQUE);
+            SetFlag(FLAG_OPACITY_CALCULATED);
+            return;
+        }
+
+        // Cache local variables to avoid repeated lookups
+        var blocks = _blocks;
+        var columns = _opaqueColumns;
+        int size = ChunkSize;
+        bool isFullyOpaque = true;
+
+        for (int x = 0; x < size && isFullyOpaque; x++)
+        {
+            for (int z = 0; z < size && isFullyOpaque; z++)
             {
-                Block block = _blocks[x, y, z];
-                if (block != null && block.IsOpaque)
+                bool hasOpaqueBlock = false;
+                
+                // Scan from top to bottom with early exit
+                for (int y = size - 1; y >= 0; y--)
                 {
-                    hasOpaqueBlock = true;
-                    break;
+                    var block = blocks[x, y, z];
+                    if (block != null && block.IsOpaque)
+                    {
+                        hasOpaqueBlock = true;
+                        break;
+                    }
+                }
+                
+                columns[x, z] = hasOpaqueBlock;
+                if (!hasOpaqueBlock)
+                {
+                    isFullyOpaque = false;
                 }
             }
-            
-            if (!hasOpaqueBlock)
-                return false;
         }
-        return true;
+
+        if (isFullyOpaque)
+        {
+            SetFlag(FLAG_OPAQUE | FLAG_OPACITY_CALCULATED);
+        }
+        else
+        {
+            ClearFlag(FLAG_OPAQUE);
+            SetFlag(FLAG_OPACITY_CALCULATED);
+        }
     }
 
     /// <summary>
@@ -184,9 +215,7 @@ public class Chunk
 
     public void Initialize()
     {
-        // Reset states
-        _isEmpty = true;
-        _isOpaque = null;
+        _flags = FLAG_EMPTY; // Reset all flags
         _isDirty = true;
     }
 
@@ -198,8 +227,33 @@ public class Chunk
     public void ClearBlocks()
     {
         InitializeBlocks();
-        _isEmpty = true;
-        _isOpaque = null;
+        _flags = FLAG_EMPTY;
         _isDirty = true;
+    }
+
+    public byte[] GetBlocks()
+    {
+        byte[] blockData = new byte[ChunkSize * ChunkSize * ChunkSize];
+        int index = 0;
+        var allBlocks = Block.Types.GetAllBlocks();
+        
+        for (int x = 0; x < ChunkSize; x++)
+        for (int y = 0; y < ChunkSize; y++)
+        for (int z = 0; z < ChunkSize; z++)
+        {
+            Block block = _blocks[x, y, z];
+            if (block == null)
+            {
+                blockData[index++] = 0; // Air
+            }
+            else
+            {
+                // Find the block type index (1-based)
+                byte blockId = (byte)(System.Array.IndexOf(allBlocks, block) + 1);
+                blockData[index++] = blockId;
+            }
+        }
+        
+        return blockData;
     }
 }

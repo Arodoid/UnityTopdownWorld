@@ -1,174 +1,35 @@
-Currently visible chunks: 0
-Currently tracking 0 rendered chunks:
-IsChunkRendered check for (0, 16, 0): False
-IsChunkRendered check for (-1, 16, 0): False
-IsChunkRendered check for (0, 16, -1): False
-IsChunkRendered check for (0, 16, 1): False
-IsChunkRendered check for (1, 16, 0): False
-IsChunkRendered check for (-1, 16, -1): False
-IsChunkRendered check for (-1, 16, 1): False
-IsChunkRendered check for (1, 16, -1): False
-IsChunkRendered check for (1, 16, 1): False
-IsChunkRendered check for (-1, 4, -1): False
-IsChunkRendered check for (-1, 4, 0): False
-IsChunkRendered check for (0, 4, -1): False
-IsChunkRendered check for (0, 4, 0): False
-RenderChunkPooled called for position (-1, 4, -1)
-Creating new GameObject at (-1, 4, -1)
-Added GameObject to _renderedChunks at (-1, 4, -1)
-RenderChunkPooled called for position (-1, 4, 0)
-Creating new GameObject at (-1, 4, 0)
-Added GameObject to _renderedChunks at (-1, 4, 0)
-RenderChunkPooled called for position (0, 4, -1)
-Creating new GameObject at (0, 4, -1)
-Added GameObject to _renderedChunks at (0, 4, -1)
-RenderChunkPooled called for position (0, 4, 0)
-Creating new GameObject at (0, 4, 0)
-Added GameObject to _renderedChunks at (0, 4, 0)
-IsChunkRendered check for (-1, 16, 0): False
-IsChunkRendered check for (-1, 16, -1): False
-IsChunkRendered check for (-1, 16, 1): False
-IsChunkRendered check for (0, 16, 0): False
-IsChunkRendered check for (0, 16, -1): False
-IsChunkRendered check for (0, 16, 1): False
-IsChunkRendered check for (1, 16, 0): False
-IsChunkRendered check for (1, 16, -1): False
-IsChunkRendered check for (1, 16, 1): False
-IsChunkRendered check for (-2, 16, 0): False
-IsChunkRendered check for (-2, 16, -1): False
-IsChunkRendered check for (-2, 16, 1): False
-IsChunkRendered check for (-1, 16, 0): False
-IsChunkRendered check for (-1, 16, -1): False
-IsChunkRendered check for (-1, 16, 1): False
-IsChunkRendered check for (0, 16, 0): False
-IsChunkRendered check for (0, 16, -1): False
-IsChunkRendered check for (0, 16, 1): False
-RemoveChunk called for position (0, 16, 0)
-No mesh found to remove at (0, 16, 0)
-No GameObject found to remove at (0, 16, 0)
-RemoveChunk called for position (0, 16, -1)
-No mesh found to remove at (0, 16, -1)
-No GameObject found to remove at (0, 16, -1)
-IsChunkRendered check for (-2, 4, -1): False
-IsChunkRendered check for (-2, 4, 0): False
-RenderChunkPooled called for position (-2, 4, -1)
-Creating new GameObject at (-2, 4, -1)
-Added GameObject to _renderedChunks at (-2, 4, -1)
-RenderChunkPooled called for position (-2, 4, 0)
-Creating new GameObject at (-2, 4, 0)
-Added GameObject to _renderedChunks at (-2, 4, 0)
-IsChunkRendered check for (-3, 16, 0): False
-IsChunkRendered check for (-3, 16, -1): False
-IsChunkRendered check for (-3, 16, 1): False
-IsChunkRendered check for (-2, 16, 0): False
-IsChunkRendered check for (-2, 16, -1): False
-IsChunkRendered check for (-2, 16, 1): False
-IsChunkRendered check for (-1, 16, 0): False
-IsChunkRendered check for (-1, 16, -1): False
-IsChunkRendered check for (-1, 16, 1): False
-RemoveChunk called for position (-1, 16, 0)
-No mesh found to remove at (-1, 16, 0)
-No GameObject found to remove at (-1, 16, 0)
-RemoveChunk called for position (-1, 16, -1)
-No mesh found to remove at (-1, 16, -1)
-No GameObject found to remove at (-1, 16, -1)
-IsChunkRendered check for (-3, 4, -1): False
-IsChunkRendered check for (-3, 4, 0): False
-RenderChunkPooled called for position (-3, 4, -1)
-Creating new GameObject at (-3, 4, -1)
-Added GameObject to _renderedChunks at (-3, 4, -1)
-RenderChunkPooled called for position (-3, 4, 0)
-Creating new GameObject at (-3, 4, 0)
-Added GameObject to _renderedChunks at (-3, 4, 0)
-IsChunkRendered check for (-4, 16, 0): False
-IsChunkRendered check for (-4, 16, -1): False
-IsChunkRendered check for (-4, 16, 1): False
-IsChunkRendered check for (-3, 16, 0): False
-IsChunkRendered check for (-3, 16, -1): False
-IsChunkRendered check for (-3, 16, 1): False
-IsChunkRendered check for (-2, 16, 0): False
-IsChunkRendered check for (-2, 16, -1): False
-IsChunkRendered check for (-2, 16, 1): False
-RemoveChunk called for position (-2, 16, -1)
-No mesh found to remove at (-2, 16, -1)
-No GameObject found to remove at (-2, 16, -1)
-RemoveChunk called for position (-2, 16, 0)
-No mesh found to remove at (-2, 16, 0)
-No GameObject found to remove at (-2, 16, 0)
-IsChunkRendered check for (-4, 4, -1): False
-IsChunkRendered check for (-4, 4, 0): False
-RenderChunkPooled called for position (-4, 4, -1)
-Creating new GameObject at (-4, 4, -1)
-Added GameObject to _renderedChunks at (-4, 4, -1)
-RenderChunkPooled called for position (-4, 4, 0)
-Creating new GameObject at (-4, 4, 0)
-Added GameObject to _renderedChunks at (-4, 4, 0)
-IsChunkRendered check for (-5, 16, 0): False
-IsChunkRendered check for (-5, 16, -1): False
-IsChunkRendered check for (-5, 16, 1): False
-IsChunkRendered check for (-4, 16, 0): False
-IsChunkRendered check for (-4, 16, -1): False
-IsChunkRendered check for (-4, 16, 1): False
-IsChunkRendered check for (-3, 16, 0): False
-IsChunkRendered check for (-3, 16, -1): False
-IsChunkRendered check for (-3, 16, 1): False
-RemoveChunk called for position (-3, 16, -1)
-No mesh found to remove at (-3, 16, -1)
-No GameObject found to remove at (-3, 16, -1)
-RemoveChunk called for position (-3, 16, 0)
-No mesh found to remove at (-3, 16, 0)
-No GameObject found to remove at (-3, 16, 0)
-IsChunkRendered check for (-5, 4, 0): False
-IsChunkRendered check for (-5, 4, -1): False
-RenderChunkPooled called for position (-5, 4, 0)
-Creating new GameObject at (-5, 4, 0)
-Added GameObject to _renderedChunks at (-5, 4, 0)
-RenderChunkPooled called for position (-5, 4, -1)
-Creating new GameObject at (-5, 4, -1)
-Added GameObject to _renderedChunks at (-5, 4, -1)
-IsChunkRendered check for (-6, 16, 0): False
-IsChunkRendered check for (-6, 16, -1): False
-IsChunkRendered check for (-6, 16, 1): False
-IsChunkRendered check for (-5, 16, 0): False
-IsChunkRendered check for (-5, 16, -1): False
-IsChunkRendered check for (-5, 16, 1): False
-IsChunkRendered check for (-4, 16, 0): False
-IsChunkRendered check for (-4, 16, -1): False
-IsChunkRendered check for (-4, 16, 1): False
-RemoveChunk called for position (-4, 16, -1)
-No mesh found to remove at (-4, 16, -1)
-No GameObject found to remove at (-4, 16, -1)
-RemoveChunk called for position (-4, 16, 0)
-No mesh found to remove at (-4, 16, 0)
-No GameObject found to remove at (-4, 16, 0)
-IsChunkRendered check for (-6, 4, -1): False
-IsChunkRendered check for (-6, 4, 0): False
-RenderChunkPooled called for position (-6, 4, -1)
-Creating new GameObject at (-6, 4, -1)
-Added GameObject to _renderedChunks at (-6, 4, -1)
-RenderChunkPooled called for position (-6, 4, 0)
-Creating new GameObject at (-6, 4, 0)
-Added GameObject to _renderedChunks at (-6, 4, 0)
-IsChunkRendered check for (-7, 16, 0): False
-IsChunkRendered check for (-7, 16, -1): False
-IsChunkRendered check for (-7, 16, 1): False
-IsChunkRendered check for (-6, 16, 0): False
-IsChunkRendered check for (-6, 16, -1): False
-IsChunkRendered check for (-6, 16, 1): False
-IsChunkRendered check for (-5, 16, 0): False
-IsChunkRendered check for (-5, 16, -1): False
-IsChunkRendered check for (-5, 16, 1): False
-RemoveChunk called for position (-5, 16, -1)
-No mesh found to remove at (-5, 16, -1)
-No GameObject found to remove at (-5, 16, -1)
-RemoveChunk called for position (-5, 16, 0)
-No mesh found to remove at (-5, 16, 0)
-No GameObject found to remove at (-5, 16, 0)
-IsChunkRendered check for (-7, 4, 0): False
-IsChunkRendered check for (-7, 4, -1): False
-RenderChunkPooled called for position (-7, 4, 0)
-Creating new GameObject at (-7, 4, 0)
-Added GameObject to _renderedChunks at (-7, 4, 0)
-RenderChunkPooled called for position (-7, 4, -1)
-Creating new GameObject at (-7, 4, -1)
-Added GameObject to _renderedChunks at (-7, 4, -1)
+Active Jobs: 6 when trying to generate for chunk (-8, 3, -1)
+Active Jobs: 7 when trying to generate for chunk (0, 4, -9)
+Active Jobs: 8 when trying to generate for chunk (5, 4, 9)
+Start of Update - Active Jobs: 8
+Error processing completed job: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can read from the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
+InvalidOperationException: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can deallocate the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
+Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle.CheckDeallocateAndThrow (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle handle) (at <44f3679c53d1477a9c6e72f269e3a3a9>:0)
+Unity.Collections.CollectionHelper.DisposeSafetyHandle (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle& handle) (at ./Library/PackageCache/com.unity.collections/Unity.Collections/CollectionHelper.cs:602)
+Unity.Collections.NativeList`1[T].Dispose () (at ./Library/PackageCache/com.unity.collections/Unity.Collections/NativeList.cs:513)
+Active Jobs: 8 when trying to generate for chunk (6, 4, 9)
+Start of Update - Active Jobs: 8
+Error processing completed job: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can read from the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
+InvalidOperationException: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can deallocate the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
+Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle.CheckDeallocateAndThrow (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle handle) (at <44f3679c53d1477a9c6e72f269e3a3a9>:0)
+Unity.Collections.CollectionHelper.DisposeSafetyHandle (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle& handle) (at ./Library/PackageCache/com.unity.collections/Unity.Collections/CollectionHelper.cs:602)
+Unity.Collections.NativeList`1[T].Dispose () (at ./Library/PackageCache/com.unity.collections/Unity.Collections/NativeList.cs:513)
+Active Jobs: 8 when trying to generate for chunk (-4, 3, -8)
+Start of Update - Active Jobs: 8
+Error processing completed job: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can read from the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
+InvalidOperationException: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can deallocate the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
+Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle.CheckDeallocateAndThrow (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle handle) (at <44f3679c53d1477a9c6e72f269e3a3a9>:0)
+Unity.Collections.CollectionHelper.DisposeSafetyHandle (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle& handle) (at ./Library/PackageCache/com.unity.collections/Unity.Collections/CollectionHelper.cs:602)
+Unity.Collections.NativeList`1[T].Dispose () (at ./Library/PackageCache/com.unity.collections/Unity.Collections/NativeList.cs:513)
+Active Jobs: 8 when trying to generate for chunk (-8, 3, -3)
+Start of Update - Active Jobs: 8
+Error processing completed job: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can read from the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
+InvalidOperationException: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can deallocate the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
+Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle.CheckDeallocateAndThrow (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle handle) (at <44f3679c53d1477a9c6e72f269e3a3a9>:0)
+Unity.Collections.CollectionHelper.DisposeSafetyHandle (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle& handle) (at ./Library/PackageCache/com.unity.collections/Unity.Collections/CollectionHelper.cs:602)
+Unity.Collections.NativeList`1[T].Dispose () (at ./Library/PackageCache/com.unity.collections/Unity.Collections/NativeList.cs:513)
+Active Jobs: 8 when trying to generate for chunk (4, 4, 10)
+Start of Update - Active Jobs: 8
+Active Jobs: 0 when trying to generate for chunk (4, 4, -7)
+Active Jobs: 1 when trying to generate for chunk (-6, 4, -9)
+Active Jobs: 2 when trying to generate for chunk (-6, 3, -9)
