@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class PriorityQueue<T>
 {
@@ -65,5 +66,35 @@ public class PriorityQueue<T>
         }
 
         throw new InvalidOperationException("No priorities found in the queue.");
+    }
+
+    /// <summary>
+    /// Removes the specified item from the priority queue.
+    /// </summary>
+    /// <param name="item">The item to remove from the queue.</param>
+    /// <returns>True if the item was found and removed; otherwise, false.</returns>
+    public bool Remove(T item)
+    {
+        foreach (var queue in _priorityDict.Values)
+        {
+            // Create a new queue without the item
+            var newQueue = new Queue<T>(queue.Where(x => !x.Equals(item)));
+            
+            if (newQueue.Count < queue.Count)
+            {
+                // Item was found and removed
+                _count--;
+                
+                // Replace the old queue with the filtered one
+                queue.Clear();
+                foreach (var remaining in newQueue)
+                {
+                    queue.Enqueue(remaining);
+                }
+                
+                return true;
+            }
+        }
+        return false;
     }
 }

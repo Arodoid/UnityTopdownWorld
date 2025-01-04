@@ -1,0 +1,174 @@
+Currently visible chunks: 0
+Currently tracking 0 rendered chunks:
+IsChunkRendered check for (0, 16, 0): False
+IsChunkRendered check for (-1, 16, 0): False
+IsChunkRendered check for (0, 16, -1): False
+IsChunkRendered check for (0, 16, 1): False
+IsChunkRendered check for (1, 16, 0): False
+IsChunkRendered check for (-1, 16, -1): False
+IsChunkRendered check for (-1, 16, 1): False
+IsChunkRendered check for (1, 16, -1): False
+IsChunkRendered check for (1, 16, 1): False
+IsChunkRendered check for (-1, 4, -1): False
+IsChunkRendered check for (-1, 4, 0): False
+IsChunkRendered check for (0, 4, -1): False
+IsChunkRendered check for (0, 4, 0): False
+RenderChunkPooled called for position (-1, 4, -1)
+Creating new GameObject at (-1, 4, -1)
+Added GameObject to _renderedChunks at (-1, 4, -1)
+RenderChunkPooled called for position (-1, 4, 0)
+Creating new GameObject at (-1, 4, 0)
+Added GameObject to _renderedChunks at (-1, 4, 0)
+RenderChunkPooled called for position (0, 4, -1)
+Creating new GameObject at (0, 4, -1)
+Added GameObject to _renderedChunks at (0, 4, -1)
+RenderChunkPooled called for position (0, 4, 0)
+Creating new GameObject at (0, 4, 0)
+Added GameObject to _renderedChunks at (0, 4, 0)
+IsChunkRendered check for (-1, 16, 0): False
+IsChunkRendered check for (-1, 16, -1): False
+IsChunkRendered check for (-1, 16, 1): False
+IsChunkRendered check for (0, 16, 0): False
+IsChunkRendered check for (0, 16, -1): False
+IsChunkRendered check for (0, 16, 1): False
+IsChunkRendered check for (1, 16, 0): False
+IsChunkRendered check for (1, 16, -1): False
+IsChunkRendered check for (1, 16, 1): False
+IsChunkRendered check for (-2, 16, 0): False
+IsChunkRendered check for (-2, 16, -1): False
+IsChunkRendered check for (-2, 16, 1): False
+IsChunkRendered check for (-1, 16, 0): False
+IsChunkRendered check for (-1, 16, -1): False
+IsChunkRendered check for (-1, 16, 1): False
+IsChunkRendered check for (0, 16, 0): False
+IsChunkRendered check for (0, 16, -1): False
+IsChunkRendered check for (0, 16, 1): False
+RemoveChunk called for position (0, 16, 0)
+No mesh found to remove at (0, 16, 0)
+No GameObject found to remove at (0, 16, 0)
+RemoveChunk called for position (0, 16, -1)
+No mesh found to remove at (0, 16, -1)
+No GameObject found to remove at (0, 16, -1)
+IsChunkRendered check for (-2, 4, -1): False
+IsChunkRendered check for (-2, 4, 0): False
+RenderChunkPooled called for position (-2, 4, -1)
+Creating new GameObject at (-2, 4, -1)
+Added GameObject to _renderedChunks at (-2, 4, -1)
+RenderChunkPooled called for position (-2, 4, 0)
+Creating new GameObject at (-2, 4, 0)
+Added GameObject to _renderedChunks at (-2, 4, 0)
+IsChunkRendered check for (-3, 16, 0): False
+IsChunkRendered check for (-3, 16, -1): False
+IsChunkRendered check for (-3, 16, 1): False
+IsChunkRendered check for (-2, 16, 0): False
+IsChunkRendered check for (-2, 16, -1): False
+IsChunkRendered check for (-2, 16, 1): False
+IsChunkRendered check for (-1, 16, 0): False
+IsChunkRendered check for (-1, 16, -1): False
+IsChunkRendered check for (-1, 16, 1): False
+RemoveChunk called for position (-1, 16, 0)
+No mesh found to remove at (-1, 16, 0)
+No GameObject found to remove at (-1, 16, 0)
+RemoveChunk called for position (-1, 16, -1)
+No mesh found to remove at (-1, 16, -1)
+No GameObject found to remove at (-1, 16, -1)
+IsChunkRendered check for (-3, 4, -1): False
+IsChunkRendered check for (-3, 4, 0): False
+RenderChunkPooled called for position (-3, 4, -1)
+Creating new GameObject at (-3, 4, -1)
+Added GameObject to _renderedChunks at (-3, 4, -1)
+RenderChunkPooled called for position (-3, 4, 0)
+Creating new GameObject at (-3, 4, 0)
+Added GameObject to _renderedChunks at (-3, 4, 0)
+IsChunkRendered check for (-4, 16, 0): False
+IsChunkRendered check for (-4, 16, -1): False
+IsChunkRendered check for (-4, 16, 1): False
+IsChunkRendered check for (-3, 16, 0): False
+IsChunkRendered check for (-3, 16, -1): False
+IsChunkRendered check for (-3, 16, 1): False
+IsChunkRendered check for (-2, 16, 0): False
+IsChunkRendered check for (-2, 16, -1): False
+IsChunkRendered check for (-2, 16, 1): False
+RemoveChunk called for position (-2, 16, -1)
+No mesh found to remove at (-2, 16, -1)
+No GameObject found to remove at (-2, 16, -1)
+RemoveChunk called for position (-2, 16, 0)
+No mesh found to remove at (-2, 16, 0)
+No GameObject found to remove at (-2, 16, 0)
+IsChunkRendered check for (-4, 4, -1): False
+IsChunkRendered check for (-4, 4, 0): False
+RenderChunkPooled called for position (-4, 4, -1)
+Creating new GameObject at (-4, 4, -1)
+Added GameObject to _renderedChunks at (-4, 4, -1)
+RenderChunkPooled called for position (-4, 4, 0)
+Creating new GameObject at (-4, 4, 0)
+Added GameObject to _renderedChunks at (-4, 4, 0)
+IsChunkRendered check for (-5, 16, 0): False
+IsChunkRendered check for (-5, 16, -1): False
+IsChunkRendered check for (-5, 16, 1): False
+IsChunkRendered check for (-4, 16, 0): False
+IsChunkRendered check for (-4, 16, -1): False
+IsChunkRendered check for (-4, 16, 1): False
+IsChunkRendered check for (-3, 16, 0): False
+IsChunkRendered check for (-3, 16, -1): False
+IsChunkRendered check for (-3, 16, 1): False
+RemoveChunk called for position (-3, 16, -1)
+No mesh found to remove at (-3, 16, -1)
+No GameObject found to remove at (-3, 16, -1)
+RemoveChunk called for position (-3, 16, 0)
+No mesh found to remove at (-3, 16, 0)
+No GameObject found to remove at (-3, 16, 0)
+IsChunkRendered check for (-5, 4, 0): False
+IsChunkRendered check for (-5, 4, -1): False
+RenderChunkPooled called for position (-5, 4, 0)
+Creating new GameObject at (-5, 4, 0)
+Added GameObject to _renderedChunks at (-5, 4, 0)
+RenderChunkPooled called for position (-5, 4, -1)
+Creating new GameObject at (-5, 4, -1)
+Added GameObject to _renderedChunks at (-5, 4, -1)
+IsChunkRendered check for (-6, 16, 0): False
+IsChunkRendered check for (-6, 16, -1): False
+IsChunkRendered check for (-6, 16, 1): False
+IsChunkRendered check for (-5, 16, 0): False
+IsChunkRendered check for (-5, 16, -1): False
+IsChunkRendered check for (-5, 16, 1): False
+IsChunkRendered check for (-4, 16, 0): False
+IsChunkRendered check for (-4, 16, -1): False
+IsChunkRendered check for (-4, 16, 1): False
+RemoveChunk called for position (-4, 16, -1)
+No mesh found to remove at (-4, 16, -1)
+No GameObject found to remove at (-4, 16, -1)
+RemoveChunk called for position (-4, 16, 0)
+No mesh found to remove at (-4, 16, 0)
+No GameObject found to remove at (-4, 16, 0)
+IsChunkRendered check for (-6, 4, -1): False
+IsChunkRendered check for (-6, 4, 0): False
+RenderChunkPooled called for position (-6, 4, -1)
+Creating new GameObject at (-6, 4, -1)
+Added GameObject to _renderedChunks at (-6, 4, -1)
+RenderChunkPooled called for position (-6, 4, 0)
+Creating new GameObject at (-6, 4, 0)
+Added GameObject to _renderedChunks at (-6, 4, 0)
+IsChunkRendered check for (-7, 16, 0): False
+IsChunkRendered check for (-7, 16, -1): False
+IsChunkRendered check for (-7, 16, 1): False
+IsChunkRendered check for (-6, 16, 0): False
+IsChunkRendered check for (-6, 16, -1): False
+IsChunkRendered check for (-6, 16, 1): False
+IsChunkRendered check for (-5, 16, 0): False
+IsChunkRendered check for (-5, 16, -1): False
+IsChunkRendered check for (-5, 16, 1): False
+RemoveChunk called for position (-5, 16, -1)
+No mesh found to remove at (-5, 16, -1)
+No GameObject found to remove at (-5, 16, -1)
+RemoveChunk called for position (-5, 16, 0)
+No mesh found to remove at (-5, 16, 0)
+No GameObject found to remove at (-5, 16, 0)
+IsChunkRendered check for (-7, 4, 0): False
+IsChunkRendered check for (-7, 4, -1): False
+RenderChunkPooled called for position (-7, 4, 0)
+Creating new GameObject at (-7, 4, 0)
+Added GameObject to _renderedChunks at (-7, 4, 0)
+RenderChunkPooled called for position (-7, 4, -1)
+Creating new GameObject at (-7, 4, -1)
+Added GameObject to _renderedChunks at (-7, 4, -1)

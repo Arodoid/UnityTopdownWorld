@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using VoxelGame.Utilities;
 using VoxelGame.WorldSystem.Generation.Features;
 using VoxelGame.WorldSystem.Generation.Biomes;
+using VoxelGame.Interfaces;
 
 namespace VoxelGame.WorldSystem.Generation.Core
 {
@@ -11,7 +12,7 @@ namespace VoxelGame.WorldSystem.Generation.Core
     /// Orchestrates the world generation process.
     /// Coordinates between biomes and features but doesn't implement generation logic directly.
     /// </summary>
-    public class WorldGenerator : MonoBehaviour
+    public class WorldGenerator : MonoBehaviour, IChunkGenerator
     {
         [SerializeField] private int worldSeed;
         [SerializeField] private BiomeType defaultBiome = BiomeType.Plains;  // Can be set in Unity Inspector
@@ -55,7 +56,20 @@ namespace VoxelGame.WorldSystem.Generation.Core
         }
 
         /// <summary>
-        /// Generate a new chunk at the given position using the object pool
+        /// Generate a chunk immediately (synchronously) using the object pool
+        /// </summary>
+        public Chunk GenerateChunkImmediate(Vector3Int position, ObjectPool<Chunk> chunkPool)
+        {
+            if (!initialized) Initialize();
+
+            Chunk chunk = chunkPool.Get();
+            chunk.SetPosition(position);
+            GenerateChunkData(chunk);
+            return chunk;
+        }
+
+        /// <summary>
+        /// Generate a new chunk at the given position using the object pool (async version)
         /// </summary>
         public async Task<Chunk> GenerateChunkPooled(Vector3Int position, ObjectPool<Chunk> chunkPool)
         {
@@ -73,14 +87,30 @@ namespace VoxelGame.WorldSystem.Generation.Core
         /// <summary>
         /// Generate a new chunk at the given position without pooling
         /// </summary>
-        public Task<Chunk> GenerateChunk(Vector3Int position)
+        public async Task<Chunk> GenerateChunk(Vector3Int position)
         {
-            if (!initialized) Initialize();
+            if (!initialized)
+            {
+                Initialize();
+            }
 
-            return Task.Run(() =>
+            // Use Task.Run for CPU-bound work
+            return await Task.Run(() =>
             {
                 var chunk = new Chunk(position);
-                GenerateChunkData(chunk);
+
+                // Apply each feature to the chunk
+                foreach (var feature in features)
+                {
+                    feature.Apply(chunk, noiseGenerator);
+                }
+
+                // If chunk is completely empty after generation, return null
+                if (chunk.IsFullyEmpty())
+                {
+                    return null;
+                }
+
                 return chunk;
             });
         }

@@ -15,15 +15,16 @@ public class Chunk
     // Dimension of the chunk in blocks (e.g., 16x16x16)
     public const int ChunkSize = 16;
 
-    private bool? _isOpaque = null; // null = not calculated yet
-    private bool? _isEmpty = null;  // Also cache isEmpty for performance
+    // Remove nullable since we'll track it directly
+    private bool _isEmpty = true;  // Start empty
+    private bool? _isOpaque = null;
 
     // Constructor: initializes the chunk at the specified chunk position
     public Chunk(Vector3Int position)
     {
         Position = position;
         _blocks = new Block[ChunkSize, ChunkSize, ChunkSize];
-        InitializeBlocks(); // Optional initialization logic        
+        InitializeBlocks();
     }
 
     /// <summary>
@@ -32,15 +33,12 @@ public class Chunk
     /// </summary>
     private void InitializeBlocks()
     {
+        // All blocks start null, _isEmpty is already true
         for (int x = 0; x < ChunkSize; x++)
+        for (int y = 0; y < ChunkSize; y++)
+        for (int z = 0; z < ChunkSize; z++)
         {
-            for (int y = 0; y < ChunkSize; y++)
-            {
-                for (int z = 0; z < ChunkSize; z++)
-                {
-                    _blocks[x, y, z] = null;
-                }
-            }
+            _blocks[x, y, z] = null;
         }
     }
 
@@ -60,10 +58,22 @@ public class Chunk
     {
         if (IsValidBlockPosition(x, y, z))
         {
+            Block oldBlock = _blocks[x, y, z];
             _blocks[x, y, z] = block;
-            // Invalidate cached states
+
+            // Update emptiness state
+            if (block != null)
+            {
+                _isEmpty = false;
+            }
+            else if (oldBlock != null)
+            {
+                // Only need to recheck if we removed a block
+                _isEmpty = CheckIsEmpty();
+            }
+
+            // Invalidate opacity cache
             _isOpaque = null;
-            _isEmpty = null;
             MarkDirty();
         }
         else
@@ -87,18 +97,17 @@ public class Chunk
     /// </summary>
     public bool IsFullyEmpty()
     {
-        if (!_isEmpty.HasValue)
-        {
-            _isEmpty = CalculateIsEmpty();
-        }
-        return _isEmpty.Value;
+        return _isEmpty;
     }
 
-    private bool CalculateIsEmpty()
+    // Only called when we need to recheck after removing a block
+    private bool CheckIsEmpty()
     {
-        foreach (var block in _blocks)
+        for (int y = 0; y < ChunkSize; y++)
+        for (int x = 0; x < ChunkSize; x++)
+        for (int z = 0; z < ChunkSize; z++)
         {
-            if (block != null)
+            if (_blocks[x, y, z] != null)
                 return false;
         }
         return true;
@@ -112,6 +121,9 @@ public class Chunk
     {
         get
         {
+            // Short circuit if empty
+            if (_isEmpty) return false;
+
             if (!_isOpaque.HasValue)
             {
                 _isOpaque = CalculateOpacity();
@@ -122,27 +134,28 @@ public class Chunk
 
     private bool CalculateOpacity()
     {
-        // Check each column
+        // Skip calculation if chunk is empty
+        if (_isEmpty) return false;
+
         for (int x = 0; x < ChunkSize; x++)
         for (int z = 0; z < ChunkSize; z++)
         {
             bool hasOpaqueBlock = false;
             
-            // Check each block in this column from top to bottom
             for (int y = ChunkSize - 1; y >= 0; y--)
             {
                 Block block = _blocks[x, y, z];
                 if (block != null && block.IsOpaque)
                 {
                     hasOpaqueBlock = true;
-                    break;  // Found an opaque block in this column, move to next column
+                    break;
                 }
             }
             
             if (!hasOpaqueBlock)
-                return false;  // If any column has no opaque blocks, the chunk doesn't block vision
+                return false;
         }
-        return true;  // All columns have at least one opaque block
+        return true;
     }
 
     /// <summary>
@@ -171,7 +184,10 @@ public class Chunk
 
     public void Initialize()
     {
-        // Initialize any internal data structures
+        // Reset states
+        _isEmpty = true;
+        _isOpaque = null;
+        _isDirty = true;
     }
 
     public void SetPosition(Vector3Int position)
@@ -181,7 +197,9 @@ public class Chunk
 
     public void ClearBlocks()
     {
-        // Clear block data
-        // Your existing clear logic here
+        InitializeBlocks();
+        _isEmpty = true;
+        _isOpaque = null;
+        _isDirty = true;
     }
 }

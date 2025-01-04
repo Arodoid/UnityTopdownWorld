@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
+using VoxelGame.Interfaces;
 
-public class ChunkManager : MonoBehaviour
+public class ChunkManager : MonoBehaviour, IChunkManager
 {
     // Dictionary to store chunks with their positions as the key
     private readonly Dictionary<Vector3Int, Chunk> _chunks = new Dictionary<Vector3Int, Chunk>();
@@ -84,5 +85,14 @@ public class ChunkManager : MonoBehaviour
     public bool IsMarkedForUnloading(Vector3Int position)
     {
         return _chunksMarkedForUnloading.Contains(position);
+    }
+
+    /// <summary>
+    /// Returns all currently loaded chunk positions.
+    /// </summary>
+    /// <returns>Collection of chunk positions.</returns>
+    public ICollection<Vector3Int> GetAllChunkPositions()
+    {
+        return _chunks.Keys;
     }
 }

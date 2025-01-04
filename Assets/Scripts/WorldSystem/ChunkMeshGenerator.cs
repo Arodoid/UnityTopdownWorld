@@ -1,202 +1,295 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Profiling;
+using VoxelGame.Interfaces;
 
-public class ChunkMeshGenerator
+public class ChunkMeshGenerator : MonoBehaviour, IChunkMeshGenerator 
 {
     private readonly int chunkSize = Chunk.ChunkSize;
+    private ChunkManager chunkManager;
 
-    public Mesh GenerateMesh(Chunk chunk, int yLimit)
+    // Pooled collections with pre-allocated capacity
+    private List<Vector3> verticesPool;
+    private List<int> trianglesPool;
+    private List<Color32> colorsPool;
+    private List<Vector2> uvsPool;
+
+    // Pre-calculated capacities
+    private const int MAX_VERTICES_PER_CHUNK = 16 * 16 * 16 * 24;  // 16³ blocks * 24 vertices max per block
+    private const int MAX_TRIANGLES_PER_CHUNK = 16 * 16 * 16 * 36; // 16³ blocks * 36 indices max per block
+    private const int MAX_UVS_PER_CHUNK = MAX_VERTICES_PER_CHUNK;
+    private const int MAX_COLORS_PER_CHUNK = MAX_VERTICES_PER_CHUNK;
+
+    // Face checking optimization
+    private readonly bool[] shouldRenderFace = new bool[5];
+    private readonly int[] neighborX = new int[5];
+    private readonly int[] neighborY = new int[5];
+    private readonly int[] neighborZ = new int[5];
+    
+    // Neighbor chunk caching
+    private readonly Chunk[] neighborCache = new Chunk[5];
+    private Vector3Int currentChunkPos;
+    private readonly Vector2[] rotatedUVsCache = new Vector2[4];
+
+    // Profiler markers
+    private static readonly ProfilerMarker GenerateMeshMarker = new ProfilerMarker("ChunkMeshGenerator.GenerateMeshPooled");
+    private static readonly ProfilerMarker FaceCheckMarker = new ProfilerMarker("ChunkMeshGenerator.CheckFaces");
+    private static readonly ProfilerMarker MeshBuildMarker = new ProfilerMarker("ChunkMeshGenerator.BuildMesh");
+
+    private void Awake()
     {
-        List<Vector3> vertices = new List<Vector3>();
-        List<int> triangles = new List<int>();
-        List<Color32> colors = new List<Color32>();
-        List<Vector2> uvs = new List<Vector2>();
-
-        // Calculate effective Y limit within this chunk's space
-        int chunkYOffset = chunk.Position.y * chunkSize;
-        int effectiveYLimit = Mathf.Min(chunkSize, 
-            Mathf.Max(0, yLimit - chunkYOffset));
-
-        for (int x = 0; x < chunkSize; x++)
-        for (int y = 0; y < effectiveYLimit; y++) // Only iterate to Y limit
-        for (int z = 0; z < chunkSize; z++)
+        // Get ChunkManager reference
+        chunkManager = GetComponent<ChunkManager>();
+        if (chunkManager == null)
         {
-            Block block = chunk.GetBlock(x, y, z);
-            if (block != null)
-            {
-                Vector3Int pos = new Vector3Int(x, y, z);
-                
-                switch (block.RenderType)
-                {
-                    case BlockRenderType.Cube:
-                        AddCubeMesh(chunk, block, pos, vertices, triangles, 
-                                  colors, uvs, y == effectiveYLimit - 1);
-                        break;
-                    case BlockRenderType.Flat:
-                        if (y < effectiveYLimit - 1) // Don't add flat meshes at the cut line
-                        {
-                            AddFlatMesh(block, pos, vertices, triangles, colors, uvs);
-                        }
-                        break;
-                }
-            }
+            Debug.LogError("ChunkManager not found on the same GameObject!");
+            enabled = false;
+            return;
         }
 
-        // Add cap faces at Y-limit if needed
-        if (effectiveYLimit < chunkSize)
-        {
-            AddYLevelCap(chunk, effectiveYLimit, vertices, triangles, colors, uvs);
-        }
-
-        Mesh mesh = new Mesh();
-        mesh.vertices = vertices.ToArray();
-        mesh.triangles = triangles.ToArray();
-        mesh.colors32 = colors.ToArray();
-        mesh.uv = uvs.ToArray();
-        mesh.RecalculateNormals();
-        return mesh;
+        // Initialize pools with maximum possible sizes
+        verticesPool = new List<Vector3>(MAX_VERTICES_PER_CHUNK);
+        trianglesPool = new List<int>(MAX_TRIANGLES_PER_CHUNK);
+        colorsPool = new List<Color32>(MAX_COLORS_PER_CHUNK);
+        uvsPool = new List<Vector2>(MAX_UVS_PER_CHUNK);
     }
 
-    private void AddCubeMesh(Chunk chunk, Block block, Vector3Int position,
-                           List<Vector3> vertices, List<int> triangles, 
-                           List<Color32> colors, List<Vector2> uvs,
-                           bool isAtYLimit)
+    public void GenerateMeshData(Chunk chunk, Mesh mesh, int yLimit)
     {
-        int vertexIndex = vertices.Count;
-        Vector2[] blockUVs = block.UVs ?? GetDefaultUVs();
-
-        // Get world position for deterministic rotation
-        Vector3Int worldPos = chunk.Position * Chunk.ChunkSize + position;
-
-        // Iterate through all faces except bottom
-        for (int i = 0; i < BlockFaceNormals.Length; i++)
+        if (verticesPool == null)
         {
-            Vector3Int neighborPos = position + BlockFaceNormals[i];
-            bool isTopFace = i == 2; // Top face index
+            Debug.LogError("ChunkMeshGenerator not properly initialized!");
+            return;
+        }
+        GenerateMeshPooled(chunk, mesh, yLimit);
+    }
 
-            // Special handling for faces at Y-limit
+    public void GenerateMeshPooled(Chunk chunk, Mesh mesh, int yLimit)
+    {
+        using (GenerateMeshMarker.Auto())
+        {
+            // Clear pools
+            verticesPool.Clear();
+            trianglesPool.Clear();
+            colorsPool.Clear();
+            uvsPool.Clear();
+
+            if (chunk.IsFullyEmpty())
+            {
+                mesh.Clear();
+                return;
+            }
+
+            // Update neighbor cache if chunk changed
+            if (currentChunkPos != chunk.Position)
+            {
+                UpdateNeighborCache(chunk);
+                currentChunkPos = chunk.Position;
+            }
+
+            int chunkYOffset = chunk.Position.y * chunkSize;
+            int effectiveYLimit = Mathf.Min(chunkSize, Mathf.Max(0, yLimit - chunkYOffset));
+
+            // Generate mesh data
+            using (MeshBuildMarker.Auto())
+            {
+                for (int y = 0; y < effectiveYLimit; y++)
+                for (int x = 0; x < chunkSize; x++)
+                for (int z = 0; z < chunkSize; z++)
+                {
+                    Block block = chunk.GetBlock(x, y, z);
+                    if (block != null)
+                    {
+                        ProcessBlock(chunk, block, x, y, z, y == effectiveYLimit - 1);
+                    }
+                }
+            }
+
+            // Apply mesh data
+            mesh.Clear();
+            mesh.SetVertices(verticesPool);
+            mesh.SetTriangles(trianglesPool, 0);
+            mesh.SetColors(colorsPool);
+            mesh.SetUVs(0, uvsPool);
+            mesh.RecalculateNormals();
+        }
+    }
+
+    private void ProcessBlock(Chunk chunk, Block block, int x, int y, int z, bool isAtYLimit)
+    {
+        switch (block.RenderType)
+        {
+            case BlockRenderType.Cube:
+                using (FaceCheckMarker.Auto())
+                {
+                    CheckAllFaces(chunk, x, y, z, isAtYLimit);
+                    AddCubeMesh(block, x, y, z);
+                }
+                break;
+            case BlockRenderType.Flat:
+                if (!isAtYLimit)
+                {
+                    AddFlatMesh(block, x, y, z);
+                }
+                break;
+        }
+    }
+
+    private void CheckAllFaces(Chunk chunk, int x, int y, int z, bool isAtYLimit)
+    {
+        // Pre-calculate all neighbor coordinates
+        for (int face = 0; face < 5; face++)
+        {
+            neighborX[face] = x + BlockFaceNormals[face].x;
+            neighborY[face] = y + BlockFaceNormals[face].y;
+            neighborZ[face] = z + BlockFaceNormals[face].z;
+        }
+
+        // Check all faces
+        for (int face = 0; face < 5; face++)
+        {
+            bool isTopFace = face == 2;
             if (isAtYLimit && isTopFace)
             {
-                // Always show top face at Y-limit
-                AddFace(i, position, block, blockUVs, worldPos,
-                       vertices, triangles, colors, uvs);
+                shouldRenderFace[face] = true;
+                continue;
             }
-            else if (!IsBlockOpaque(chunk, neighborPos))
+
+            int nx = neighborX[face];
+            int ny = neighborY[face];
+            int nz = neighborZ[face];
+
+            if ((uint)nx < chunkSize && (uint)ny < chunkSize && (uint)nz < chunkSize)
             {
-                AddFace(i, position, block, blockUVs, worldPos,
-                       vertices, triangles, colors, uvs);
+                // Fast path: within same chunk
+                shouldRenderFace[face] = !IsOpaqueBlock(chunk, nx, ny, nz);
+            }
+            else
+            {
+                // Slow path: check neighbor chunks
+                shouldRenderFace[face] = !IsOpaqueBlockInNeighbor(chunk, nx, ny, nz, face);
             }
         }
     }
 
-    private void AddYLevelCap(Chunk chunk, int yLevel,
-                            List<Vector3> vertices, List<int> triangles,
-                            List<Color32> colors, List<Vector2> uvs)
+    private bool IsOpaqueBlock(Chunk chunk, int x, int y, int z)
     {
-        // Add a semi-transparent cap at the Y-level cut
-        Color32 capColor = new Color32(128, 128, 128, 128); // Semi-transparent grey
-
-        for (int x = 0; x < chunkSize; x++)
-        for (int z = 0; z < chunkSize; z++)
-        {
-            // Skip if we're at the bottom of the chunk
-            if (yLevel <= 0) continue;
-
-            // Only add cap face if there's a block below
-            Block blockBelow = null;
-            if (yLevel > 0) // Check if we can safely look below
-            {
-                blockBelow = chunk.GetBlock(x, yLevel - 1, z);
-            }
-
-            if (blockBelow != null)
-            {
-                int vertexIndex = vertices.Count;
-                Vector3 pos = new Vector3(x, yLevel, z);
-
-                // Add vertices for cap face
-                vertices.AddRange(new[]
-                {
-                    pos,
-                    pos + Vector3.right,
-                    pos + Vector3.right + Vector3.forward,
-                    pos + Vector3.forward
-                });
-
-                // Add cap face triangles
-                triangles.AddRange(new[]
-                {
-                    vertexIndex, vertexIndex + 1, vertexIndex + 2,
-                    vertexIndex + 2, vertexIndex + 3, vertexIndex
-                });
-
-                // Add colors and UVs for cap face
-                for (int i = 0; i < 4; i++)
-                {
-                    colors.Add(capColor);
-                    uvs.Add(Vector2.zero); // Use a specific texture for the cap if desired
-                }
-            }
-        }
-    }
-
-    private void AddFlatMesh(Block block, Vector3Int position,
-                           List<Vector3> vertices, List<int> triangles, 
-                           List<Color32> colors, List<Vector2> uvs)
-    {
-        int vertexIndex = vertices.Count;
-        float height = 1f;
-
-        // Add vertices
-        vertices.Add(new Vector3(position.x, position.y, position.z));
-        vertices.Add(new Vector3(position.x + 1, position.y, position.z));
-        vertices.Add(new Vector3(position.x + 1, position.y + height, position.z));
-        vertices.Add(new Vector3(position.x, position.y + height, position.z));
-
-        // Add UVs
-        if (block.UVs != null && block.UVs.Length >= 4)
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                uvs.Add(block.UVs[i]);
-            }
-        }
-        else
-        {
-            // Fallback UVs
-            uvs.Add(new Vector2(0, 0));
-            uvs.Add(new Vector2(1, 0));
-            uvs.Add(new Vector2(1, 1));
-            uvs.Add(new Vector2(0, 1));
-        }
-
-        // Add colors
-        for (int i = 0; i < 4; i++)
-            colors.Add(block.Color);
-
-        // Add triangles
-        triangles.AddRange(new int[]
-        {
-            vertexIndex, vertexIndex + 1, vertexIndex + 2,
-            vertexIndex + 2, vertexIndex + 3, vertexIndex
-        });
-    }
-
-    private bool IsBlockOpaque(Chunk chunk, Vector3Int position)
-    {
-        if (position.x < 0 || position.x >= chunkSize ||
-            position.y < 0 || position.y >= chunkSize ||
-            position.z < 0 || position.z >= chunkSize)
-        {
-            return false;
-        }
-
-        Block block = chunk.GetBlock(position.x, position.y, position.z);
+        Block block = chunk.GetBlock(x, y, z);
         return block != null && block.IsOpaque;
     }
 
-    private static readonly Vector3Int[] BlockFaceNormals =
+    private bool IsOpaqueBlockInNeighbor(Chunk chunk, int x, int y, int z, int face)
     {
+        Chunk neighborChunk = neighborCache[face];
+        if (neighborChunk == null) return false;
+
+        // Wrap coordinates to chunk space
+        x = x & 15; // equivalent to x % 16
+        y = y & 15;
+        z = z & 15;
+
+        Block block = neighborChunk.GetBlock(x, y, z);
+        return block != null && block.IsOpaque;
+    }
+
+    private void AddCubeMesh(Block block, int x, int y, int z)
+    {
+        Vector2[] blockUVs = block.UVs ?? DefaultUVs;
+        Color32 blockColor = block.Color;
+        int worldX = currentChunkPos.x * chunkSize + x;
+        int worldY = currentChunkPos.y * chunkSize + y;
+        int worldZ = currentChunkPos.z * chunkSize + z;
+
+        for (int face = 0; face < 5; face++)
+        {
+            if (!shouldRenderFace[face]) continue;
+
+            int vertexIndex = verticesPool.Count;
+            Vector3[] faceVerts = BlockFaceVertices[face];
+
+            // Add vertices
+            for (int v = 0; v < 4; v++)
+            {
+                verticesPool.Add(new Vector3(
+                    x + faceVerts[v].x,
+                    y + faceVerts[v].y,
+                    z + faceVerts[v].z
+                ));
+            }
+
+            // Add triangles
+            trianglesPool.Add(vertexIndex);
+            trianglesPool.Add(vertexIndex + 1);
+            trianglesPool.Add(vertexIndex + 2);
+            trianglesPool.Add(vertexIndex + 2);
+            trianglesPool.Add(vertexIndex + 3);
+            trianglesPool.Add(vertexIndex);
+
+            // Add colors
+            for (int c = 0; c < 4; c++)
+            {
+                colorsPool.Add(blockColor);
+            }
+
+            // Add UVs with rotation
+            int rotation = GetDeterministicRotation(worldX, worldY, worldZ, face);
+            GetRotatedUVs(blockUVs, rotation, rotatedUVsCache);
+            for (int u = 0; u < 4; u++)
+            {
+                uvsPool.Add(rotatedUVsCache[u]);
+            }
+        }
+    }
+
+    private void UpdateNeighborCache(Chunk chunk)
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            Vector3Int neighborPos = new Vector3Int(
+                chunk.Position.x + BlockFaceNormals[i].x,
+                chunk.Position.y + BlockFaceNormals[i].y,
+                chunk.Position.z + BlockFaceNormals[i].z
+            );
+            neighborCache[i] = chunkManager.GetChunk(neighborPos);
+        }
+    }
+
+    private void AddFlatMesh(Block block, int x, int y, int z)
+    {
+        int vertexIndex = verticesPool.Count;
+        float height = 1f;
+
+        // Add vertices for cross mesh
+        verticesPool.Add(new Vector3(x, y, z));
+        verticesPool.Add(new Vector3(x + 1, y, z));
+        verticesPool.Add(new Vector3(x + 1, y + height, z));
+        verticesPool.Add(new Vector3(x, y + height, z));
+
+        // Add UVs
+        Vector2[] blockUVs = block.UVs ?? DefaultUVs;
+        for (int i = 0; i < 4; i++)
+        {
+            uvsPool.Add(blockUVs[i]);
+        }
+
+        // Add colors
+        Color32 color = block.Color;
+        for (int i = 0; i < 4; i++)
+        {
+            colorsPool.Add(color);
+        }
+
+        // Add triangles
+        trianglesPool.Add(vertexIndex);
+        trianglesPool.Add(vertexIndex + 1);
+        trianglesPool.Add(vertexIndex + 2);
+        trianglesPool.Add(vertexIndex + 2);
+        trianglesPool.Add(vertexIndex + 3);
+        trianglesPool.Add(vertexIndex);
+    }
+
+    private static readonly Vector3Int[] BlockFaceNormals = {
         new Vector3Int(0, 0, 1),  // Front
         new Vector3Int(0, 0, -1), // Back
         new Vector3Int(0, 1, 0),  // Top
@@ -204,130 +297,37 @@ public class ChunkMeshGenerator
         new Vector3Int(-1, 0, 0)  // Left
     };
 
-    private static readonly Vector3[][] BlockFaceVertices =
-    {
-        // Front face (+z)
-        new [] { new Vector3(0, 0, 1), new Vector3(1, 0, 1), new Vector3(1, 1, 1), new Vector3(0, 1, 1) },
-        // Back face (-z)
-        new [] { new Vector3(1, 0, 0), new Vector3(0, 0, 0), new Vector3(0, 1, 0), new Vector3(1, 1, 0) },
-        // Top face (+y)
-        new [] { new Vector3(0, 1, 0), new Vector3(0, 1, 1), new Vector3(1, 1, 1), new Vector3(1, 1, 0) },
-        // Right face (+x)
-        new [] { new Vector3(1, 0, 1), new Vector3(1, 0, 0), new Vector3(1, 1, 0), new Vector3(1, 1, 1) },
-        // Left face (-x)
-        new [] { new Vector3(0, 0, 0), new Vector3(0, 0, 1), new Vector3(0, 1, 1), new Vector3(0, 1, 0) }
+    private static readonly Vector3[][] BlockFaceVertices = {
+        // Front
+        new [] { new Vector3(0,0,1), new Vector3(1,0,1), new Vector3(1,1,1), new Vector3(0,1,1) },
+        // Back
+        new [] { new Vector3(1,0,0), new Vector3(0,0,0), new Vector3(0,1,0), new Vector3(1,1,0) },
+        // Top
+        new [] { new Vector3(0,1,0), new Vector3(0,1,1), new Vector3(1,1,1), new Vector3(1,1,0) },
+        // Right
+        new [] { new Vector3(1,0,1), new Vector3(1,0,0), new Vector3(1,1,0), new Vector3(1,1,1) },
+        // Left
+        new [] { new Vector3(0,0,0), new Vector3(0,0,1), new Vector3(0,1,1), new Vector3(0,1,0) }
     };
 
-    private Vector2[] RotateUVs(Vector2[] originalUVs, int rotations)
+    private static readonly Vector2[] DefaultUVs = {
+        new Vector2(0, 0),
+        new Vector2(1, 0),
+        new Vector2(1, 1),
+        new Vector2(0, 1)
+    };
+
+    private void GetRotatedUVs(Vector2[] originalUVs, int rotations, Vector2[] result)
     {
-        Vector2[] rotatedUVs = new Vector2[4];
         for (int i = 0; i < 4; i++)
         {
-            rotatedUVs[i] = originalUVs[(i + rotations) % 4];
+            result[i] = originalUVs[(i + rotations) % 4];
         }
-        return rotatedUVs;
     }
 
-    private int GetDeterministicRotation(Vector3Int worldPos, int face)
+    private int GetDeterministicRotation(int x, int y, int z, int face)
     {
-        // Create a deterministic but seemingly random rotation based on position
-        int seed = worldPos.x * 73856093 ^ worldPos.y * 19349663 ^ worldPos.z * 83492791 ^ face;
-        System.Random random = new System.Random(seed);
-        return random.Next(0, 4); // 0, 1, 2, or 3 rotations (90° each)
-    }
-
-    private Vector2[] GetDefaultUVs()
-    {
-        return new Vector2[]
-        {
-            new Vector2(0, 0),
-            new Vector2(1, 0),
-            new Vector2(1, 1),
-            new Vector2(0, 1)
-        };
-    }
-
-    private void AddFace(int faceIndex, Vector3Int position, Block block, 
-                        Vector2[] blockUVs, Vector3Int worldPos,
-                        List<Vector3> vertices, List<int> triangles, 
-                        List<Color32> colors, List<Vector2> uvs)
-    {
-        int vertexIndex = vertices.Count;
-
-        // Add the four vertices for this face
-        for (int i = 0; i < 4; i++)
-        {
-            vertices.Add(position + BlockFaceVertices[faceIndex][i]);
-        }
-
-        // Add triangles
-        triangles.AddRange(new int[]
-        {
-            vertexIndex, vertexIndex + 1, vertexIndex + 2,
-            vertexIndex + 2, vertexIndex + 3, vertexIndex
-        });
-
-        // Add colors
-        for (int i = 0; i < 4; i++)
-        {
-            colors.Add(block.Color);
-        }
-
-        // Get rotated UVs based on world position
-        int rotation = GetDeterministicRotation(worldPos, faceIndex);
-        Vector2[] rotatedUVs = RotateUVs(blockUVs, rotation);
-        uvs.AddRange(rotatedUVs);
-    }
-
-    public void GenerateMeshPooled(Chunk chunk, Mesh mesh, int yLimit)
-    {
-        List<Vector3> vertices = new List<Vector3>();
-        List<int> triangles = new List<int>();
-        List<Color32> colors = new List<Color32>();
-        List<Vector2> uvs = new List<Vector2>();
-
-        // Calculate effective Y limit within this chunk's space
-        int chunkYOffset = chunk.Position.y * chunkSize;
-        int effectiveYLimit = Mathf.Min(chunkSize, 
-            Mathf.Max(0, yLimit - chunkYOffset));
-
-        for (int x = 0; x < chunkSize; x++)
-        for (int y = 0; y < effectiveYLimit; y++)
-        for (int z = 0; z < chunkSize; z++)
-        {
-            Block block = chunk.GetBlock(x, y, z);
-            if (block != null)
-            {
-                Vector3Int pos = new Vector3Int(x, y, z);
-                
-                switch (block.RenderType)
-                {
-                    case BlockRenderType.Cube:
-                        AddCubeMesh(chunk, block, pos, vertices, triangles, 
-                                  colors, uvs, y == effectiveYLimit - 1);
-                        break;
-                    case BlockRenderType.Flat:
-                        if (y < effectiveYLimit - 1) // Don't add flat meshes at the cut line
-                        {
-                            AddFlatMesh(block, pos, vertices, triangles, colors, uvs);
-                        }
-                        break;
-                }
-            }
-        }
-
-        // Add cap faces at Y-limit if needed
-        if (effectiveYLimit < chunkSize)
-        {
-            AddYLevelCap(chunk, effectiveYLimit, vertices, triangles, colors, uvs);
-        }
-
-        // Update the pooled mesh instead of creating a new one
-        mesh.Clear();
-        mesh.vertices = vertices.ToArray();
-        mesh.triangles = triangles.ToArray();
-        mesh.colors32 = colors.ToArray();
-        mesh.uv = uvs.ToArray();
-        mesh.RecalculateNormals();
+        int hash = x * 73856093 ^ y * 19349663 ^ z * 83492791 ^ face;
+        return (hash & 0x7fffffff) % 4;
     }
 }
