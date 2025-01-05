@@ -60,26 +60,25 @@ public class ChunkRenderer : MonoBehaviour, IChunkRenderer
         var chunkGO = new GameObject($"Chunk_{chunkPos.x}_{chunkPos.y}_{chunkPos.z}");
         chunkGO.transform.SetPositionAndRotation(worldPos, Quaternion.identity);
         chunkGO.transform.parent = transform;
-
+        
+        // Mark static since we never modify the mesh - we only replace it
+        chunkGO.isStatic = true;
+        
         var lodGroup = chunkGO.AddComponent<LODGroup>();
         
         // Configure LODGroup for orthographic top-down view
-        lodGroup.size = Chunk.ChunkSize * 2f;  // Increased size for better LOD transitions
+        lodGroup.size = Chunk.ChunkSize * 2f;
         lodGroup.fadeMode = LODFadeMode.None;
         lodGroup.localReferencePoint = new Vector3(Chunk.ChunkSize/2f, 0, Chunk.ChunkSize/2f);
         
-        LOD[] lods = new LOD[4]; // Now 4 LOD levels
+        LOD[] lods = new LOD[2]; // Changed from 3 to 2 LOD levels
         
         var highLOD = CreateLODLevel(chunkGO, mesh, "High");
-        var medLOD = CreateLODLevel(chunkGO, SimplifyMeshForTopDown(mesh, 2), "Med");
-        var lowLOD = CreateLODLevel(chunkGO, SimplifyMeshForTopDown(mesh, 4), "Low");
-        var ultraLowLOD = CreateLODLevel(chunkGO, CreateSingleQuadMesh(mesh), "Ultra"); // New ultra-low LOD
+        var ultraLowLOD = CreateLODLevel(chunkGO, CreateSingleQuadMesh(mesh), "Ultra");
 
-        // Adjusted thresholds for screen coverage only
-        lods[0] = new LOD(0.3f, new[] { highLOD });    // >30% screen coverage
-        lods[1] = new LOD(0.15f, new[] { medLOD });    // 15-30% screen coverage
-        lods[2] = new LOD(0.05f, new[] { lowLOD });    // 5-15% screen coverage
-        lods[3] = new LOD(0.0f, new[] { ultraLowLOD }); // <5% screen coverage (never cull)
+        // Adjusted thresholds for two LOD levels
+        lods[0] = new LOD(0.1f, new[] { highLOD });     // >10% screen coverage
+        lods[1] = new LOD(0.0f, new[] { ultraLowLOD }); // <10% screen coverage
 
         lodGroup.SetLODs(lods);
         lodGroup.RecalculateBounds();
@@ -128,66 +127,54 @@ public class ChunkRenderer : MonoBehaviour, IChunkRenderer
         if (vertices.Length == 0 || colors32.Length == 0) return originalMesh;
 
         var gridSize = Chunk.ChunkSize / factor;
-        var vertexGrid = new Dictionary<Vector2Int, List<(float height, Color32 color, Vector3 normal)>>();
-
-        // First pass: collect only upward-facing vertices
-        for (int i = 0; i < vertices.Length; i++)
-        {
-            // Skip if not an upward-facing vertex (using normal)
-            if (i < normals.Length && normals[i].y <= 0.5f) continue;
-
-            var v = vertices[i];
-            var gridPos = new Vector2Int(
-                Mathf.FloorToInt(v.x / factor),
-                Mathf.FloorToInt(v.z / factor)
-            );
-
-            if (!vertexGrid.ContainsKey(gridPos))
-            {
-                vertexGrid[gridPos] = new List<(float, Color32, Vector3)>();
-            }
-
-            if (i < colors32.Length)
-            {
-                vertexGrid[gridPos].Add((v.y, colors32[i], normals[i]));
-            }
-        }
-
-        // Generate simplified mesh
         var newVerts = new List<Vector3>();
         var newColors = new List<Color32>();
         var newTris = new List<int>();
 
+        // Create one quad for each grid cell
         for (int x = 0; x < gridSize; x++)
         for (int z = 0; z < gridSize; z++)
         {
-            var pos = new Vector2Int(x, z);
-            if (!vertexGrid.ContainsKey(pos) || vertexGrid[pos].Count == 0) continue;
+            float minX = x * factor;
+            float maxX = minX + factor;
+            float minZ = z * factor;
+            float maxZ = minZ + factor;
 
-            var cellData = vertexGrid[pos];
-            // Take the highest point for this cell
-            var maxY = cellData.Max(d => d.height);
-            
-            // Get the color from the highest point
-            var topColor = cellData
-                .Where(d => Mathf.Approximately(d.height, maxY))
-                .Select(d => d.color)
-                .FirstOrDefault();
+            // Find all vertices in this grid cell
+            var cellVertices = new List<Vector3>();
+            var cellColors = new List<Color32>();
+
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                if (i >= normals.Length || normals[i].y <= 0.5f) continue;
+
+                var v = vertices[i];
+                if (v.x >= minX && v.x < maxX && v.z >= minZ && v.z < maxZ)
+                {
+                    cellVertices.Add(v);
+                    if (i < colors32.Length) cellColors.Add(colors32[i]);
+                }
+            }
+
+            // Skip if no vertices in this cell
+            if (cellVertices.Count == 0) continue;
+
+            // Get maximum height and dominant color for this cell
+            float cellHeight = cellVertices.Max(v => v.y);
+            Color32 cellColor = GetDominantColor(cellColors.ToArray());
 
             int baseIndex = newVerts.Count;
-            float worldX = x * factor;
-            float worldZ = z * factor;
 
-            // Add vertices for this cell
-            newVerts.Add(new Vector3(worldX, maxY, worldZ));
-            newVerts.Add(new Vector3(worldX + factor, maxY, worldZ));
-            newVerts.Add(new Vector3(worldX, maxY, worldZ + factor));
-            newVerts.Add(new Vector3(worldX + factor, maxY, worldZ + factor));
+            // Create quad vertices
+            newVerts.Add(new Vector3(minX, cellHeight, minZ));
+            newVerts.Add(new Vector3(maxX, cellHeight, minZ));
+            newVerts.Add(new Vector3(minX, cellHeight, maxZ));
+            newVerts.Add(new Vector3(maxX, cellHeight, maxZ));
 
             // Add colors
             for (int i = 0; i < 4; i++)
             {
-                newColors.Add(topColor);
+                newColors.Add(cellColor);
             }
 
             // Add triangles
@@ -218,7 +205,8 @@ public class ChunkRenderer : MonoBehaviour, IChunkRenderer
 
         var renderer = lodObj.AddComponent<MeshRenderer>();
         renderer.sharedMaterial = BlockRegistry.TerrainMaterial;
-
+        renderer.allowOcclusionWhenDynamic = true;
+        
         return renderer;
     }
 
@@ -299,5 +287,38 @@ public class ChunkRenderer : MonoBehaviour, IChunkRenderer
         simplifiedMesh.RecalculateBounds();
 
         return simplifiedMesh;
+    }
+
+    void OnGUI()
+    {
+        var lodGroups = UnityEngine.Object.FindObjectsByType<LODGroup>(FindObjectsSortMode.None);
+        int highLODCount = 0;
+        int lowLODCount = 0;
+        
+        foreach (var lodGroup in lodGroups)
+        {
+            if (lodGroup.lodCount > 0)
+            {
+                // Calculate the current LOD level based on the camera's distance
+                Camera mainCamera = Camera.main;
+                if (mainCamera != null)
+                {
+                    float distance = Vector3.Distance(mainCamera.transform.position, lodGroup.transform.position);
+                    LOD[] lods = lodGroup.GetLODs();
+                    for (int i = 0; i < lods.Length; i++)
+                    {
+                        if (distance < lods[i].screenRelativeTransitionHeight * mainCamera.pixelHeight)
+                        {
+                            if (i == 0) highLODCount++;
+                            if (i == 1) lowLODCount++;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        
+        GUI.Label(new Rect(10, 70, 200, 20), $"High LOD: {highLODCount}");
+        GUI.Label(new Rect(10, 90, 200, 20), $"Low LOD: {lowLODCount}");
     }
 }

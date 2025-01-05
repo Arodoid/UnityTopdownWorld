@@ -5,6 +5,7 @@ using System.Linq;
 using VoxelGame.Interfaces;
 using VoxelGame.WorldSystem;
 using VoxelGame.WorldSystem.Generation.Core;  // For WorldGenerator
+using VoxelGame.Utilities;
 
 public class ChunkQueueProcessor : MonoBehaviour
 {
@@ -80,24 +81,35 @@ public class ChunkQueueProcessor : MonoBehaviour
         }
     }
 
-    private void Update() => ProcessQueues();
+    private void Update() 
+    {
+        // Process queues only if necessary
+        if (columnGenerationQueue.Count > 0 || renderQueue.Count > 0)
+        {
+            ProcessQueues();
+        }
+    }
 
     public void UpdateVisibleChunks(CameraVisibilityController.ViewData viewData)
     {
+        PerformanceMonitor.StartMeasurement("ChunkProcessor.UpdateVisibleChunks.Total");
+        
+        PerformanceMonitor.StartMeasurement("ChunkProcessor.UpdateVisibleChunks.QueueClear");
         columnGenerationQueue.Clear();
         renderQueue.Clear();
+        PerformanceMonitor.EndMeasurement("ChunkProcessor.UpdateVisibleChunks.QueueClear");
         
         currentYLimit = viewData.YLevel;
         var columnsInView = GetColumnsInView(viewData.ViewBounds);
         var columnsToKeep = new HashSet<Vector2Int>(columnsInView);
 
+        PerformanceMonitor.StartMeasurement("ChunkProcessor.UpdateVisibleChunks.Cleanup");
         // Clean up chunks outside view
         foreach (var chunkPos in chunkManager.GetAllChunkPositions().ToList())
         {
             Vector2Int columnPos = new Vector2Int(chunkPos.x, chunkPos.z);
             if (!columnsToKeep.Contains(columnPos))
             {
-                // Cancel any pending mesh generation jobs before removing the chunk
                 if (meshGenerator.HasPendingJob(chunkPos))
                 {
                     meshGenerator.CancelJob(chunkPos);
@@ -107,7 +119,9 @@ public class ChunkQueueProcessor : MonoBehaviour
                 completedColumns.Remove(columnPos);
             }
         }
+        PerformanceMonitor.EndMeasurement("ChunkProcessor.UpdateVisibleChunks.Cleanup");
 
+        PerformanceMonitor.StartMeasurement("ChunkProcessor.UpdateVisibleChunks.QueueNew");
         // Queue new chunks for generation
         foreach (var columnPos in columnsInView)
         {
@@ -116,6 +130,9 @@ public class ChunkQueueProcessor : MonoBehaviour
                 columnGenerationQueue.Enqueue(columnPos);
             }
         }
+        PerformanceMonitor.EndMeasurement("ChunkProcessor.UpdateVisibleChunks.QueueNew");
+        
+        PerformanceMonitor.EndMeasurement("ChunkProcessor.UpdateVisibleChunks.Total");
     }
 
     private bool ShouldRenderChunk(Chunk chunk) =>
@@ -148,46 +165,71 @@ public class ChunkQueueProcessor : MonoBehaviour
 
     private void ProcessQueues()
     {
+        PerformanceMonitor.StartMeasurement("ChunkProcessor.ProcessQueues.Total");
+        
+        PerformanceMonitor.StartMeasurement("ChunkProcessor.ProcessQueues.UpdateLimits");
         processingLimits.UpdateLimits();
+        PerformanceMonitor.EndMeasurement("ChunkProcessor.ProcessQueues.UpdateLimits");
 
         // Process render queue first (non-async)
         int meshesProcessed = 0;
+        
+        PerformanceMonitor.StartMeasurement("ChunkProcessor.ProcessQueues.RenderLoop");
         while (renderQueue.Count > 0 && meshesProcessed < processingLimits.MaxMeshesPerFrame)
         {
+            PerformanceMonitor.StartMeasurement("ChunkProcessor.ProcessQueues.DequeueAndCheck");
             Chunk chunk = renderQueue.Dequeue();
-            if (chunk != null && !chunk.IsFullyEmpty())
+            if (chunk == null || chunk.IsFullyEmpty())
             {
-                if (!meshGenerator.HasPendingJob(chunk.Position))
-                {
-                    // Create a new mesh for this chunk
-                    var mesh = new Mesh();
-                    
-                    // If rejected, put back in queue
-                    if (!meshGenerator.GenerateMeshData(chunk, mesh, currentYLimit))
-                    {
-                        renderQueue.Enqueue(chunk);
-                        Object.Destroy(mesh);
-                        break; // Stop processing if we're hitting limits
-                    }
-                    
-                    // Render the chunk with the new mesh
-                    chunkRenderer.RenderChunk(chunk, mesh);
-                    meshesProcessed++;
-                }
-                else
+                PerformanceMonitor.EndMeasurement("ChunkProcessor.ProcessQueues.DequeueAndCheck");
+                continue;
+            }
+            PerformanceMonitor.EndMeasurement("ChunkProcessor.ProcessQueues.DequeueAndCheck");
+
+            PerformanceMonitor.StartMeasurement("ChunkProcessor.ProcessQueues.JobCheck");
+            if (!meshGenerator.HasPendingJob(chunk.Position))
+            {
+                PerformanceMonitor.EndMeasurement("ChunkProcessor.ProcessQueues.JobCheck");
+                
+                PerformanceMonitor.StartMeasurement("ChunkProcessor.ProcessQueues.MeshCreation");
+                var mesh = new Mesh();
+                
+                // If rejected, put back in queue
+                if (!meshGenerator.GenerateMeshData(chunk, mesh, currentYLimit))
                 {
                     renderQueue.Enqueue(chunk);
-                    break;
+                    Object.Destroy(mesh);
+                    PerformanceMonitor.EndMeasurement("ChunkProcessor.ProcessQueues.MeshCreation");
+                    break; // Stop processing if we're hitting limits
                 }
+                
+                // Render the chunk with the new mesh
+                chunkRenderer.RenderChunk(chunk, mesh);
+                meshesProcessed++;
+                PerformanceMonitor.EndMeasurement("ChunkProcessor.ProcessQueues.MeshCreation");
+            }
+            else
+            {
+                PerformanceMonitor.EndMeasurement("ChunkProcessor.ProcessQueues.JobCheck");
+                renderQueue.Enqueue(chunk);
+                break;
             }
         }
+        PerformanceMonitor.EndMeasurement("ChunkProcessor.ProcessQueues.RenderLoop");
 
         // Then process column generation (async)
+        PerformanceMonitor.StartMeasurement("ChunkProcessor.ProcessQueues.ColumnGeneration");
         ProcessColumnGeneration();
+        PerformanceMonitor.EndMeasurement("ChunkProcessor.ProcessQueues.ColumnGeneration");
+        
+        PerformanceMonitor.EndMeasurement("ChunkProcessor.ProcessQueues.Total");
     }
 
     private async void ProcessColumnGeneration()
     {
+        PerformanceMonitor.StartMeasurement("ChunkProcessor.ColumnGeneration.Total");
+        
+        PerformanceMonitor.StartMeasurement("ChunkProcessor.ColumnGeneration.BatchPrep");
         var columnBatch = new List<Vector2Int>();
         int batchSize = Mathf.Min(4, processingLimits.MaxColumnsPerFrame);
         
@@ -199,16 +241,22 @@ public class ChunkQueueProcessor : MonoBehaviour
                 columnBatch.Add(columnPos);
             }
         }
+        PerformanceMonitor.EndMeasurement("ChunkProcessor.ColumnGeneration.BatchPrep");
 
         if (columnBatch.Count > 0)
         {
+            PerformanceMonitor.StartMeasurement("ChunkProcessor.ColumnGeneration.ProcessBatch");
             var tasks = columnBatch.Select(columnPos => ProcessColumnAsync(columnPos));
             await Task.WhenAll(tasks);
+            PerformanceMonitor.EndMeasurement("ChunkProcessor.ColumnGeneration.ProcessBatch");
         }
+        
+        PerformanceMonitor.EndMeasurement("ChunkProcessor.ColumnGeneration.Total");
     }
 
     private async Task ProcessColumnAsync(Vector2Int columnPos)
     {
+        PerformanceMonitor.StartMeasurement("ChunkProcessor.ProcessColumn.Total");
         if (columnsInProgress.Contains(columnPos) || worldGenerator == null)
             return;
 
@@ -216,34 +264,53 @@ public class ChunkQueueProcessor : MonoBehaviour
 
         try
         {
-            var chunksToRender = new List<Chunk>(8); // Preallocate with expected size
+            var chunksToRender = new List<Chunk>(8);
             bool foundOpaque = false;
             
+            PerformanceMonitor.StartMeasurement("ChunkProcessor.ProcessColumn.Setup");
             int maxY = Mathf.Min(
                 WorldDataManager.WORLD_HEIGHT_IN_CHUNKS - 1,
                 Mathf.CeilToInt(currentYLimit / (float)Chunk.ChunkSize)
             );
+            PerformanceMonitor.EndMeasurement("ChunkProcessor.ProcessColumn.Setup");
 
+            PerformanceMonitor.StartMeasurement("ChunkProcessor.ProcessColumn.ChunkLoop");
+            int chunksProcessed = 0;
+            
             // Process from top down and exit early if we find an opaque chunk
             for (int y = maxY; y >= 0 && !foundOpaque; y--)
             {
+                chunksProcessed++;
                 Vector3Int chunkPos = new Vector3Int(columnPos.x, y, columnPos.y);
+                
+                PerformanceMonitor.StartMeasurement("ChunkProcessor.ProcessColumn.GetChunk");
                 Chunk chunk = chunkManager.GetChunk(chunkPos);
+                PerformanceMonitor.EndMeasurement("ChunkProcessor.ProcessColumn.GetChunk");
                 
                 if (chunk == null)
                 {
+                    PerformanceMonitor.StartMeasurement("ChunkProcessor.ProcessColumn.GenerateChunk");
                     chunk = await worldGenerator.GenerateChunk(chunkPos);
+                    PerformanceMonitor.EndMeasurement("ChunkProcessor.ProcessColumn.GenerateChunk");
+                    
                     if (chunk == null) continue;
+                    
+                    PerformanceMonitor.StartMeasurement("ChunkProcessor.ProcessColumn.StoreChunk");
                     chunkManager.StoreChunk(chunk.Position, chunk);
+                    PerformanceMonitor.EndMeasurement("ChunkProcessor.ProcessColumn.StoreChunk");
                 }
                 
+                PerformanceMonitor.StartMeasurement("ChunkProcessor.ProcessColumn.ProcessChunk");
                 if (!chunk.IsFullyEmpty())
                 {
                     chunksToRender.Add(chunk);
                     foundOpaque = chunk.IsOpaque;
                 }
+                PerformanceMonitor.EndMeasurement("ChunkProcessor.ProcessColumn.ProcessChunk");
             }
+            PerformanceMonitor.EndMeasurement("ChunkProcessor.ProcessColumn.ChunkLoop");
 
+            PerformanceMonitor.StartMeasurement("ChunkProcessor.ProcessColumn.QueueChunks");
             // Batch process chunks that need rendering
             if (chunksToRender.Count > 0)
             {
@@ -259,12 +326,14 @@ public class ChunkQueueProcessor : MonoBehaviour
             }
             else
             {
-                completedColumns.Add(columnPos); // Mark empty columns as completed
+                completedColumns.Add(columnPos);
             }
-        }
+            PerformanceMonitor.EndMeasurement("ChunkProcessor.ProcessColumn.QueueChunks");
+                    }
         finally
         {
             columnsInProgress.Remove(columnPos);
         }
+        PerformanceMonitor.EndMeasurement("ChunkProcessor.ProcessColumn.Total");
     }
 }

@@ -2,6 +2,21 @@ using UnityEngine;
 using UnityEngine.U2D;
 using System.Linq;
 
+public enum BlockType : byte
+{
+    Air = 0,
+    Stone,
+    Dirt,
+    Gravel,
+    Coal,
+    Grass,
+    TallGrass,
+    Flower,
+    Sand,
+    Sandstone,
+    Snow
+}
+
 public class Block
 {
     public string Name { get; }
@@ -10,13 +25,15 @@ public class Block
     public BlockRenderType RenderType { get; }
     public Vector2[] UVs { get; private set; }
     public bool UseRandomRotation { get; }
+    public BlockType BlockType { get; }
 
-    private Block(string name, bool isOpaque, Color32 fallbackColor, BlockRenderType type = BlockRenderType.Cube, bool rotate = false)
+    private Block(string name, BlockType blockType, bool isOpaque, Color32 fallbackColor, BlockRenderType renderType = BlockRenderType.Cube, bool rotate = false)
     {
         Name = name;
+        BlockType = blockType;
         IsOpaque = isOpaque;
         Color = fallbackColor;
-        RenderType = type;
+        RenderType = renderType;
         UseRandomRotation = rotate;
     }
 
@@ -41,16 +58,16 @@ public class Block
 
     public static class Types
     {
-        public static Block Stone = new("Stone", true, new Color32(149, 157, 169, 255), rotate: true);
-        public static Block Dirt = new("Dirt", true, new Color32(161, 127, 89, 255), rotate: true);
-        public static Block Gravel = new("Gravel", true, new Color32(137, 142, 151, 255), rotate: true);
-        public static Block Coal = new("Coal", true, new Color32(81, 82, 89, 255), rotate: true);
-        public static Block Grass = new("Grass", true, new Color32(124, 167, 89, 255), rotate: true);
-        public static Block TallGrass = new("TallGrass", false, new Color32(149, 196, 107, 255), BlockRenderType.Flat);
-        public static Block Flower = new("Flower", false, new Color32(255, 232, 171, 255), BlockRenderType.Flat);
-        public static Block Sand = new("Sand", true, new Color32(237, 225, 186, 255), rotate: true);
-        public static Block Sandstone = new("Sandstone", true, new Color32(226, 208, 176, 255), rotate: true);
-        public static Block Snow = new("Snow", true, new Color32(235, 241, 245, 255), rotate: true);
+        public static Block Stone = new("Stone", BlockType.Stone, true, new Color32(149, 157, 169, 255), rotate: true);
+        public static Block Dirt = new("Dirt", BlockType.Dirt, true, new Color32(161, 127, 89, 255), rotate: true);
+        public static Block Gravel = new("Gravel", BlockType.Gravel, true, new Color32(137, 142, 151, 255), rotate: true);
+        public static Block Coal = new("Coal", BlockType.Coal, true, new Color32(81, 82, 89, 255), rotate: true);
+        public static Block Grass = new("Grass", BlockType.Grass, true, new Color32(124, 167, 89, 255), rotate: true);
+        public static Block TallGrass = new("TallGrass", BlockType.TallGrass, false, new Color32(149, 196, 107, 255), BlockRenderType.Flat);
+        public static Block Flower = new("Flower", BlockType.Flower, false, new Color32(255, 232, 171, 255), BlockRenderType.Flat);
+        public static Block Sand = new("Sand", BlockType.Sand, true, new Color32(237, 225, 186, 255), rotate: true);
+        public static Block Sandstone = new("Sandstone", BlockType.Sandstone, true, new Color32(226, 208, 176, 255), rotate: true);
+        public static Block Snow = new("Snow", BlockType.Snow, true, new Color32(235, 241, 245, 255), rotate: true);
 
         public static void Initialize(SpriteAtlas atlas)
         {

@@ -30,6 +30,8 @@ Shader "Custom/TerrainShadowShader"
             #pragma multi_compile _ _ADDITIONAL_LIGHTS
             #pragma multi_compile _ _ADDITIONAL_LIGHT_SHADOWS
             #pragma multi_compile _ _SHADOWS_SOFT
+            #pragma multi_compile_instancing
+            #pragma instancing_options renderinglayer
             
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
@@ -53,6 +55,7 @@ Shader "Custom/TerrainShadowShader"
                 float3 normalOS : NORMAL;
                 float4 color : COLOR;
                 float2 uv : TEXCOORD0;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
             struct Varyings
@@ -63,11 +66,15 @@ Shader "Custom/TerrainShadowShader"
                 float4 positionWS : TEXCOORD1;
                 float2 uv : TEXCOORD2;
                 float4 screenPos : TEXCOORD3;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
             Varyings vert(Attributes input)
             {
                 Varyings output;
+                UNITY_SETUP_INSTANCE_ID(input);
+                UNITY_TRANSFER_INSTANCE_ID(input, output);
+                
                 output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
                 output.positionWS = mul(unity_ObjectToWorld, input.positionOS);
                 output.normalWS = TransformObjectToWorldNormal(input.normalOS);
@@ -79,6 +86,8 @@ Shader "Custom/TerrainShadowShader"
 
             float4 frag(Varyings input) : SV_Target
             {
+                UNITY_SETUP_INSTANCE_ID(input);
+                
                 // Sample texture
                 float4 texColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv);
                 
@@ -115,6 +124,7 @@ Shader "Custom/TerrainShadowShader"
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            #pragma multi_compile_instancing
             
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"

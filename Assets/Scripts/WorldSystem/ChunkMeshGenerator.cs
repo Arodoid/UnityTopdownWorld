@@ -1,7 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Unity.Collections;
+using Unity.Jobs;
+using Unity.Mathematics;
 using VoxelGame.Interfaces;
 using VoxelGame.Utilities;
+using VoxelGame.WorldSystem.Jobs;
 
 namespace VoxelGame.WorldSystem
 {
@@ -11,7 +15,7 @@ namespace VoxelGame.WorldSystem
         [SerializeField] private IChunkManager chunkManager;
         
         private ObjectPool<Mesh> meshPool;
-        private Dictionary<Vector3Int, float> chunkUpdateTimes = new Dictionary<Vector3Int, float>();
+        private Dictionary<Vector3Int, JobHandle> pendingJobs = new Dictionary<Vector3Int, JobHandle>();
 
         private void Awake()
         {
@@ -24,209 +28,165 @@ namespace VoxelGame.WorldSystem
             if (chunkManager == null) chunkManager = GetComponent<IChunkManager>();
         }
 
-        public bool HasPendingJob(Vector3Int chunkPos) => false;
+        public bool HasPendingJob(Vector3Int chunkPos) => pendingJobs.ContainsKey(chunkPos);
 
         public bool GenerateMeshData(Chunk chunk, Mesh mesh, int maxYLevel)
         {
+            return GenerateMeshData(chunk, mesh, maxYLevel, MeshLODLevel.High);
+        }
+
+        private bool GenerateMeshData(Chunk chunk, Mesh mesh, int maxYLevel, MeshLODLevel lodLevel)
+        {
+            PerformanceMonitor.StartMeasurement("MeshGen.GenerateMeshData");
             if (chunk == null || chunk.IsFullyEmpty()) return true;
 
-            Vector3Int chunkPos = chunk.Position;
-            chunkUpdateTimes[chunkPos] = Time.time;
-
-            var meshData = GenerateMeshDataImmediate(chunk, maxYLevel);
-            if (mesh != null)
+            // Convert chunk data to job-friendly format
+            var jobData = new ChunkJobData
             {
-                ApplyMeshData(mesh, meshData);
-            }
-            
-            return true;
-        }
+                chunkPosition = new int3(chunk.Position.x, chunk.Position.y, chunk.Position.z),
+                chunkSize = Chunk.ChunkSize,
+                maxYLevel = Mathf.Min(Chunk.ChunkSize, maxYLevel - chunk.Position.y * Chunk.ChunkSize),
+                blocks = new NativeArray<BlockData>(
+                    Chunk.ChunkSize * Chunk.ChunkSize * Chunk.ChunkSize, 
+                    Allocator.TempJob
+                ),
+                lodLevel = lodLevel
+            };
 
-        private (Vector3[] vertices, int[] triangles, Vector2[] uvs, Color32[] colors) GenerateMeshDataImmediate(Chunk chunk, int maxYLevel)
-        {
-            var vertices = new List<Vector3>();
-            var triangles = new List<int>();
-            var uvs = new List<Vector2>();
-            var colors = new List<Color32>();
-
-            int effectiveYLimit = Mathf.Min(Chunk.ChunkSize, Mathf.Max(0, maxYLevel - chunk.Position.y * Chunk.ChunkSize));
-
-            // Process blocks in natural order
+            // Fill block data
             for (int x = 0; x < Chunk.ChunkSize; x++)
-            for (int y = 0; y < effectiveYLimit; y++)
+            for (int y = 0; y < Chunk.ChunkSize; y++)
             for (int z = 0; z < Chunk.ChunkSize; z++)
             {
-                ProcessBlock(chunk, x, y, z, vertices, triangles, uvs, colors);
-            }
-
-            return (vertices.ToArray(), triangles.ToArray(), uvs.ToArray(), colors.ToArray());
-        }
-
-        private void ProcessBlock(Chunk chunk, int x, int y, int z, 
-            List<Vector3> vertices, List<int> triangles, List<Vector2> uvs, List<Color32> colors)
-        {
-            var block = chunk.GetBlock(x, y, z);
-            if (block == null) return;
-
-            // Check each face
-            for (int face = 0; face < 6; face++)
-            {
-                if (ShouldRenderFace(chunk, x, y, z, face))
+                var block = chunk.GetBlock(x, y, z);
+                int index = (y * Chunk.ChunkSize * Chunk.ChunkSize) + (x * Chunk.ChunkSize) + z;
+                
+                if (block != null)
                 {
-                    AddFace(chunk, x, y, z, face, vertices, triangles, uvs, colors);
+                    // Debug UV coordinates                    
+                    jobData.blocks[index] = new BlockData
+                    {
+                        blockType = (byte)block.BlockType,
+                        color = new float4(
+                            block.Color.r / 255f, 
+                            block.Color.g / 255f, 
+                            block.Color.b / 255f, 
+                            block.Color.a / 255f
+                        ),
+                        uvStart = float2.zero, // Not used anymore
+                        isOpaque = block.IsOpaque
+                    };
                 }
             }
-        }
 
-        private bool ShouldRenderFace(Chunk chunk, int x, int y, int z, int face)
-        {
-            var normal = GetFaceNormal(face);
-            int nx = x + normal.x;
-            int ny = y + normal.y;
-            int nz = z + normal.z;
+            // Create output containers
+            var vertices = new NativeList<float3>(Allocator.TempJob);
+            var triangles = new NativeList<int>(Allocator.TempJob);
+            var uvs = new NativeList<float2>(Allocator.TempJob);
+            var colors = new NativeList<float4>(Allocator.TempJob);
+            
+            // Allocate merged array
+            var merged = new NativeArray<bool>(
+                Chunk.ChunkSize * Chunk.ChunkSize, 
+                Allocator.TempJob
+            );
 
-            if (IsInChunkBounds(nx, ny, nz))
+            // Create and schedule the job
+            var job = new MeshGenerationJob
             {
-                return chunk.GetBlock(nx, ny, nz) == null;
-            }
-            
-            // Check neighbor chunks
-            var neighborChunk = GetNeighborChunk(chunk, nx, ny, nz);
-            if (neighborChunk != null)
+                chunkData = jobData,
+                vertices = vertices,
+                triangles = triangles,
+                uvs = uvs,
+                colors = colors,
+                merged = merged // Assign the merged array
+            };
+
+            var handle = job.Schedule();
+            handle.Complete();
+
+            // Apply results to mesh
+            if (mesh != null)
             {
-                var localPos = WrapCoordinates(nx, ny, nz);
-                return neighborChunk.GetBlock(localPos.x, localPos.y, localPos.z) == null;
+                ApplyJobResults(mesh, vertices, triangles, uvs, colors);
             }
-            
+
+            // Cleanup
+            jobData.blocks.Dispose();
+            vertices.Dispose();
+            triangles.Dispose();
+            uvs.Dispose();
+            colors.Dispose();
+            merged.Dispose(); // Don't forget to dispose the merged array
+
+            PerformanceMonitor.EndMeasurement("MeshGen.GenerateMeshData");
             return true;
         }
 
-        private void AddFace(Chunk chunk, int x, int y, int z, int face, 
-            List<Vector3> vertices, List<int> triangles, List<Vector2> uvs, List<Color32> colors)
+        private void ApplyJobResults(
+            Mesh mesh, 
+            NativeList<float3> vertices, 
+            NativeList<int> triangles,
+            NativeList<float2> uvs,
+            NativeList<float4> colors)
         {
-            int vertexStart = vertices.Count;
-            Vector3 pos = new Vector3(x, y, z);
+            // Convert NativeArray data to Unity types
+            var unityVertices = new Vector3[vertices.Length];
+            var unityUVs = new Vector2[uvs.Length];
+            var unityColors = new Color32[colors.Length];
+            var unityTriangles = new int[triangles.Length];
 
-            // Add vertices based on face
-            switch (face)
+            for (int i = 0; i < vertices.Length; i++)
             {
-                case 0: // Right (positive X) - Fixing winding order
-                    vertices.AddRange(new[] {
-                        pos + new Vector3(1, 0, 1),  // Changed order
-                        pos + new Vector3(1, 0, 0),
-                        pos + new Vector3(1, 1, 0),
-                        pos + new Vector3(1, 1, 1)
-                    });
-                    break;
-                case 1: // Left (negative X) - Fixing winding order
-                    vertices.AddRange(new[] {
-                        pos + new Vector3(0, 0, 0),  // Changed order
-                        pos + new Vector3(0, 0, 1),
-                        pos + new Vector3(0, 1, 1),
-                        pos + new Vector3(0, 1, 0)
-                    });
-                    break;
-                case 2: // Top
-                    vertices.AddRange(new[] {
-                        pos + new Vector3(0, 1, 1),
-                        pos + new Vector3(1, 1, 1),
-                        pos + new Vector3(1, 1, 0),
-                        pos + new Vector3(0, 1, 0)
-                    });
-                    break;
-                case 3: // Front
-                    vertices.AddRange(new[] {
-                        pos + new Vector3(0, 0, 1),
-                        pos + new Vector3(1, 0, 1),
-                        pos + new Vector3(1, 1, 1),
-                        pos + new Vector3(0, 1, 1)
-                    });
-                    break;
-                case 4: // Back
-                    vertices.AddRange(new[] {
-                        pos + new Vector3(1, 0, 0),
-                        pos + new Vector3(0, 0, 0),
-                        pos + new Vector3(0, 1, 0),
-                        pos + new Vector3(1, 1, 0)
-                    });
-                    break;
+                unityVertices[i] = new Vector3(vertices[i].x, vertices[i].y, vertices[i].z);
             }
 
-            // Get the block at this position
-            var block = chunk.GetBlock(x, y, z);
-            
-            // Add UVs from the block's atlas coordinates
-            uvs.AddRange(block.UVs);
-
-            // Use the block's color instead of face color
-            var blockColor = block.Color;
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < uvs.Length; i++)
             {
-                colors.Add(blockColor);
+                unityUVs[i] = new Vector2(uvs[i].x, uvs[i].y);
             }
 
-            // Add triangles
-            triangles.AddRange(new[] {
-                vertexStart, vertexStart + 1, vertexStart + 2,
-                vertexStart, vertexStart + 2, vertexStart + 3
-            });
-        }
-
-        private Vector3Int GetFaceNormal(int face)
-        {
-            switch (face)
+            for (int i = 0; i < colors.Length; i++)
             {
-                case 0: return new Vector3Int(1, 0, 0);   // Right
-                case 1: return new Vector3Int(-1, 0, 0);  // Left
-                case 2: return new Vector3Int(0, 1, 0);   // Top
-                case 3: return new Vector3Int(0, 0, 1);   // Front
-                case 4: return new Vector3Int(0, 0, -1);  // Back
-                default: return new Vector3Int(0, 0, 0);
+                unityColors[i] = new Color32(
+                    (byte)(colors[i].x * 255),
+                    (byte)(colors[i].y * 255),
+                    (byte)(colors[i].z * 255),
+                    (byte)(colors[i].w * 255)
+                );
             }
-        }
 
-        private bool IsInChunkBounds(int x, int y, int z)
-        {
-            return x >= 0 && x < Chunk.ChunkSize && 
-                   y >= 0 && y < Chunk.ChunkSize && 
-                   z >= 0 && z < Chunk.ChunkSize;
-        }
+            // Copy triangles to regular array
+            for (int i = 0; i < triangles.Length; i++)
+            {
+                unityTriangles[i] = triangles[i];
+            }
 
-        private Vector3Int WrapCoordinates(int x, int y, int z)
-        {
-            return new Vector3Int(
-                (x + Chunk.ChunkSize) % Chunk.ChunkSize,
-                (y + Chunk.ChunkSize) % Chunk.ChunkSize,
-                (z + Chunk.ChunkSize) % Chunk.ChunkSize
-            );
-        }
-
-        private Chunk GetNeighborChunk(Chunk chunk, int x, int y, int z)
-        {
-            var chunkPos = chunk.Position;
-            if (x < 0) return chunkManager.GetChunk(new Vector3Int(chunkPos.x - 1, chunkPos.y, chunkPos.z));
-            if (x >= Chunk.ChunkSize) return chunkManager.GetChunk(new Vector3Int(chunkPos.x + 1, chunkPos.y, chunkPos.z));
-            if (y < 0) return chunkManager.GetChunk(new Vector3Int(chunkPos.x, chunkPos.y - 1, chunkPos.z));
-            if (y >= Chunk.ChunkSize) return chunkManager.GetChunk(new Vector3Int(chunkPos.x, chunkPos.y + 1, chunkPos.z));
-            if (z < 0) return chunkManager.GetChunk(new Vector3Int(chunkPos.x, chunkPos.y, chunkPos.z - 1));
-            if (z >= Chunk.ChunkSize) return chunkManager.GetChunk(new Vector3Int(chunkPos.x, chunkPos.y, chunkPos.z + 1));
-            return null;
-        }
-
-        private void ApplyMeshData(Mesh mesh, (Vector3[] vertices, int[] triangles, Vector2[] uvs, Color32[] colors) data)
-        {
-            mesh.SetVertices(data.vertices);
-            mesh.SetTriangles(data.triangles, 0);
-            mesh.SetUVs(0, data.uvs);
-            mesh.SetColors(data.colors);
+            mesh.Clear();
+            mesh.SetVertices(unityVertices);
+            mesh.SetTriangles(unityTriangles, 0); // Now using the regular array
+            mesh.SetUVs(0, unityUVs);
+            mesh.SetColors(unityColors);
             mesh.RecalculateNormals();
             mesh.RecalculateBounds();
         }
 
         public void CancelJob(Vector3Int chunkPos)
         {
-            // No jobs to cancel in this simplified version
-            chunkUpdateTimes.Remove(chunkPos);
+            if (pendingJobs.TryGetValue(chunkPos, out JobHandle handle))
+            {
+                handle.Complete();
+                pendingJobs.Remove(chunkPos);
+            }
+        }
+
+        private void OnDestroy()
+        {
+            foreach (var handle in pendingJobs.Values)
+            {
+                handle.Complete();
+            }
+            pendingJobs.Clear();
         }
     }
 }

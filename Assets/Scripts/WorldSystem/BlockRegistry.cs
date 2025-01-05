@@ -74,6 +74,7 @@ public class BlockRegistry : MonoBehaviour
         {
             Debug.Log("Creating terrain material...");
             terrainMaterial = new Material(terrainShader);
+            terrainMaterial.enableInstancing = true;
             
             // Get sprites from atlas with proper error handling
             Sprite[] sprites = new Sprite[atlas.spriteCount];

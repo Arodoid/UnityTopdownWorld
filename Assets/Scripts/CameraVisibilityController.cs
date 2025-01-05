@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using VoxelGame.Utilities;
 
 public class CameraVisibilityController : MonoBehaviour
 {
@@ -15,6 +16,11 @@ public class CameraVisibilityController : MonoBehaviour
     private int currentYLevel = WorldDataManager.WORLD_MAX_Y;
     private Vector3 lastUpdatePosition;
     private float lastUpdateSize;
+
+    // Add these fields for optimization
+    private Vector3Int[] cachedChunkPositions;
+    private int cachedChunkCount;
+    private readonly int maxCachedChunks = 1024;
 
     public struct ViewData
     {
@@ -104,7 +110,8 @@ public class CameraVisibilityController : MonoBehaviour
 
     private void UpdateWorld()
     {
-        // Calculate view bounds with a generous margin
+        
+        // Measure bounds calculation
         float margin = Chunk.ChunkSize * 3f;
         float width = mainCamera.orthographicSize * 2f * mainCamera.aspect + margin;
         float height = mainCamera.orthographicSize * 2f + margin;
@@ -114,11 +121,58 @@ public class CameraVisibilityController : MonoBehaviour
             new Vector3(width, 1000f, height)
         );
 
+        // Measure chunk position calculations
+        if (cachedChunkPositions == null || cachedChunkPositions.Length != maxCachedChunks)
+        {
+            cachedChunkPositions = new Vector3Int[maxCachedChunks];
+        }
+
+        int minX = Mathf.FloorToInt((viewBounds.min.x - margin) / Chunk.ChunkSize);
+        int maxX = Mathf.CeilToInt((viewBounds.max.x + margin) / Chunk.ChunkSize);
+        int minZ = Mathf.FloorToInt((viewBounds.min.z - margin) / Chunk.ChunkSize);
+        int maxZ = Mathf.CeilToInt((viewBounds.max.z + margin) / Chunk.ChunkSize);
+
+        Vector2Int center = new Vector2Int(
+            Mathf.RoundToInt(transform.position.x / Chunk.ChunkSize),
+            Mathf.RoundToInt(transform.position.z / Chunk.ChunkSize)
+        );
+
+        cachedChunkCount = 0;
+        // Simple spiral pattern from center
+        int radius = 0;
+        int maxRadius = Mathf.Max(maxX - minX, maxZ - minZ);
+        
+        while (radius <= maxRadius && cachedChunkCount < maxCachedChunks)
+        {
+            for (int dx = -radius; dx <= radius; dx++)
+            for (int dz = -radius; dz <= radius; dz++)
+            {
+                // Only process edge of spiral
+                if (Mathf.Abs(dx) != radius && Mathf.Abs(dz) != radius) continue;
+                
+                int x = center.x + dx;
+                int z = center.y + dz;
+                
+                // Check bounds
+                if (x < minX || x > maxX || z < minZ || z > maxZ) continue;
+
+                if (cachedChunkCount < maxCachedChunks) // Ensure we don't exceed array bounds
+                {
+                    cachedChunkPositions[cachedChunkCount++] = new Vector3Int(x, 0, z);
+                }
+            }
+            radius++;
+        }
+
+
+        // Measure chunk processing
         ViewData viewData = new ViewData
         {
             YLevel = currentYLevel,
             ViewBounds = viewBounds
         };
+
         chunkProcessor.UpdateVisibleChunks(viewData);
+
     }
 }
