@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f27c180567d80364c969da1a622bb2e5, type: 3}
+  m_Name: WorldSystemSettings
+  m_EditorClassIdentifier: 
+  worldSeed: 12345
+  maxWorldHeight: 256
+  chunkSize: 16
+  maxLoadedChunks: 64
+  viewDistance: 1
+  maxChunksPerFrame: 4
+  maxConcurrentJobs: 32
+  meshPoolSize: 50
+  maxCachedChunks: 64
+  showChunkBoundaries: 1
+  enablePerformanceLogging: 1

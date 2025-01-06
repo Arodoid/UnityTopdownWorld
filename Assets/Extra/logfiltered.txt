@@ -1,35 +1,222 @@
-Active Jobs: 6 when trying to generate for chunk (-8, 3, -1)
-Active Jobs: 7 when trying to generate for chunk (0, 4, -9)
-Active Jobs: 8 when trying to generate for chunk (5, 4, 9)
-Start of Update - Active Jobs: 8
-Error processing completed job: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can read from the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
-InvalidOperationException: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can deallocate the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
-Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle.CheckDeallocateAndThrow (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle handle) (at <44f3679c53d1477a9c6e72f269e3a3a9>:0)
-Unity.Collections.CollectionHelper.DisposeSafetyHandle (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle& handle) (at ./Library/PackageCache/com.unity.collections/Unity.Collections/CollectionHelper.cs:602)
-Unity.Collections.NativeList`1[T].Dispose () (at ./Library/PackageCache/com.unity.collections/Unity.Collections/NativeList.cs:513)
-Active Jobs: 8 when trying to generate for chunk (6, 4, 9)
-Start of Update - Active Jobs: 8
-Error processing completed job: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can read from the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
-InvalidOperationException: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can deallocate the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
-Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle.CheckDeallocateAndThrow (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle handle) (at <44f3679c53d1477a9c6e72f269e3a3a9>:0)
-Unity.Collections.CollectionHelper.DisposeSafetyHandle (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle& handle) (at ./Library/PackageCache/com.unity.collections/Unity.Collections/CollectionHelper.cs:602)
-Unity.Collections.NativeList`1[T].Dispose () (at ./Library/PackageCache/com.unity.collections/Unity.Collections/NativeList.cs:513)
-Active Jobs: 8 when trying to generate for chunk (-4, 3, -8)
-Start of Update - Active Jobs: 8
-Error processing completed job: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can read from the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
-InvalidOperationException: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can deallocate the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
-Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle.CheckDeallocateAndThrow (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle handle) (at <44f3679c53d1477a9c6e72f269e3a3a9>:0)
-Unity.Collections.CollectionHelper.DisposeSafetyHandle (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle& handle) (at ./Library/PackageCache/com.unity.collections/Unity.Collections/CollectionHelper.cs:602)
-Unity.Collections.NativeList`1[T].Dispose () (at ./Library/PackageCache/com.unity.collections/Unity.Collections/NativeList.cs:513)
-Active Jobs: 8 when trying to generate for chunk (-8, 3, -3)
-Start of Update - Active Jobs: 8
-Error processing completed job: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can read from the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
-InvalidOperationException: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can deallocate the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
-Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle.CheckDeallocateAndThrow (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle handle) (at <44f3679c53d1477a9c6e72f269e3a3a9>:0)
-Unity.Collections.CollectionHelper.DisposeSafetyHandle (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle& handle) (at ./Library/PackageCache/com.unity.collections/Unity.Collections/CollectionHelper.cs:602)
-Unity.Collections.NativeList`1[T].Dispose () (at ./Library/PackageCache/com.unity.collections/Unity.Collections/NativeList.cs:513)
-Active Jobs: 8 when trying to generate for chunk (4, 4, 10)
-Start of Update - Active Jobs: 8
-Active Jobs: 0 when trying to generate for chunk (4, 4, -7)
-Active Jobs: 1 when trying to generate for chunk (-6, 4, -9)
-Active Jobs: 2 when trying to generate for chunk (-6, 3, -9)
+Initializing BlockRegistry...
+Atlas state: Found
+BlockRegistry initialization complete
+Processing chunk at int2(8, 8)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(8, 7)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(8, 6)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(8, 5)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(8, 4)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(8, 3)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(8, 2)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(8, 1)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(8, 0)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(8, -1)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(8, -2)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(8, -3)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(8, -4)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(8, -5)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(8, -6)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(8, -7)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(8, -8)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(7, 8)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(7, 7)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(7, 6)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(7, 5)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(7, 4)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(7, 3)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(7, 2)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(7, 1)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(7, 0)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(7, -1)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(7, -2)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(7, -3)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(7, -4)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(7, -5)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(7, -6)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(7, -7)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(7, -8)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(6, 8)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(6, 7)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(6, 6)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(6, 5)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(6, 4)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(6, 3)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(6, 2)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(6, 1)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(6, 0)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(6, -1)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(6, -2)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(6, -3)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(6, -4)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(6, -5)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(6, -6)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(6, -7)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(6, -8)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(5, 8)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(5, 7)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(5, 6)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Processing chunk at int2(5, 5)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+Generated mesh with 4 vertices

@@ -1,132 +1,1110 @@
-Active Jobs: 6 when trying to generate for chunk (-8, 3, -1)
+Initializing BlockRegistry...
 UnityEngine.Debug:Log (object)
-ChunkMeshGenerator:GenerateMeshData (Chunk,UnityEngine.Mesh,int) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:86)
-ChunkQueueProcessor:ProcessQueues () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:148)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:68)
+VoxelGame.WorldSystem.Core.Base.BlockRegistry:Initialize () (at Assets/Scripts/WorldSystem/Core/Base/BlockRegistry.cs:57)
+VoxelGame.WorldSystem.Core.Base.BlockRegistry:Awake () (at Assets/Scripts/WorldSystem/Core/Base/BlockRegistry.cs:20)
 
-Active Jobs: 7 when trying to generate for chunk (0, 4, -9)
+Atlas state: Found
 UnityEngine.Debug:Log (object)
-ChunkMeshGenerator:GenerateMeshData (Chunk,UnityEngine.Mesh,int) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:86)
-ChunkQueueProcessor:ProcessQueues () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:148)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:68)
+VoxelGame.WorldSystem.Core.Base.BlockRegistry:Initialize () (at Assets/Scripts/WorldSystem/Core/Base/BlockRegistry.cs:69)
+VoxelGame.WorldSystem.Core.Base.BlockRegistry:Awake () (at Assets/Scripts/WorldSystem/Core/Base/BlockRegistry.cs:20)
 
-Active Jobs: 8 when trying to generate for chunk (5, 4, 9)
+BlockRegistry initialization complete
 UnityEngine.Debug:Log (object)
-ChunkMeshGenerator:GenerateMeshData (Chunk,UnityEngine.Mesh,int) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:86)
-ChunkQueueProcessor:ProcessQueues () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:148)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:68)
+VoxelGame.WorldSystem.Core.Base.BlockRegistry:Initialize () (at Assets/Scripts/WorldSystem/Core/Base/BlockRegistry.cs:75)
+VoxelGame.WorldSystem.Core.Base.BlockRegistry:Awake () (at Assets/Scripts/WorldSystem/Core/Base/BlockRegistry.cs:20)
 
-Start of Update - Active Jobs: 8
+Processing chunk at int2(8, 8)
 UnityEngine.Debug:Log (object)
-ChunkMeshGenerator:Update () (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:193)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
 
-Error processing completed job: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can read from the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
-UnityEngine.Debug:LogError (object)
-ChunkMeshGenerator:ProcessCompletedJob (int) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:252)
-ChunkMeshGenerator:Update () (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:208)
-
-InvalidOperationException: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can deallocate the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
-Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle.CheckDeallocateAndThrow (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle handle) (at <44f3679c53d1477a9c6e72f269e3a3a9>:0)
-Unity.Collections.CollectionHelper.DisposeSafetyHandle (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle& handle) (at ./Library/PackageCache/com.unity.collections/Unity.Collections/CollectionHelper.cs:602)
-Unity.Collections.NativeList`1[T].Dispose () (at ./Library/PackageCache/com.unity.collections/Unity.Collections/NativeList.cs:513)
-ChunkMeshGenerator.DisposePendingJob (ChunkMeshGenerator+PendingJobData jobData) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:296)
-ChunkMeshGenerator.ProcessCompletedJob (System.Int32 jobIndex) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:256)
-ChunkMeshGenerator.Update () (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:208)
-
-Active Jobs: 8 when trying to generate for chunk (6, 4, 9)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
 UnityEngine.Debug:Log (object)
-ChunkMeshGenerator:GenerateMeshData (Chunk,UnityEngine.Mesh,int) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:86)
-ChunkQueueProcessor:ProcessQueues () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:148)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:68)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
 
-Start of Update - Active Jobs: 8
+Generated mesh with 4 vertices
 UnityEngine.Debug:Log (object)
-ChunkMeshGenerator:Update () (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:193)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
 
-Error processing completed job: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can read from the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
-UnityEngine.Debug:LogError (object)
-ChunkMeshGenerator:ProcessCompletedJob (int) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:252)
-ChunkMeshGenerator:Update () (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:208)
-
-InvalidOperationException: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can deallocate the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
-Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle.CheckDeallocateAndThrow (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle handle) (at <44f3679c53d1477a9c6e72f269e3a3a9>:0)
-Unity.Collections.CollectionHelper.DisposeSafetyHandle (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle& handle) (at ./Library/PackageCache/com.unity.collections/Unity.Collections/CollectionHelper.cs:602)
-Unity.Collections.NativeList`1[T].Dispose () (at ./Library/PackageCache/com.unity.collections/Unity.Collections/NativeList.cs:513)
-ChunkMeshGenerator.DisposePendingJob (ChunkMeshGenerator+PendingJobData jobData) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:296)
-ChunkMeshGenerator.ProcessCompletedJob (System.Int32 jobIndex) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:256)
-ChunkMeshGenerator.Update () (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:208)
-
-Active Jobs: 8 when trying to generate for chunk (-4, 3, -8)
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
 UnityEngine.Debug:Log (object)
-ChunkMeshGenerator:GenerateMeshData (Chunk,UnityEngine.Mesh,int) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:86)
-ChunkQueueProcessor:ProcessQueues () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:148)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:68)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
 
-Start of Update - Active Jobs: 8
+Processing chunk at int2(8, 7)
 UnityEngine.Debug:Log (object)
-ChunkMeshGenerator:Update () (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:193)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
 
-Error processing completed job: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can read from the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
-UnityEngine.Debug:LogError (object)
-ChunkMeshGenerator:ProcessCompletedJob (int) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:252)
-ChunkMeshGenerator:Update () (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:208)
-
-InvalidOperationException: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can deallocate the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
-Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle.CheckDeallocateAndThrow (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle handle) (at <44f3679c53d1477a9c6e72f269e3a3a9>:0)
-Unity.Collections.CollectionHelper.DisposeSafetyHandle (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle& handle) (at ./Library/PackageCache/com.unity.collections/Unity.Collections/CollectionHelper.cs:602)
-Unity.Collections.NativeList`1[T].Dispose () (at ./Library/PackageCache/com.unity.collections/Unity.Collections/NativeList.cs:513)
-ChunkMeshGenerator.DisposePendingJob (ChunkMeshGenerator+PendingJobData jobData) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:296)
-ChunkMeshGenerator.ProcessCompletedJob (System.Int32 jobIndex) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:256)
-ChunkMeshGenerator.Update () (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:208)
-
-Active Jobs: 8 when trying to generate for chunk (-8, 3, -3)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
 UnityEngine.Debug:Log (object)
-ChunkMeshGenerator:GenerateMeshData (Chunk,UnityEngine.Mesh,int) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:86)
-ChunkQueueProcessor:ProcessQueues () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:148)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:68)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
 
-Start of Update - Active Jobs: 8
+Generated mesh with 4 vertices
 UnityEngine.Debug:Log (object)
-ChunkMeshGenerator:Update () (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:193)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
 
-Error processing completed job: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can read from the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
-UnityEngine.Debug:LogError (object)
-ChunkMeshGenerator:ProcessCompletedJob (int) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:252)
-ChunkMeshGenerator:Update () (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:208)
-
-InvalidOperationException: The previously scheduled job GenerateChunkMeshJob writes to the Unity.Collections.NativeList`1[Unity.Mathematics.float3] GenerateChunkMeshJob.vertices. You must call JobHandle.Complete() on the job GenerateChunkMeshJob, before you can deallocate the Unity.Collections.NativeList`1[Unity.Mathematics.float3] safely.
-Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle.CheckDeallocateAndThrow (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle handle) (at <44f3679c53d1477a9c6e72f269e3a3a9>:0)
-Unity.Collections.CollectionHelper.DisposeSafetyHandle (Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle& handle) (at ./Library/PackageCache/com.unity.collections/Unity.Collections/CollectionHelper.cs:602)
-Unity.Collections.NativeList`1[T].Dispose () (at ./Library/PackageCache/com.unity.collections/Unity.Collections/NativeList.cs:513)
-ChunkMeshGenerator.DisposePendingJob (ChunkMeshGenerator+PendingJobData jobData) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:296)
-ChunkMeshGenerator.ProcessCompletedJob (System.Int32 jobIndex) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:256)
-ChunkMeshGenerator.Update () (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:208)
-
-Active Jobs: 8 when trying to generate for chunk (4, 4, 10)
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
 UnityEngine.Debug:Log (object)
-ChunkMeshGenerator:GenerateMeshData (Chunk,UnityEngine.Mesh,int) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:86)
-ChunkQueueProcessor:ProcessQueues () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:148)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:68)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
 
-Start of Update - Active Jobs: 8
+Processing chunk at int2(8, 6)
 UnityEngine.Debug:Log (object)
-ChunkMeshGenerator:Update () (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:193)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
 
-Active Jobs: 0 when trying to generate for chunk (4, 4, -7)
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
 UnityEngine.Debug:Log (object)
-ChunkMeshGenerator:GenerateMeshData (Chunk,UnityEngine.Mesh,int) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:86)
-ChunkQueueProcessor:ProcessQueues () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:148)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:68)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
 
-Active Jobs: 1 when trying to generate for chunk (-6, 4, -9)
+Generated mesh with 4 vertices
 UnityEngine.Debug:Log (object)
-ChunkMeshGenerator:GenerateMeshData (Chunk,UnityEngine.Mesh,int) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:86)
-ChunkQueueProcessor:ProcessQueues () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:148)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:68)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
 
-Active Jobs: 2 when trying to generate for chunk (-6, 3, -9)
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
 UnityEngine.Debug:Log (object)
-ChunkMeshGenerator:GenerateMeshData (Chunk,UnityEngine.Mesh,int) (at Assets/Scripts/WorldSystem/ChunkMeshGenerator.cs:86)
-ChunkQueueProcessor:ProcessQueues () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:148)
-ChunkQueueProcessor:Update () (at Assets/Scripts/WorldSystem/ChunkQueueProcessor.cs:68)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(8, 5)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(8, 4)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(8, 3)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(8, 2)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(8, 1)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(8, 0)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(8, -1)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(8, -2)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(8, -3)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(8, -4)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(8, -5)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(8, -6)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(8, -7)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(8, -8)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(7, 8)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(7, 7)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(7, 6)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(7, 5)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(7, 4)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(7, 3)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(7, 2)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(7, 1)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(7, 0)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(7, -1)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(7, -2)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(7, -3)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(7, -4)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(7, -5)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(7, -6)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(7, -7)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(7, -8)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(6, 8)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(6, 7)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(6, 6)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(6, 5)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(6, 4)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(6, 3)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(6, 2)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(6, 1)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(6, 0)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(6, -1)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(6, -2)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(6, -3)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(6, -4)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(6, -5)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(6, -6)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(6, -7)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(6, -8)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(5, 8)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(5, 7)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(5, 6)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Processing chunk at int2(5, 5)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+
+Generated mesh with 4 vertices
+UnityEngine.Debug:Log (object)
+VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
+VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
 
