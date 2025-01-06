@@ -5,17 +5,20 @@ using Unity.Jobs;
 using System.Collections.Generic;
 using WorldSystem.Data;
 using WorldSystem.Jobs;
+using System.Linq;
 
 public class ChunkManager : MonoBehaviour
 {
     private const int VERTS_PER_QUAD = 4;
     private const int TRIS_PER_QUAD = 6;
     private const int TOTAL_QUADS = ChunkData.SIZE * ChunkData.SIZE;
-    private const int CHUNKS_PER_FRAME = 128;  // Adjust based on performance needs
+    private const int CHUNKS_PER_FRAME = 32;  // Adjust based on performance needs
 
     [SerializeField] private Camera mainCamera;
     [SerializeField] private Material chunkMaterial;
-    [SerializeField] private float loadDistance = 100f;  // World units
+
+    [SerializeField] private float loadDistance = 100f;  // Fallback for perspective camera if orthographic is false for whatever reason
+    [SerializeField] private float chunkLoadBuffer = 1.2f; // 1.0 = exact fit, 1.2 = 20% extra, etc.
     
     private Dictionary<int2, GameObject> _activeChunks = new();
     private Dictionary<int2, byte[]> _chunkDataCache = new();
@@ -27,15 +30,26 @@ public class ChunkManager : MonoBehaviour
     private NativeArray<BlockDefinition> _blockDefs;
     private Vector3 _lastCameraPosition;
     private float _lastCameraHeight;
-    private const float UPDATE_THRESHOLD = 16f; // Only update when camera moves 1 unit
+    private const float UPDATE_THRESHOLD = 16f; // Only update when camera moves 1 chunk
 
     [SerializeField] private int poolSize = 512; // Adjust based on your max visible chunks
     private Queue<GameObject> _chunkPool;
     
-    private const int BATCH_SIZE = 8; // Adjust based on testing
+        private const int BATCH_SIZE = 256; // Adjust based on testing
     private List<int2> _batchPositions = new();
     private NativeArray<JobHandle> _batchHandles;
     
+    // Add new field to track last ortho size
+    private float _lastOrthoSize;
+
+    [SerializeField] private float bufferTimeSeconds = 10f; // How long chunks stay in memory after leaving view
+    private Dictionary<int2, (float timestamp, GameObject gameObject)> _inactiveChunks = new(); // Tracks chunks in buffer zone
+    private const float BUFFER_CHECK_INTERVAL = 1f; // How often to check buffer (optimization)
+    private float _lastBufferCheck;
+
+    [SerializeField] private int maxChunks = 512; // Maximum total chunks that can exist
+    private int TotalChunksInUse => _activeChunks.Count + _inactiveChunks.Count + _chunkPool.Count;
+
     void Start()
     {
         InitializeChunkPool();
@@ -62,9 +76,19 @@ public class ChunkManager : MonoBehaviour
         var chunk = new GameObject("Chunk Pool Object");
         chunk.transform.parent = transform;
         
-        // Add components that all chunks will need
+        // Add components for render mesh
         chunk.AddComponent<MeshFilter>();
         chunk.AddComponent<MeshRenderer>().material = chunkMaterial;
+        
+        // Add components for shadow mesh
+        var shadowObject = new GameObject("Shadow Mesh");
+        shadowObject.transform.parent = chunk.transform;
+        shadowObject.transform.localPosition = Vector3.zero;
+        var shadowMeshFilter = shadowObject.AddComponent<MeshFilter>();
+        var shadowMeshRenderer = shadowObject.AddComponent<MeshRenderer>();
+        shadowMeshRenderer.material = chunkMaterial;
+        shadowMeshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
+        shadowMeshRenderer.receiveShadows = false;
         
         return chunk;
     }
@@ -73,10 +97,12 @@ public class ChunkManager : MonoBehaviour
     {
         Vector3 currentCamPos = mainCamera.transform.position;
         float currentHeight = currentCamPos.y;
+        float currentOrthoSize = mainCamera.orthographicSize;
         
-        // Only update chunks if camera moved enough
+        // Only update chunks if camera moved enough or ortho size changed
         if (Vector3.Distance(_lastCameraPosition, currentCamPos) > UPDATE_THRESHOLD ||
-            Mathf.Abs(_lastCameraHeight - currentHeight) > UPDATE_THRESHOLD)
+            Mathf.Abs(_lastCameraHeight - currentHeight) > UPDATE_THRESHOLD ||
+            Mathf.Abs(_lastOrthoSize - currentOrthoSize) > 0.01f)  // Small threshold for ortho changes
         {
             UpdateVisibleChunks();
             QueueMissingChunks();
@@ -84,6 +110,7 @@ public class ChunkManager : MonoBehaviour
             
             _lastCameraPosition = currentCamPos;
             _lastCameraHeight = currentHeight;
+            _lastOrthoSize = currentOrthoSize;
         }
 
         // This still needs to run every frame to process the queue
@@ -94,22 +121,51 @@ public class ChunkManager : MonoBehaviour
     {
         _visibleChunkPositions.Clear();
         Vector3 camPos = mainCamera.transform.position;
-        float camHeight = camPos.y;
-        float viewDistance = Mathf.Min(loadDistance, camHeight * 2f); // Adjust view distance based on height
-
-        // Convert camera position to chunk coordinates
-        int2 centerChunk = new int2(
-            Mathf.FloorToInt(camPos.x / ChunkData.SIZE),
-            Mathf.FloorToInt(camPos.z / ChunkData.SIZE)
-        );
-
-        // Calculate visible chunks based on view distance
-        int chunkDistance = Mathf.CeilToInt(viewDistance / ChunkData.SIZE);
-        for (int x = -chunkDistance; x <= chunkDistance; x++)
-        for (int z = -chunkDistance; z <= chunkDistance; z++)
+        
+        if (mainCamera.orthographic)
         {
-            int2 chunkPos = new int2(centerChunk.x + x, centerChunk.y + z);
-            _visibleChunkPositions.Add(chunkPos);
+            float aspect = mainCamera.aspect;
+            float orthoWidth = mainCamera.orthographicSize * 2f * aspect;
+            float orthoHeight = mainCamera.orthographicSize * 2f;
+            
+            // Apply buffer to the view distances
+            orthoWidth *= chunkLoadBuffer;
+            orthoHeight *= chunkLoadBuffer;
+            
+            // Calculate chunk distances for width and height separately
+            int chunkDistanceX = Mathf.CeilToInt((orthoWidth * 0.5f) / ChunkData.SIZE);
+            int chunkDistanceZ = Mathf.CeilToInt((orthoHeight * 0.5f) / ChunkData.SIZE);
+
+            // Convert camera position to chunk coordinates
+            int2 centerChunk = new int2(
+                Mathf.FloorToInt(camPos.x / ChunkData.SIZE),
+                Mathf.FloorToInt(camPos.z / ChunkData.SIZE)
+            );
+
+            // Use different ranges for X and Z to create a rectangular area
+            for (int x = -chunkDistanceX; x <= chunkDistanceX; x++)
+            for (int z = -chunkDistanceZ; z <= chunkDistanceZ; z++)
+            {
+                int2 chunkPos = new int2(centerChunk.x + x, centerChunk.y + z);
+                _visibleChunkPositions.Add(chunkPos);
+            }
+        }
+        else
+        {
+            // Fallback for perspective camera (using the buffer as a direct multiplier)
+            float viewDistance = Mathf.Min(loadDistance, camPos.y * 2f) * chunkLoadBuffer;
+            int2 centerChunk = new int2(
+                Mathf.FloorToInt(camPos.x / ChunkData.SIZE),
+                Mathf.FloorToInt(camPos.z / ChunkData.SIZE)
+            );
+            
+            int chunkDistance = Mathf.CeilToInt(viewDistance / ChunkData.SIZE);
+            for (int x = -chunkDistance; x <= chunkDistance; x++)
+            for (int z = -chunkDistance; z <= chunkDistance; z++)
+            {
+                int2 chunkPos = new int2(centerChunk.x + x, centerChunk.y + z);
+                _visibleChunkPositions.Add(chunkPos);
+            }
         }
     }
 
@@ -141,21 +197,32 @@ public class ChunkManager : MonoBehaviour
             {
                 pendingMesh.jobHandle.Complete();
 
+                // Create render mesh
                 var mesh = new Mesh();
                 mesh.SetVertices(pendingMesh.vertices.Reinterpret<Vector3>());
                 mesh.SetTriangles(pendingMesh.triangles.ToArray(), 0);
                 mesh.SetUVs(0, pendingMesh.uvs.Reinterpret<Vector2>());
                 mesh.SetColors(pendingMesh.colors.Reinterpret<Color>());
                 mesh.RecalculateNormals();
-
                 pendingMesh.meshFilter.mesh = mesh;
 
-                // Cleanup
+                // Create shadow mesh
+                var shadowMesh = new Mesh();
+                shadowMesh.SetVertices(pendingMesh.shadowVertices.Reinterpret<Vector3>());
+                shadowMesh.SetTriangles(pendingMesh.shadowTriangles.ToArray(), 0);
+                shadowMesh.RecalculateNormals();
+                pendingMesh.shadowMeshFilter.mesh = shadowMesh;
+
+                // Cleanup ALL native arrays
                 pendingMesh.vertices.Dispose();
                 pendingMesh.triangles.Dispose();
                 pendingMesh.uvs.Dispose();
                 pendingMesh.colors.Dispose();
+                pendingMesh.meshCounts.Dispose();
                 pendingMesh.heightMap.Dispose();
+                pendingMesh.shadowVertices.Dispose();
+                pendingMesh.shadowTriangles.Dispose();
+                pendingMesh.shadowMeshCounts.Dispose();
 
                 _pendingMeshes.RemoveAt(i);
             }
@@ -208,28 +275,25 @@ public class ChunkManager : MonoBehaviour
     {
         var batchedChunks = new List<PendingChunk>(positions.Count);
 
-        // Set up all jobs in the batch
         for (int i = 0; i < positions.Count; i++)
         {
             var pos = positions[i];
             _chunksBeingProcessed.Add(pos);
 
-            // Skip if cached (same as before)
             if (_chunkDataCache.TryGetValue(pos, out byte[] cachedBlocks) && 
                 _heightMapCache.TryGetValue(pos, out HeightPoint[] cachedHeightMap))
             {
-                var cachedHeightMapNative = new NativeArray<HeightPoint>(cachedHeightMap, Allocator.TempJob);
-                var cachedBlocksNative = new NativeArray<byte>(cachedBlocks, Allocator.TempJob);
+                // Use Persistent allocator for cached data since it needs to survive until job completion
+                var cachedHeightMapNative = new NativeArray<HeightPoint>(cachedHeightMap, Allocator.Persistent);
+                var cachedBlocksNative = new NativeArray<byte>(cachedBlocks, Allocator.Persistent);
                 CreateChunkObject(pos, cachedBlocksNative, cachedHeightMapNative);
-                cachedHeightMapNative.Dispose();
-                cachedBlocksNative.Dispose();
                 _chunksBeingProcessed.Remove(pos);
                 continue;
             }
 
-            // Prepare job data
-            var blocks = new NativeArray<byte>(ChunkData.SIZE * ChunkData.SIZE * ChunkData.SIZE, Allocator.TempJob);
-            var heightMap = new NativeArray<HeightPoint>(ChunkData.SIZE * ChunkData.SIZE, Allocator.TempJob);
+            // Use Persistent allocator for job data
+            var blocks = new NativeArray<byte>(ChunkData.SIZE * ChunkData.SIZE * ChunkData.SIZE, Allocator.Persistent);
+            var heightMap = new NativeArray<HeightPoint>(ChunkData.SIZE * ChunkData.SIZE, Allocator.Persistent);
 
             var genJob = new ChunkGenerationJob
             {
@@ -239,8 +303,7 @@ public class ChunkManager : MonoBehaviour
                 heightMap = heightMap
             };
 
-            // Store job handle in the batch array
-            _batchHandles[i] = genJob.Schedule();
+            _batchHandles[i] = genJob.Schedule(ChunkData.SIZE * ChunkData.SIZE, 64);
 
             batchedChunks.Add(new PendingChunk
             {
@@ -250,7 +313,7 @@ public class ChunkManager : MonoBehaviour
             });
         }
 
-        // Combine all job handles in the batch
+        // Combine all job handles
         var combinedHandle = JobHandle.CombineDependencies(_batchHandles.Slice(0, positions.Count));
 
         // Update pending chunks with combined handle
@@ -270,16 +333,39 @@ public class ChunkManager : MonoBehaviour
     {
         GameObject chunkObject;
         
-        // Try to get from pool, create new if pool is empty
-        if (_chunkPool.Count > 0)
+        // First, try to force-reclaim chunks if we're at the limit
+        if (_chunkPool.Count == 0 && TotalChunksInUse >= maxChunks)
+        {
+            // Force immediate cleanup of oldest inactive chunks
+            var oldestChunks = _inactiveChunks
+                .OrderBy(x => x.Value.timestamp)
+                .Take(maxChunks / 4) // Reclaim 25% of max chunks
+                .ToList();
+
+            foreach (var old in oldestChunks)
+            {
+                _chunkPool.Enqueue(old.Value.gameObject);
+                _inactiveChunks.Remove(old.Key);
+            }
+        }
+
+        // Now try to get a chunk
+        if (_inactiveChunks.TryGetValue(position, out var inactive))
+        {
+            chunkObject = inactive.gameObject;
+            _inactiveChunks.Remove(position);
+            chunkObject.SetActive(true);
+        }
+        else if (_chunkPool.Count > 0)
         {
             chunkObject = _chunkPool.Dequeue();
             chunkObject.SetActive(true);
         }
         else
         {
-            Debug.LogWarning("Chunk pool depleted, creating new chunk object");
-            chunkObject = CreateChunkGameObject();
+            // If we still can't get a chunk, skip this one
+            Debug.LogWarning($"Cannot create chunk at {position}: At maximum chunk limit ({maxChunks}). Consider increasing maxChunks if needed.");
+            return;
         }
 
         // Configure the chunk
@@ -310,16 +396,27 @@ public class ChunkManager : MonoBehaviour
         public NativeArray<HeightPoint> heightMap;
         public GameObject gameObject;
         public MeshFilter meshFilter;
+        public NativeArray<int> meshCounts;
+        public NativeArray<float3> shadowVertices;
+        public NativeArray<int> shadowTriangles;
+        public NativeArray<int> shadowMeshCounts;
+        public MeshFilter shadowMeshFilter;
     }
 
     private List<PendingMesh> _pendingMeshes = new();
 
     private void CreateMesh(int2 position, NativeArray<HeightPoint> heightMap, MeshFilter meshFilter)
     {
-        var vertices = new NativeArray<float3>(TOTAL_QUADS * VERTS_PER_QUAD, Allocator.TempJob);
-        var triangles = new NativeArray<int>(TOTAL_QUADS * TRIS_PER_QUAD, Allocator.TempJob);
-        var uvs = new NativeArray<float2>(TOTAL_QUADS * VERTS_PER_QUAD, Allocator.TempJob);
-        var colors = new NativeArray<float4>(TOTAL_QUADS * VERTS_PER_QUAD, Allocator.TempJob);
+        // Change allocator from TempJob to Persistent since these arrays need to live longer
+        var vertices = new NativeArray<float3>(TOTAL_QUADS * VERTS_PER_QUAD, Allocator.Persistent);
+        var triangles = new NativeArray<int>(TOTAL_QUADS * TRIS_PER_QUAD, Allocator.Persistent);
+        var uvs = new NativeArray<float2>(TOTAL_QUADS * VERTS_PER_QUAD, Allocator.Persistent);
+        var colors = new NativeArray<float4>(TOTAL_QUADS * VERTS_PER_QUAD, Allocator.Persistent);
+        var meshCounts = new NativeArray<int>(ChunkData.SIZE * 4, Allocator.Persistent);
+
+        // Add shadow mesh arrays
+        var shadowVertices = new NativeArray<float3>(TOTAL_QUADS * VERTS_PER_QUAD * 4, Allocator.Persistent);
+        var shadowTriangles = new NativeArray<int>(TOTAL_QUADS * TRIS_PER_QUAD * 4, Allocator.Persistent);
 
         var meshJob = new ChunkMeshJob
         {
@@ -329,10 +426,15 @@ public class ChunkManager : MonoBehaviour
             triangles = triangles,
             uvs = uvs,
             colors = colors,
-            blockDefinitions = _blockDefs
+            blockDefinitions = _blockDefs,
+            meshCounts = meshCounts,
+            shadowVertices = shadowVertices,
+            shadowTriangles = shadowTriangles
         };
 
-        var jobHandle = meshJob.Schedule();
+        var jobHandle = meshJob.Schedule(ChunkData.SIZE, 1);
+        
+        var shadowMeshFilter = meshFilter.gameObject.transform.GetChild(0).GetComponent<MeshFilter>();
         
         _pendingMeshes.Add(new PendingMesh
         {
@@ -342,14 +444,20 @@ public class ChunkManager : MonoBehaviour
             triangles = triangles,
             uvs = uvs,
             colors = colors,
-            gameObject = meshFilter.gameObject,
             meshFilter = meshFilter,
-            heightMap = heightMap  // Store heightMap to dispose later
+            heightMap = heightMap,
+            meshCounts = meshCounts,
+            shadowVertices = shadowVertices,
+            shadowTriangles = shadowTriangles,
+            shadowMeshFilter = shadowMeshFilter
         });
     }
 
     void CleanupDistantChunks()
     {
+        var currentTime = Time.time;
+        
+        // Process chunks that just left view
         var chunksToRemove = new List<int2>();
         foreach (var chunk in _activeChunks)
         {
@@ -359,21 +467,49 @@ public class ChunkManager : MonoBehaviour
             }
         }
 
+        // Move them to inactive buffer instead of immediately pooling
         foreach (var pos in chunksToRemove)
         {
             var chunk = _activeChunks[pos];
+            _inactiveChunks[pos] = (currentTime, chunk); // Store both timestamp and GameObject
             chunk.SetActive(false);
-            _chunkPool.Enqueue(chunk); // Return to pool
             _activeChunks.Remove(pos);
         }
 
-        // Clean pending chunks
+        // Only check buffer periodically to save performance
+        if (currentTime - _lastBufferCheck > BUFFER_CHECK_INTERVAL)
+        {
+            _lastBufferCheck = currentTime;
+            
+            // Check buffer for chunks that have expired
+            var expiredChunks = new List<int2>();
+            foreach (var inactive in _inactiveChunks)
+            {
+                // If chunk has been inactive too long
+                if (currentTime - inactive.Value.timestamp > bufferTimeSeconds)
+                {
+                    expiredChunks.Add(inactive.Key);
+                }
+            }
+
+            // Actually pool expired chunks
+            foreach (var pos in expiredChunks)
+            {
+                if (_inactiveChunks.TryGetValue(pos, out var value))
+                {
+                    _chunkPool.Enqueue(value.gameObject);
+                    _inactiveChunks.Remove(pos);
+                }
+            }
+        }
+        
+        // Clean pending chunks.
         for (int i = _pendingChunks.Count - 1; i >= 0; i--)
         {
             if (!_visibleChunkPositions.Contains(_pendingChunks[i].position))
             {
                 var chunk = _pendingChunks[i];
-                chunk.jobHandle.Complete(); // Must complete before disposing
+                chunk.jobHandle.Complete(); // Must complete before disposing.
                 chunk.blocks.Dispose();
                 chunk.heightMap.Dispose();
                 _pendingChunks.RemoveAt(i);
@@ -399,6 +535,19 @@ public class ChunkManager : MonoBehaviour
 
     void OnDestroy()
     {
+        // Complete and dispose all pending meshes
+        foreach (var pendingMesh in _pendingMeshes)
+        {
+            pendingMesh.jobHandle.Complete();
+            pendingMesh.vertices.Dispose();
+            pendingMesh.triangles.Dispose();
+            pendingMesh.uvs.Dispose();
+            pendingMesh.colors.Dispose();
+            pendingMesh.meshCounts.Dispose();
+            pendingMesh.heightMap.Dispose();
+        }
+        _pendingMeshes.Clear();
+
         // Complete any pending jobs
         foreach (var job in _pendingJobs)
         {
@@ -409,6 +558,14 @@ public class ChunkManager : MonoBehaviour
         _activeChunks.Clear();
         _chunkDataCache.Clear();
         _heightMapCache.Clear();
+
+        // Clean up inactive chunks
+        foreach (var inactive in _inactiveChunks)
+        {
+            if (inactive.Value.gameObject != null)
+                Destroy(inactive.Value.gameObject);
+        }
+        _inactiveChunks.Clear();
 
         // Clean up pool
         while (_chunkPool.Count > 0)

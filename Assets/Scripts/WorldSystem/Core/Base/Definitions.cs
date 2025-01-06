@@ -53,22 +53,22 @@ namespace WorldSystem.Data
             },
             // Grass
             new BlockDefinition { 
-                color = new float4(0.4f, 0.7f, 0.3f, 1f), 
+                color = new float4(0.2f, 0.4f, 0.1f, 1f), 
                 isOpaque = true 
             },
             // Dirt
             new BlockDefinition { 
-                color = new float4(0.6f, 0.4f, 0.2f, 1f), 
+                color = new float4(0.35f, 0.2f, 0.05f, 1f), 
                 isOpaque = true 
             },
             // Stone
             new BlockDefinition { 
-                color = new float4(0.5f, 0.5f, 0.5f, 1f), 
+                color = new float4(0.25f, 0.25f, 0.25f, 1f), 
                 isOpaque = true 
             },
             // Sand
             new BlockDefinition { 
-                color = new float4(0.9f, 0.9f, 0.7f, 1f), 
+                color = new float4(0.6f, 0.6f, 0.4f, 1f), 
                 isOpaque = true 
             }
         };
