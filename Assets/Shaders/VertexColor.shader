@@ -3,8 +3,10 @@ Shader "Custom/VertexColor"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-        _HazeColor ("Haze Color", Color) = (0.5, 0.5, 0.5, 1)
-        _HazeDensity ("Haze Density", Range(0, 1)) = 0.1
+        _AtmosphereColor ("Atmosphere Color", Color) = (0.6, 0.8, 1.0, 1.0)
+        _AtmosphereDensity ("Atmosphere Density", Range(0, 1)) = 0.3
+        _AtmosphereHeight ("Atmosphere Height", Float) = 50
+        _OrthoSize ("Ortho Size", Float) = 10
     }
     SubShader
     {
@@ -14,6 +16,7 @@ Shader "Custom/VertexColor"
             "Queue"="Geometry"
         }
 
+        // Main pass for the visible mesh
         Pass
         {
             Name "ForwardLit"
@@ -47,6 +50,8 @@ Shader "Custom/VertexColor"
                 float3 normalWS : NORMAL;
                 float4 shadowCoord : TEXCOORD1;
                 float fogFactor : TEXCOORD2;
+                float3 worldPos : TEXCOORD3;
+                float viewDist : TEXCOORD4;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
                 UNITY_VERTEX_OUTPUT_STEREO
             };
@@ -54,8 +59,11 @@ Shader "Custom/VertexColor"
             TEXTURE2D(_MainTex);
             SAMPLER(sampler_MainTex);
             float4 _MainTex_ST;
-            float4 _HazeColor;
-            float _HazeDensity;
+
+            float4 _AtmosphereColor;
+            float _AtmosphereDensity;
+            float _AtmosphereHeight;
+            float _OrthoSize;
 
             Varyings vert(Attributes input)
             {
@@ -74,8 +82,28 @@ Shader "Custom/VertexColor"
                 output.normalWS = normalInput.normalWS;
                 output.shadowCoord = GetShadowCoord(vertexInput);
                 output.fogFactor = ComputeFogFactor(output.positionCS.z);
+                output.worldPos = vertexInput.positionWS;
+                output.viewDist = length(_WorldSpaceCameraPos - output.worldPos);
                 
                 return output;
+            }
+
+            float3 ApplyAtmosphericScattering(float3 color, float3 worldPos)
+            {
+                // Height-based atmosphere
+                float heightFactor = 1 - saturate(worldPos.y / _AtmosphereHeight);
+                
+                // Scale with ortho size (zoom level), but with a reasonable limit
+                float zoomFactor = saturate(_OrthoSize / 100.0); // Adjust 100.0 to change where atmosphere maxes out
+                
+                // Combine factors with a softer curve
+                float atmosphereFactor = heightFactor * _AtmosphereDensity * zoomFactor;
+                atmosphereFactor = saturate(atmosphereFactor); // Ensure we don't exceed 1
+                
+                // Use smoothstep for a more pleasing blend
+                atmosphereFactor = smoothstep(0, 0.8, atmosphereFactor);
+                
+                return lerp(color, _AtmosphereColor.rgb, atmosphereFactor);
             }
 
             half4 frag(Varyings input) : SV_Target
@@ -93,10 +121,11 @@ Shader "Custom/VertexColor"
                 float3 lighting = mainLight.color * (shadow * mainLight.distanceAttenuation);
                 color.rgb *= lighting;
                 
-                // Apply haze
-                float depth = input.positionCS.z;
-                float hazeFactor = saturate(depth * _HazeDensity);
-                color.rgb = lerp(color.rgb, _HazeColor.rgb, hazeFactor);
+                // Apply atmospheric scattering
+                color.rgb = ApplyAtmosphericScattering(color.rgb, input.worldPos);
+                
+                // Apply fog
+                color.rgb = MixFog(color.rgb, input.fogFactor);
                 
                 return color;
             }
@@ -107,31 +136,49 @@ Shader "Custom/VertexColor"
         Pass
         {
             Name "ShadowCaster"
-            Tags { "LightMode" = "ShadowCaster" }
+            Tags{"LightMode" = "ShadowCaster"}
 
             ZWrite On
             ZTest LEqual
+            ColorMask 0
+            Cull Back
 
             HLSLPROGRAM
             #pragma vertex ShadowPassVertex
             #pragma fragment ShadowPassFragment
-            
+
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
             struct Attributes
             {
-                float4 positionOS : POSITION;
-                float3 normalOS : NORMAL;
+                float4 positionOS   : POSITION;
+                float3 normalOS     : NORMAL;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
             struct Varyings
             {
-                float4 positionCS : SV_POSITION;
+                float4 positionCS   : SV_POSITION;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
                 UNITY_VERTEX_OUTPUT_STEREO
             };
+
+            float4 GetShadowPositionHClip(Attributes input)
+            {
+                float3 positionWS = TransformObjectToWorld(input.positionOS.xyz);
+                float3 normalWS = TransformObjectToWorldNormal(input.normalOS);
+
+                float4 positionCS = TransformWorldToHClip(positionWS);
+
+                #if UNITY_REVERSED_Z
+                    positionCS.z = min(positionCS.z, positionCS.w * UNITY_NEAR_CLIP_VALUE);
+                #else
+                    positionCS.z = max(positionCS.z, positionCS.w * UNITY_NEAR_CLIP_VALUE);
+                #endif
+
+                return positionCS;
+            }
 
             Varyings ShadowPassVertex(Attributes input)
             {
@@ -140,9 +187,7 @@ Shader "Custom/VertexColor"
                 UNITY_TRANSFER_INSTANCE_ID(input, output);
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
-                float3 positionWS = TransformObjectToWorld(input.positionOS.xyz);
-                output.positionCS = TransformWorldToHClip(ApplyShadowBias(positionWS, input.normalOS, _MainLightPosition.xyz));
-                
+                output.positionCS = GetShadowPositionHClip(input);
                 return output;
             }
 

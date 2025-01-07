@@ -17,6 +17,19 @@ namespace WorldSystem.Data
             }
         }
 
+        public T Peek()
+        {
+            if (_items.Count == 0) throw new System.InvalidOperationException("Queue is empty");
+            
+            if (_isDirty)
+            {
+                _items.Sort((a, b) => a.priority.CompareTo(b.priority));
+                _isDirty = false;
+            }
+
+            return _items[0].item;
+        }
+
         public T Dequeue()
         {
             if (_items.Count == 0) throw new System.InvalidOperationException("Queue is empty");
