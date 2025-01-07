@@ -35,9 +35,21 @@ namespace WorldSystem.Base
 
         [Header("Atmosphere Settings")]
         [SerializeField] private Color atmosphereColor = new Color(0.6f, 0.8f, 1.0f, 1.0f);
-        [SerializeField] private float atmosphereDensity = 0.3f;
-        [SerializeField] private float atmosphereHeight = 50f;
-        [SerializeField] private float distanceFactor = 100f;
+        [SerializeField] private float atmosphereDensity = 0.5f;
+        [SerializeField] private float atmosphereStartHeight = 20f;
+        [SerializeField] private float atmosphereEndHeight = 100f;
+        [SerializeField] private float atmosphereMaxOrthoSize = 100f;
+        [SerializeField] private float atmosphereMinOrthoSize = 20f;
+
+        [Header("Cloud Settings")]
+        [SerializeField] private float cloudScale = 20f;
+        [SerializeField] private float cloudSpeed = 0.05f;
+        [SerializeField] private float cloudDensity = 0.3f;
+        [SerializeField] private float cloudHeight = 100f;
+        [SerializeField] private float cloudMaxOrthoSize = 100f;
+        [SerializeField] private float cloudMinOrthoSize = 20f;
+        [SerializeField] private Color cloudColor = new Color(1, 1, 1, 0.6f);
+        [SerializeField] private float cloudShadowStrength = 0.3f;
 
         void Awake()
         {
@@ -48,11 +60,8 @@ namespace WorldSystem.Base
             _chunkPool = new ChunkPool(chunkMaterial, transform, poolSize, maxChunks, bufferTimeSeconds);
             UpdateVisibleChunks();
 
-            // Set the atmosphere properties on the material
-            chunkMaterial.SetColor("_AtmosphereColor", atmosphereColor);
-            chunkMaterial.SetFloat("_AtmosphereDensity", atmosphereDensity);
-            chunkMaterial.SetFloat("_AtmosphereHeight", atmosphereHeight);
-            chunkMaterial.SetFloat("_DistanceFactor", distanceFactor);
+            // Set initial material properties
+            UpdateMaterialProperties();
         }
 
         void Update()
@@ -79,11 +88,8 @@ namespace WorldSystem.Base
             ProcessChunkQueue();
             _meshBuilder.Update();
 
-            // Only what matters for orthographic
-            chunkMaterial.SetFloat("_OrthoSize", mainCamera.orthographicSize);
-            chunkMaterial.SetColor("_AtmosphereColor", atmosphereColor);
-            chunkMaterial.SetFloat("_AtmosphereDensity", atmosphereDensity);
-            chunkMaterial.SetFloat("_AtmosphereHeight", atmosphereHeight);
+            // Update material properties
+            UpdateMaterialProperties();
         }
 
         void UpdateVisibleChunks()
@@ -226,6 +232,40 @@ namespace WorldSystem.Base
                 }
             }
             _chunkLoadQueue = newQueue;
+        }
+
+        private void UpdateMaterialProperties()
+        {
+            // Atmosphere properties
+            chunkMaterial.SetColor("_AtmosphereColor", atmosphereColor);
+            chunkMaterial.SetFloat("_AtmosphereDensity", atmosphereDensity);
+            chunkMaterial.SetFloat("_AtmosphereStartHeight", atmosphereStartHeight);
+            chunkMaterial.SetFloat("_AtmosphereEndHeight", atmosphereEndHeight);
+            chunkMaterial.SetFloat("_AtmosphereMaxOrthoSize", atmosphereMaxOrthoSize);
+            chunkMaterial.SetFloat("_AtmosphereMinOrthoSize", atmosphereMinOrthoSize);
+            chunkMaterial.SetFloat("_OrthoSize", mainCamera.orthographicSize);
+
+            // Cloud and shadow properties
+            chunkMaterial.SetFloat("_CloudScale", cloudScale);
+            chunkMaterial.SetFloat("_CloudSpeed", cloudSpeed);
+            chunkMaterial.SetFloat("_CloudDensity", cloudDensity);
+            chunkMaterial.SetFloat("_CloudHeight", cloudHeight);
+            chunkMaterial.SetColor("_CloudColor", cloudColor);
+            chunkMaterial.SetFloat("_ShadowStrength", cloudShadowStrength);
+            chunkMaterial.SetFloat("_CloudMaxOrthoSize", cloudMaxOrthoSize);
+            chunkMaterial.SetFloat("_CloudMinOrthoSize", cloudMinOrthoSize);
+            
+            // Calculate shadow offset based on main directional light
+            Light mainLight = RenderSettings.sun;
+            if (mainLight != null)
+            {
+                Vector3 lightDir = -mainLight.transform.forward.normalized;
+                chunkMaterial.SetVector("_MainLightPosition", new Vector4(lightDir.x, lightDir.y, lightDir.z, 0));
+                
+                // We'll keep shadow offset for optimization/approximation at far distances
+                Vector2 shadowOffset = new Vector2(lightDir.x, lightDir.z) * (cloudHeight / -lightDir.y);
+                chunkMaterial.SetVector("_ShadowOffset", shadowOffset);
+            }
         }
 
         void OnDestroy()

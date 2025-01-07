@@ -6,7 +6,22 @@ Shader "Custom/VertexColor"
         _AtmosphereColor ("Atmosphere Color", Color) = (0.6, 0.8, 1.0, 1.0)
         _AtmosphereDensity ("Atmosphere Density", Range(0, 1)) = 0.3
         _AtmosphereHeight ("Atmosphere Height", Float) = 50
+        _AtmosphereStartHeight ("Atmosphere Start Height", Float) = 20
+        _AtmosphereEndHeight ("Atmosphere End Height", Float) = 100
+        _AtmosphereMaxOrthoSize ("Atmosphere Max Ortho Size", Float) = 100
+        _AtmosphereMinOrthoSize ("Atmosphere Min Ortho Size", Float) = 20
         _OrthoSize ("Ortho Size", Float) = 10
+        [Header(Cloud Settings)]
+        _CloudScale ("Cloud Scale", Range(1, 100)) = 50
+        _CloudSpeed ("Cloud Speed", Range(0, 1)) = 0.1
+        _CloudDensity ("Cloud Density", Range(0, 1)) = 0.5
+        _CloudHeight ("Cloud Height", Range(10, 1000)) = 100
+        _CloudColor ("Cloud Color", Color) = (1,1,1,0.6)
+        _CloudShadowTexture ("Cloud Shadow Texture", 2D) = "white" {}
+        _ShadowStrength ("Shadow Strength", Range(0, 1)) = 0.3
+        _CloudMaxOrthoSize ("Cloud Max Ortho Size", Float) = 100
+        _CloudMinOrthoSize ("Cloud Min Ortho Size", Float) = 20
+        _ShadowOffset ("Shadow Offset", Vector) = (0, 0, 0, 0)
     }
     SubShader
     {
@@ -63,7 +78,59 @@ Shader "Custom/VertexColor"
             float4 _AtmosphereColor;
             float _AtmosphereDensity;
             float _AtmosphereHeight;
+            float _AtmosphereStartHeight;
+            float _AtmosphereEndHeight;
+            float _AtmosphereMaxOrthoSize;
+            float _AtmosphereMinOrthoSize;
             float _OrthoSize;
+
+            float _CloudScale;
+            float _CloudSpeed;
+            float _CloudDensity;
+            float _CloudHeight;
+            float4 _CloudColor;
+            float _ShadowStrength;
+            float _CloudMaxOrthoSize;
+            float _CloudMinOrthoSize;
+
+            float2 _ShadowOffset;
+
+            // Noise functions
+            float2 hash2(float2 p)
+            {
+                p = float2(dot(p,float2(127.1,311.7)), dot(p,float2(269.5,183.3)));
+                return -1.0 + 2.0 * frac(sin(p) * 43758.5453123);
+            }
+
+            float noise(float2 p)
+            {
+                const float K1 = 0.366025404;
+                const float K2 = 0.211324865;
+                
+                float2 i = floor(p + (p.x + p.y) * K1);
+                float2 a = p - i + (i.x + i.y) * K2;
+                float2 o = (a.x > a.y) ? float2(1.0, 0.0) : float2(0.0, 1.0);
+                float2 b = a - o + K2;
+                float2 c = a - 1.0 + 2.0 * K2;
+                
+                float3 h = max(0.5 - float3(dot(a,a), dot(b,b), dot(c,c)), 0.0);
+                float3 n = h * h * h * h * float3(dot(a, hash2(i)), dot(b, hash2(i + o)), dot(c, hash2(i + 1.0)));
+                
+                return dot(n, float3(70.0, 70.0, 70.0));
+            }
+
+            float fbm(float2 p)
+            {
+                float f = 0.0;
+                float w = 0.5;
+                for (int i = 0; i < 5; i++)
+                {
+                    f += w * noise(p);
+                    p *= 2.0;
+                    w *= 0.5;
+                }
+                return f;
+            }
 
             Varyings vert(Attributes input)
             {
@@ -90,18 +157,23 @@ Shader "Custom/VertexColor"
 
             float3 ApplyAtmosphericScattering(float3 color, float3 worldPos)
             {
-                // Height-based atmosphere
-                float heightFactor = 1 - saturate(worldPos.y / _AtmosphereHeight);
+                // Height-based atmosphere with controlled range
+                float heightRange = _AtmosphereEndHeight - _AtmosphereStartHeight;
+                float normalizedHeight = (worldPos.y - _AtmosphereStartHeight) / heightRange;
+                float heightFactor = 1.0 - saturate(normalizedHeight);
+                heightFactor = pow(heightFactor, 0.5); // Make the height falloff more gradual
                 
-                // Scale with ortho size (zoom level), but with a reasonable limit
-                float zoomFactor = saturate(_OrthoSize / 100.0); // Adjust 100.0 to change where atmosphere maxes out
+                // Scale with ortho size (zoom level)
+                float orthoFactor = saturate((_OrthoSize - _AtmosphereMinOrthoSize) / 
+                                            (_AtmosphereMaxOrthoSize - _AtmosphereMinOrthoSize));
+                orthoFactor = smoothstep(0, 1, orthoFactor);
                 
-                // Combine factors with a softer curve
-                float atmosphereFactor = heightFactor * _AtmosphereDensity * zoomFactor;
-                atmosphereFactor = saturate(atmosphereFactor); // Ensure we don't exceed 1
+                // Combine factors
+                float atmosphereFactor = heightFactor * _AtmosphereDensity * orthoFactor;
+                atmosphereFactor = saturate(atmosphereFactor * 2.0);
                 
-                // Use smoothstep for a more pleasing blend
-                atmosphereFactor = smoothstep(0, 0.8, atmosphereFactor);
+                // Smoother blend
+                atmosphereFactor = smoothstep(0.0, 0.7, atmosphereFactor);
                 
                 return lerp(color, _AtmosphereColor.rgb, atmosphereFactor);
             }
@@ -121,10 +193,52 @@ Shader "Custom/VertexColor"
                 float3 lighting = mainLight.color * (shadow * mainLight.distanceAttenuation);
                 color.rgb *= lighting;
                 
-                // Apply atmospheric scattering
+                // Calculate cloud density modifier based on ortho size
+                float orthoFactor = saturate((_OrthoSize - _CloudMinOrthoSize) / (_CloudMaxOrthoSize - _CloudMinOrthoSize));
+                orthoFactor = smoothstep(0, 1, orthoFactor);
+                
+                // Calculate cloud position
+                float2 worldUV = input.worldPos.xz / _CloudScale;
+                float time = _Time.y * _CloudSpeed;
+                worldUV.x += time;
+                
+                // Calculate clouds
+                float clouds = fbm(worldUV);
+                clouds = smoothstep(_CloudDensity - 0.3, _CloudDensity + 0.3, clouds);
+                clouds *= orthoFactor;
+                
+                float cloudFade = 1.0 - saturate((input.worldPos.y - _CloudHeight) / (_CloudHeight * 0.5));
+                clouds *= cloudFade;
+                
+                // Calculate cloud shadows with ray-terrain intersection
+                float3 lightDir = normalize(_MainLightPosition.xyz);  // Get actual light direction
+                float3 worldPos = input.worldPos;
+                
+                // Calculate intersection with cloud plane using light direction
+                float rayLength = (_CloudHeight - worldPos.y) / lightDir.y;
+                float3 shadowSamplePos = worldPos + lightDir * rayLength;
+                
+                // Sample clouds at the intersection point
+                float2 shadowUV = shadowSamplePos.xz / _CloudScale;
+                shadowUV.x += _Time.y * _CloudSpeed;
+                float cloudShadow = fbm(shadowUV);
+                cloudShadow = smoothstep(_CloudDensity - 0.3, _CloudDensity + 0.3, cloudShadow);
+                
+                // Adjust shadow strength based on distance and angle
+                float shadowFactor = cloudShadow * _ShadowStrength;
+                shadowFactor *= (1.0 - saturate(rayLength / (_CloudHeight * 2.0))); // Distance fade
+                shadowFactor *= max(0, dot(input.normalWS, lightDir)); // Surface angle fade
+                
+                // Apply cloud color and shadows
+                float3 cloudColor = lerp(color.rgb, _CloudColor.rgb, clouds * _CloudColor.a);
+                float3 shadowedColor = cloudColor * (1.0 - shadowFactor);
+                
+                color.rgb = shadowedColor;
+                
+                // Apply atmospheric scattering AFTER clouds
                 color.rgb = ApplyAtmosphericScattering(color.rgb, input.worldPos);
                 
-                // Apply fog
+                // Apply fog last
                 color.rgb = MixFog(color.rgb, input.fogFactor);
                 
                 return color;
