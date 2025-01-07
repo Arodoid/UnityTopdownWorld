@@ -38,6 +38,7 @@ namespace WorldSystem.Mesh
             var meshCounts = new NativeArray<int>(ChunkData.SIZE * 4, Allocator.Persistent);
             var shadowVertices = new NativeArray<float3>(TOTAL_QUADS * VERTS_PER_QUAD * 4, Allocator.Persistent);
             var shadowTriangles = new NativeArray<int>(TOTAL_QUADS * TRIS_PER_QUAD * 4, Allocator.Persistent);
+            var shadowNormals = new NativeArray<float3>(TOTAL_QUADS * VERTS_PER_QUAD * 4, Allocator.Persistent);
 
             var meshJob = new ChunkMeshJob
             {
@@ -50,7 +51,8 @@ namespace WorldSystem.Mesh
                 blockDefinitions = _blockDefs,
                 meshCounts = meshCounts,
                 shadowVertices = shadowVertices,
-                shadowTriangles = shadowTriangles
+                shadowTriangles = shadowTriangles,
+                shadowNormals = shadowNormals
             };
 
             var jobHandle = meshJob.Schedule(ChunkData.SIZE, 1);
@@ -68,7 +70,8 @@ namespace WorldSystem.Mesh
                 meshCounts = meshCounts,
                 shadowVertices = shadowVertices,
                 shadowTriangles = shadowTriangles,
-                shadowMeshFilter = shadowMeshFilter
+                shadowMeshFilter = shadowMeshFilter,
+                shadowNormals = shadowNormals
             });
         }
 
@@ -117,6 +120,7 @@ namespace WorldSystem.Mesh
             pendingMesh.heightMap.Dispose();
             pendingMesh.shadowVertices.Dispose();
             pendingMesh.shadowTriangles.Dispose();
+            pendingMesh.shadowNormals.Dispose();
         }
 
         public void Dispose()
@@ -147,6 +151,7 @@ namespace WorldSystem.Mesh
             public NativeArray<float3> shadowVertices;
             public NativeArray<int> shadowTriangles;
             public MeshFilter shadowMeshFilter;
+            public NativeArray<float3> shadowNormals;
         }
     }
 } 

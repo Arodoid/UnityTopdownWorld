@@ -31,10 +31,11 @@ namespace WorldSystem.Jobs
         public NativeArray<float3> shadowVertices;
         [NativeDisableParallelForRestriction]
         public NativeArray<int> shadowTriangles;
+        [NativeDisableParallelForRestriction]
+        public NativeArray<float3> shadowNormals;
 
         public void Execute(int index)
         {
-            // We'll process one row at a time
             int z = index;
             if (z >= ChunkData.SIZE) return;
 
@@ -53,7 +54,7 @@ namespace WorldSystem.Jobs
                     continue;
                 }
 
-                // Find how many similar blocks we can combine
+                // Find similar height blocks to combine
                 int width = 1;
                 while (x + width < ChunkData.SIZE)
                 {
@@ -64,18 +65,17 @@ namespace WorldSystem.Jobs
                     width++;
                 }
 
+                // Use the full height value now, not just within chunk
+                float y = currentPoint.height; // No longer need to modulo by ChunkData.SIZE
+
                 // Create quad for this strip
                 float4 color = blockDefinitions[currentPoint.blockType].color;
-                float y = currentPoint.height;
-
                 AddQuad(ref currentVertex, ref currentTri, x, y, z, width, color);
 
                 x += width;
             }
 
             ProcessShadowMesh(z, ref currentVertex, ref currentTri);
-
-            // Store the counts for this row
             StoreMeshCounts(z, vertexStart, triStart, currentVertex, currentTri);
         }
 
@@ -221,10 +221,18 @@ namespace WorldSystem.Jobs
         private void AddWestShadowFace(int x, int z, float currentHeight, float neighborHeight, 
             ref int currentShadowVertex, ref int currentShadowTri)
         {
+            // Heights are already in world space (0-255)
             shadowVertices[currentShadowVertex + 0] = new float3(x, currentHeight, z);
             shadowVertices[currentShadowVertex + 1] = new float3(x, neighborHeight, z);
             shadowVertices[currentShadowVertex + 2] = new float3(x, neighborHeight, z + 1);
             shadowVertices[currentShadowVertex + 3] = new float3(x, currentHeight, z + 1);
+
+            // Add normals (pointing west)
+            float3 normal = new float3(-1, 0, 0);
+            shadowNormals[currentShadowVertex + 0] = normal;
+            shadowNormals[currentShadowVertex + 1] = normal;
+            shadowNormals[currentShadowVertex + 2] = normal;
+            shadowNormals[currentShadowVertex + 3] = normal;
 
             AddShadowQuadTriangles(ref currentShadowTri, currentShadowVertex);
             currentShadowVertex += 4;
@@ -238,6 +246,13 @@ namespace WorldSystem.Jobs
             shadowVertices[currentShadowVertex + 2] = new float3(x + 1, neighborHeight, z);
             shadowVertices[currentShadowVertex + 3] = new float3(x + 1, currentHeight, z);
 
+            // Add normals (pointing east)
+            float3 normal = new float3(1, 0, 0);
+            shadowNormals[currentShadowVertex + 0] = normal;
+            shadowNormals[currentShadowVertex + 1] = normal;
+            shadowNormals[currentShadowVertex + 2] = normal;
+            shadowNormals[currentShadowVertex + 3] = normal;
+
             AddShadowQuadTriangles(ref currentShadowTri, currentShadowVertex);
             currentShadowVertex += 4;
         }
@@ -250,6 +265,13 @@ namespace WorldSystem.Jobs
             shadowVertices[currentShadowVertex + 2] = new float3(x, neighborHeight, z);
             shadowVertices[currentShadowVertex + 3] = new float3(x, currentHeight, z);
 
+            // Add normals (pointing north)
+            float3 normal = new float3(0, 0, 1);
+            shadowNormals[currentShadowVertex + 0] = normal;
+            shadowNormals[currentShadowVertex + 1] = normal;
+            shadowNormals[currentShadowVertex + 2] = normal;
+            shadowNormals[currentShadowVertex + 3] = normal;
+
             AddShadowQuadTriangles(ref currentShadowTri, currentShadowVertex);
             currentShadowVertex += 4;
         }
@@ -261,6 +283,13 @@ namespace WorldSystem.Jobs
             shadowVertices[currentShadowVertex + 1] = new float3(x, neighborHeight, z + 1);
             shadowVertices[currentShadowVertex + 2] = new float3(x + 1, neighborHeight, z + 1);
             shadowVertices[currentShadowVertex + 3] = new float3(x + 1, currentHeight, z + 1);
+
+            // Add normals (pointing south)
+            float3 normal = new float3(0, 0, -1);
+            shadowNormals[currentShadowVertex + 0] = normal;
+            shadowNormals[currentShadowVertex + 1] = normal;
+            shadowNormals[currentShadowVertex + 2] = normal;
+            shadowNormals[currentShadowVertex + 3] = normal;
 
             AddShadowQuadTriangles(ref currentShadowTri, currentShadowVertex);
             currentShadowVertex += 4;

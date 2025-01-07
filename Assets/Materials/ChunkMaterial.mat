@@ -46,6 +46,14 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _CloudNoise:
+        m_Texture: {fileID: 2800000, guid: 9db21fc7de66046188a19871986d5af6, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CloudShadowTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -99,13 +107,25 @@ Material:
     - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0
     - _AlphaToMask: 0
-    - _AtmosphereDensity: 0.1
+    - _AtmosphereDensity: 0.2
+    - _AtmosphereEndHeight: 256
     - _AtmosphereHeight: 100
+    - _AtmosphereMaxOrthoSize: 256
+    - _AtmosphereMinOrthoSize: 30
+    - _AtmosphereStartHeight: 0
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
+    - _CloudCoverage: 0.5
+    - _CloudDensity: 0.15
+    - _CloudHeight: 150
+    - _CloudMaxOrthoSize: 120
+    - _CloudMinOrthoSize: 70
+    - _CloudScale: 300
+    - _CloudShadowHeight: -6.44
+    - _CloudSpeed: 0.03
     - _Cull: 2
     - _Cutoff: 0.5
     - _DebugShadows: 0
@@ -125,14 +145,18 @@ Material:
     - _HorizonFalloff: 3
     - _Metallic: 0
     - _OcclusionStrength: 1
-    - _OrthoSize: 260.3862
+    - _OrthoFalloffEnd: 100
+    - _OrthoFalloffMultiplier: 1
+    - _OrthoFalloffStart: 20
+    - _OrthoSize: 5
+    - _OvercastFactor: 0
     - _Parallax: 0.005
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _ShadowDistance: 16
     - _ShadowLength: 5
-    - _ShadowSoftness: 0.3
-    - _ShadowStrength: 1
+    - _ShadowSoftness: 1
+    - _ShadowStrength: 1.3
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -146,9 +170,11 @@ Material:
     m_Colors:
     - _AtmosphereColor: {r: 0.5, g: 0.7, b: 1, a: 1}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _CloudColor: {r: 1, g: 1, b: 1, a: 0.6}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _HazeColor: {r: 0, g: 0.4764049, b: 1, a: 1}
+    - _ShadowOffset: {r: -55.699924, g: 96.47511, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _SunDirection: {r: 0.5, g: 0.8, b: 0.3, a: 0}
   m_BuildTextureStacks: []

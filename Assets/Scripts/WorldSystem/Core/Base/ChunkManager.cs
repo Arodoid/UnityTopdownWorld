@@ -51,6 +51,10 @@ namespace WorldSystem.Base
         [SerializeField] private Color cloudColor = new Color(1, 1, 1, 0.6f);
         [SerializeField] private float cloudShadowStrength = 0.3f;
 
+        [Header("Shadow Settings")]
+        [SerializeField] private float shadowSoftness = 0.3f;
+        [SerializeField] private float overcastFactor = 0f;
+
         void Awake()
         {
             _chunkGenerator = new ChunkGenerator();
@@ -182,9 +186,12 @@ namespace WorldSystem.Base
             }
         }
 
-        void CreateChunkObject(int2 position, NativeArray<byte> blocks, NativeArray<HeightPoint> heightMap)
+        void CreateChunkObject(int3 position, NativeArray<byte> blocks, NativeArray<HeightPoint> heightMap)
         {
-            var chunkResult = _chunkPool.GetChunk(position);
+            // Convert 3D position to 2D position for mesh creation
+            int2 position2D = new int2(position.x, position.z);
+            
+            var chunkResult = _chunkPool.GetChunk(position2D);
             if (chunkResult == null)
             {
                 Debug.LogWarning($"Cannot create chunk at {position}: At maximum chunk limit ({maxChunks}). Consider increasing maxChunks if needed.");
@@ -197,7 +204,7 @@ namespace WorldSystem.Base
             var heightMapCopy = new NativeArray<HeightPoint>(heightMap.Length, Allocator.Persistent);
             heightMapCopy.CopyFrom(heightMap);
             
-            _meshBuilder.QueueMeshBuild(position, heightMapCopy, meshFilter, shadowMeshFilter);
+            _meshBuilder.QueueMeshBuild(position2D, heightMapCopy, meshFilter, shadowMeshFilter);
         }
 
         void CleanupDistantChunks()
@@ -246,6 +253,8 @@ namespace WorldSystem.Base
             chunkMaterial.SetFloat("_OrthoSize", mainCamera.orthographicSize);
 
             // Cloud and shadow properties
+            chunkMaterial.SetFloat("_ShadowSoftness", shadowSoftness);
+            chunkMaterial.SetFloat("_OvercastFactor", overcastFactor);
             chunkMaterial.SetFloat("_CloudScale", cloudScale);
             chunkMaterial.SetFloat("_CloudSpeed", cloudSpeed);
             chunkMaterial.SetFloat("_CloudDensity", cloudDensity);
@@ -266,6 +275,10 @@ namespace WorldSystem.Base
                 Vector2 shadowOffset = new Vector2(lightDir.x, lightDir.z) * (cloudHeight / -lightDir.y);
                 chunkMaterial.SetVector("_ShadowOffset", shadowOffset);
             }
+
+            // Add shadow control properties
+            chunkMaterial.SetFloat("_ShadowSoftness", shadowSoftness);
+            chunkMaterial.SetFloat("_OvercastFactor", overcastFactor);
         }
 
         void OnDestroy()
@@ -273,6 +286,12 @@ namespace WorldSystem.Base
             _chunkGenerator.Dispose();
             _meshBuilder.Dispose();
             _chunkPool.Cleanup();
+        }
+
+        private void UpdateShaderOrthoSize()
+        {
+            Camera cam = GetComponent<Camera>();
+            Shader.SetGlobalFloat("_OrthoSize", cam.orthographicSize);
         }
     }
 } 

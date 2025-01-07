@@ -66,12 +66,23 @@ public class CameraController : MonoBehaviour
         float scrollDelta = Input.mouseScrollDelta.y;
         if (scrollDelta != 0)
         {
-            // Scale zoom speed based on current zoom level
-            float currentZoomSpeed = zoomSpeed * (_camera.orthographicSize / maxZoom);
-            // Add a minimum speed to ensure zooming doesn't become too slow
-            currentZoomSpeed = Mathf.Max(currentZoomSpeed, zoomSpeed * 0.2f);
+            // Calculate zoom percentage (0 to 1) where 0 is minZoom and 1 is maxZoom
+            float currentZoomPercent = (_camera.orthographicSize - minZoom) / (maxZoom - minZoom);
             
-            _targetZoom = Mathf.Clamp(_targetZoom - (scrollDelta * currentZoomSpeed), minZoom, maxZoom);
+            // Base zoom speed that scales with the current size
+            float currentZoomSpeed = _camera.orthographicSize * zoomSpeed;
+            
+            // Apply the zoom change
+            if (scrollDelta > 0) // Zooming in
+            {
+                _targetZoom -= currentZoomSpeed;
+            }
+            else // Zooming out
+            {
+                _targetZoom += currentZoomSpeed;
+            }
+            
+            _targetZoom = Mathf.Clamp(_targetZoom, minZoom, maxZoom);
         }
         
         _camera.orthographicSize = Mathf.Lerp(_camera.orthographicSize, _targetZoom, zoomSmoothness);

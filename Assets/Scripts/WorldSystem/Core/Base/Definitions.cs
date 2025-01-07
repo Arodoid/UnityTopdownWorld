@@ -27,8 +27,9 @@ namespace WorldSystem.Data
     public struct ChunkData
     {
         public const int SIZE = 16;
-        public int2 position;
+        public int3 position;
         public bool isEdited;
+        public bool isFullyOpaque;
         public NativeArray<byte> blocks;
         public NativeArray<HeightPoint> heightMap;
     }
@@ -53,7 +54,7 @@ namespace WorldSystem.Data
             },
             // Grass
             new BlockDefinition { 
-                color = new float4(0.2f, 0.4f, 0.1f, 1f), 
+                color = new float4(0.15f, 0.35f, 0.08f, 1f), 
                 isOpaque = true 
             },
             // Dirt

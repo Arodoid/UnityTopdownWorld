@@ -5,13 +5,14 @@ using UnityEngine;
 using System.Collections.Generic;
 using WorldSystem.Data;
 using WorldSystem.Jobs;
+using System.Linq;
 
 namespace WorldSystem.Generation
 {
     public class ChunkGenerator : IChunkGenerator
     {
-        private HashSet<int2> _chunksBeingProcessed = new();
-        private List<PendingChunk> _pendingChunks = new();
+        private HashSet<int2> _columnsBeingProcessed = new();
+        private Dictionary<int2, (NativeArray<HeightPoint> heightMap, List<PendingChunk> chunks)> _pendingColumns = new();
         private NativeArray<JobHandle> _batchHandles;
         private const int BATCH_SIZE = 256;
 
@@ -24,81 +25,115 @@ namespace WorldSystem.Generation
 
         public void QueueChunkGeneration(int2 position)
         {
-            if (_chunksBeingProcessed.Contains(position))
+            if (_columnsBeingProcessed.Contains(position))
                 return;
 
-            _chunksBeingProcessed.Add(position);
-            StartChunkGeneration(position);
-        }
-
-        public bool IsGenerating(int2 position) => _chunksBeingProcessed.Contains(position);
-
-        public void Update()
-        {
-            // Check for completed jobs
-            for (int i = _pendingChunks.Count - 1; i >= 0; i--)
-            {
-                var chunk = _pendingChunks[i];
-                if (chunk.jobHandle.IsCompleted)
-                {
-                    chunk.jobHandle.Complete();
-                    
-                    var chunkData = new ChunkData
-                    {
-                        position = chunk.position,
-                        blocks = chunk.blocks,
-                        heightMap = chunk.heightMap,
-                        isEdited = false
-                    };
-
-                    OnChunkGenerated?.Invoke(chunkData);
-                    
-                    // Dispose of the arrays after the event is handled
-                    chunk.blocks.Dispose();
-                    chunk.heightMap.Dispose();
-                    
-                    _pendingChunks.RemoveAt(i);
-                    _chunksBeingProcessed.Remove(chunk.position);
-                }
-            }
-        }
-
-        private void StartChunkGeneration(int2 position)
-        {
-            // Create arrays with Persistent allocator
-            var blocks = new NativeArray<byte>(ChunkData.SIZE * ChunkData.SIZE * ChunkData.SIZE, Allocator.Persistent);
+            _columnsBeingProcessed.Add(position);
+            
+            // Create one heightmap for the entire column
             var heightMap = new NativeArray<HeightPoint>(ChunkData.SIZE * ChunkData.SIZE, Allocator.Persistent);
+            _pendingColumns[position] = (heightMap, new List<PendingChunk>());
+            
+            // Start with top chunk
+            StartChunkGeneration(new int3(position.x, 15, position.y));
+        }
 
+        private void StartChunkGeneration(int3 position)
+        {
+            var blocks = new NativeArray<byte>(ChunkData.SIZE * ChunkData.SIZE * ChunkData.SIZE, Allocator.Persistent);
+            var int2Pos = new int2(position.x, position.z);
+            
             var genJob = new ChunkGenerationJob
             {
                 position = position,
                 seed = 123,
                 blocks = blocks,
-                heightMap = heightMap
+                heightMap = _pendingColumns[int2Pos].heightMap,  // Use the column's heightMap
+                isFullyOpaque = true
             };
 
             var jobHandle = genJob.Schedule(ChunkData.SIZE * ChunkData.SIZE, 64);
-
-            _pendingChunks.Add(new PendingChunk
+            
+            _pendingColumns[int2Pos].chunks.Add(new PendingChunk
             {
                 position = position,
                 jobHandle = jobHandle,
                 blocks = blocks,
-                heightMap = heightMap
+                isFullyOpaque = genJob.isFullyOpaque
             });
+        }
+
+        public bool IsGenerating(int2 position) => _columnsBeingProcessed.Contains(position);
+
+        public void Update()
+        {
+            foreach (var columnPos in _columnsBeingProcessed.ToList())
+            {
+                var (heightMap, chunks) = _pendingColumns[columnPos];
+                if (chunks.Count == 0) continue;
+
+                var currentChunk = chunks[chunks.Count - 1];
+                if (!currentChunk.jobHandle.IsCompleted) continue;
+
+                currentChunk.jobHandle.Complete();
+                chunks.RemoveAt(chunks.Count - 1);
+
+                // If this is not our final chunk
+                if (!currentChunk.isFullyOpaque && currentChunk.position.y > 0)
+                {
+                    var chunkData = new ChunkData
+                    {
+                        position = currentChunk.position,
+                        blocks = currentChunk.blocks,  // ChunkData takes ownership
+                        heightMap = heightMap,         // Share the column heightmap
+                        isEdited = false
+                    };
+                    OnChunkGenerated?.Invoke(chunkData);
+                    
+                    StartChunkGeneration(new int3(
+                        currentChunk.position.x,
+                        currentChunk.position.y - 1,
+                        currentChunk.position.z
+                    ));
+                }
+                else
+                {
+                    // We're done with this column
+                    var chunkData = new ChunkData
+                    {
+                        position = currentChunk.position,
+                        blocks = currentChunk.blocks,  // ChunkData takes ownership
+                        heightMap = heightMap,         // Share the column heightmap
+                        isEdited = false
+                    };
+                    OnChunkGenerated?.Invoke(chunkData);
+                    
+                    _columnsBeingProcessed.Remove(columnPos);
+                    
+                    // Clean up any remaining chunks in the column
+                    foreach (var chunk in chunks)
+                    {
+                        chunk.jobHandle.Complete();
+                        if (chunk.blocks.IsCreated) chunk.blocks.Dispose();
+                    }
+                    _pendingColumns.Remove(columnPos);
+                }
+            }
         }
 
         public void Dispose()
         {
-            // Complete and dispose all pending jobs before disposal
-            foreach (var chunk in _pendingChunks)
+            foreach (var (heightMap, chunks) in _pendingColumns.Values)
             {
-                chunk.jobHandle.Complete();
-                if (chunk.blocks.IsCreated) chunk.blocks.Dispose();
-                if (chunk.heightMap.IsCreated) chunk.heightMap.Dispose();
+                if (heightMap.IsCreated) heightMap.Dispose();
+                foreach (var chunk in chunks)
+                {
+                    chunk.jobHandle.Complete();
+                    if (chunk.blocks.IsCreated) chunk.blocks.Dispose();
+                }
             }
-            _pendingChunks.Clear();
-            _chunksBeingProcessed.Clear();
+            _pendingColumns.Clear();
+            _columnsBeingProcessed.Clear();
 
             if (_batchHandles.IsCreated)
                 _batchHandles.Dispose();
@@ -106,10 +141,10 @@ namespace WorldSystem.Generation
 
         private struct PendingChunk
         {
-            public int2 position;
+            public int3 position;
             public JobHandle jobHandle;
             public NativeArray<byte> blocks;
-            public NativeArray<HeightPoint> heightMap;
+            public bool isFullyOpaque;
         }
     }
 } 

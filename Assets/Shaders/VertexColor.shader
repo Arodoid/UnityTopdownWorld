@@ -11,6 +11,8 @@ Shader "Custom/VertexColor"
         _AtmosphereMaxOrthoSize ("Atmosphere Max Ortho Size", Float) = 100
         _AtmosphereMinOrthoSize ("Atmosphere Min Ortho Size", Float) = 20
         _OrthoSize ("Ortho Size", Float) = 10
+        _OrthoFalloffStart ("Ortho Falloff Start", Float) = 20
+        _OrthoFalloffEnd ("Ortho Falloff End", Float) = 100
         [Header(Cloud Settings)]
         _CloudScale ("Cloud Scale", Range(1, 100)) = 50
         _CloudSpeed ("Cloud Speed", Range(0, 1)) = 0.1
@@ -22,6 +24,10 @@ Shader "Custom/VertexColor"
         _CloudMaxOrthoSize ("Cloud Max Ortho Size", Float) = 100
         _CloudMinOrthoSize ("Cloud Min Ortho Size", Float) = 20
         _ShadowOffset ("Shadow Offset", Vector) = (0, 0, 0, 0)
+        [Header(Shadow Settings)]
+        _ShadowSoftness ("Shadow Softness", Range(0, 1)) = 0.3
+        _OvercastFactor ("Overcast Factor", Range(0, 1)) = 0
+        _OrthoFalloffMultiplier ("Ortho Falloff Multiplier", Range(0.001, 10)) = 1.0
     }
     SubShader
     {
@@ -67,6 +73,7 @@ Shader "Custom/VertexColor"
                 float fogFactor : TEXCOORD2;
                 float3 worldPos : TEXCOORD3;
                 float viewDist : TEXCOORD4;
+                float4 positionNDC : TEXCOORD5;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
                 UNITY_VERTEX_OUTPUT_STEREO
             };
@@ -83,6 +90,8 @@ Shader "Custom/VertexColor"
             float _AtmosphereMaxOrthoSize;
             float _AtmosphereMinOrthoSize;
             float _OrthoSize;
+            float _OrthoFalloffStart;
+            float _OrthoFalloffEnd;
 
             float _CloudScale;
             float _CloudSpeed;
@@ -94,6 +103,11 @@ Shader "Custom/VertexColor"
             float _CloudMinOrthoSize;
 
             float2 _ShadowOffset;
+
+            float _ShadowSoftness;
+            float _OvercastFactor;
+
+            float _OrthoFalloffMultiplier;
 
             // Noise functions
             float2 hash2(float2 p)
@@ -151,6 +165,7 @@ Shader "Custom/VertexColor"
                 output.fogFactor = ComputeFogFactor(output.positionCS.z);
                 output.worldPos = vertexInput.positionWS;
                 output.viewDist = length(_WorldSpaceCameraPos - output.worldPos);
+                output.positionNDC = vertexInput.positionNDC;
                 
                 return output;
             }
@@ -178,6 +193,27 @@ Shader "Custom/VertexColor"
                 return lerp(color, _AtmosphereColor.rgb, atmosphereFactor);
             }
 
+            float GetOrthoLinearDepth(float4 positionNDC)
+            {
+                #if UNITY_REVERSED_Z
+                    real depth = positionNDC.z / positionNDC.w;
+                #else
+                    real depth = lerp(UNITY_NEAR_CLIP_VALUE, 1, positionNDC.z / positionNDC.w);
+                #endif
+                
+                return (1.0 - depth) * _ProjectionParams.z;
+            }
+
+            float GetOrthoFalloff(float4 positionNDC, float3 worldPos)
+            {
+                // Use ortho size for falloff instead of depth
+                float orthoFactor = saturate((_OrthoSize - _OrthoFalloffStart) / 
+                                            (_OrthoFalloffEnd - _OrthoFalloffStart));
+                
+                // Smooth the transition
+                return 1.0 - smoothstep(0, 1, orthoFactor);
+            }
+
             half4 frag(Varyings input) : SV_Target
             {
                 UNITY_SETUP_INSTANCE_ID(input);
@@ -189,8 +225,26 @@ Shader "Custom/VertexColor"
                 Light mainLight = GetMainLight(input.shadowCoord);
                 float shadow = mainLight.shadowAttenuation;
                 
-                // Apply lighting and shadows
-                float3 lighting = mainLight.color * (shadow * mainLight.distanceAttenuation);
+                // Apply overcast and softness to all shadows
+                shadow = lerp(shadow, 0.5, _OvercastFactor);  // Blend towards 0.5 for overcast
+                shadow = lerp(0.0, 1.0, smoothstep(0.0, _ShadowSoftness + 0.1, shadow));
+                
+                // Modify the lighting calculation to better handle SSAO
+                float3 lighting = mainLight.color;
+                
+                // Soften the SSAO interaction
+                float aoFactor = 1.0;
+                #if defined(_SCREEN_SPACE_OCCLUSION)
+                    AmbientOcclusionFactor aoFactors = GetScreenSpaceAmbientOcclusion(input.positionNDC.xy / input.positionNDC.w);
+                    float falloff = GetOrthoFalloff(input.positionNDC, input.worldPos);
+                    aoFactor = lerp(1.0, aoFactors.indirectAmbientOcclusion, falloff);
+                #endif
+
+                lighting *= (shadow * mainLight.distanceAttenuation * aoFactor);
+                
+                // Reduce lighting contrast in overcast conditions
+                lighting = lerp(lighting, float3(0.7, 0.7, 0.7), _OvercastFactor);
+                
                 color.rgb *= lighting;
                 
                 // Calculate cloud density modifier based on ortho size
@@ -202,7 +256,25 @@ Shader "Custom/VertexColor"
                 float time = _Time.y * _CloudSpeed;
                 worldUV.x += time;
                 
-                // Calculate clouds
+                // Calculate and apply cloud shadows BEFORE clouds
+                float3 lightDir = normalize(_MainLightPosition.xyz);
+                float3 worldPos = input.worldPos;
+                float rayLength = (_CloudHeight - worldPos.y) / lightDir.y;
+                float3 shadowSamplePos = worldPos + lightDir * rayLength;
+                
+                float2 shadowUV = shadowSamplePos.xz / _CloudScale;
+                shadowUV.x += _Time.y * _CloudSpeed;
+                float cloudShadow = fbm(shadowUV);
+                cloudShadow = smoothstep(_CloudDensity - 0.3, _CloudDensity + 0.3, cloudShadow);
+                
+                float shadowFactor = cloudShadow * _ShadowStrength;
+                shadowFactor *= (1.0 - saturate(rayLength / (_CloudHeight * 2.0)));
+                shadowFactor *= max(0, dot(input.normalWS, lightDir));
+                
+                // Apply shadow darkening to base color
+                color.rgb *= (1.0 - shadowFactor);
+
+                // Now calculate and apply clouds ON TOP
                 float clouds = fbm(worldUV);
                 clouds = smoothstep(_CloudDensity - 0.3, _CloudDensity + 0.3, clouds);
                 clouds *= orthoFactor;
@@ -210,30 +282,8 @@ Shader "Custom/VertexColor"
                 float cloudFade = 1.0 - saturate((input.worldPos.y - _CloudHeight) / (_CloudHeight * 0.5));
                 clouds *= cloudFade;
                 
-                // Calculate cloud shadows with ray-terrain intersection
-                float3 lightDir = normalize(_MainLightPosition.xyz);  // Get actual light direction
-                float3 worldPos = input.worldPos;
-                
-                // Calculate intersection with cloud plane using light direction
-                float rayLength = (_CloudHeight - worldPos.y) / lightDir.y;
-                float3 shadowSamplePos = worldPos + lightDir * rayLength;
-                
-                // Sample clouds at the intersection point
-                float2 shadowUV = shadowSamplePos.xz / _CloudScale;
-                shadowUV.x += _Time.y * _CloudSpeed;
-                float cloudShadow = fbm(shadowUV);
-                cloudShadow = smoothstep(_CloudDensity - 0.3, _CloudDensity + 0.3, cloudShadow);
-                
-                // Adjust shadow strength based on distance and angle
-                float shadowFactor = cloudShadow * _ShadowStrength;
-                shadowFactor *= (1.0 - saturate(rayLength / (_CloudHeight * 2.0))); // Distance fade
-                shadowFactor *= max(0, dot(input.normalWS, lightDir)); // Surface angle fade
-                
-                // Apply cloud color and shadows
-                float3 cloudColor = lerp(color.rgb, _CloudColor.rgb, clouds * _CloudColor.a);
-                float3 shadowedColor = cloudColor * (1.0 - shadowFactor);
-                
-                color.rgb = shadowedColor;
+                // Blend clouds over the already shadowed terrain
+                color.rgb = lerp(color.rgb, _CloudColor.rgb, clouds * _CloudColor.a);
                 
                 // Apply atmospheric scattering AFTER clouds
                 color.rgb = ApplyAtmosphericScattering(color.rgb, input.worldPos);
@@ -260,6 +310,10 @@ Shader "Custom/VertexColor"
             HLSLPROGRAM
             #pragma vertex ShadowPassVertex
             #pragma fragment ShadowPassFragment
+            #pragma multi_compile_instancing
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE
+            #pragma multi_compile _ _SHADOWS_SOFT
+            #pragma multi_compile _ _SCREEN_SPACE_OCCLUSION
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
@@ -274,25 +328,11 @@ Shader "Custom/VertexColor"
             struct Varyings
             {
                 float4 positionCS   : SV_POSITION;
+                float3 normalWS     : NORMAL;
+                float4 positionNDC  : TEXCOORD0;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
                 UNITY_VERTEX_OUTPUT_STEREO
             };
-
-            float4 GetShadowPositionHClip(Attributes input)
-            {
-                float3 positionWS = TransformObjectToWorld(input.positionOS.xyz);
-                float3 normalWS = TransformObjectToWorldNormal(input.normalOS);
-
-                float4 positionCS = TransformWorldToHClip(positionWS);
-
-                #if UNITY_REVERSED_Z
-                    positionCS.z = min(positionCS.z, positionCS.w * UNITY_NEAR_CLIP_VALUE);
-                #else
-                    positionCS.z = max(positionCS.z, positionCS.w * UNITY_NEAR_CLIP_VALUE);
-                #endif
-
-                return positionCS;
-            }
 
             Varyings ShadowPassVertex(Attributes input)
             {
@@ -301,13 +341,25 @@ Shader "Custom/VertexColor"
                 UNITY_TRANSFER_INSTANCE_ID(input, output);
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
-                output.positionCS = GetShadowPositionHClip(input);
+                VertexPositionInputs vertexInput = GetVertexPositionInputs(input.positionOS.xyz);
+                output.positionCS = vertexInput.positionCS;
+                output.normalWS = TransformObjectToWorldNormal(input.normalOS);
+                output.positionNDC = vertexInput.positionNDC;
+                
                 return output;
             }
 
             half4 ShadowPassFragment(Varyings input) : SV_TARGET
             {
-                return 0;
+                UNITY_SETUP_INSTANCE_ID(input);
+                UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
+
+                #if defined(_SCREEN_SPACE_OCCLUSION)
+                    AmbientOcclusionFactor aoFactors = GetScreenSpaceAmbientOcclusion(input.positionNDC.xy / input.positionNDC.w);
+                    return half4(0, 0, 0, aoFactors.directAmbientOcclusion);
+                #else
+                    return 0;
+                #endif
             }
             ENDHLSL
         }
