@@ -1,1110 +1,1166 @@
-Initializing BlockRegistry...
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Base.BlockRegistry:Initialize () (at Assets/Scripts/WorldSystem/Core/Base/BlockRegistry.cs:57)
-VoxelGame.WorldSystem.Core.Base.BlockRegistry:Awake () (at Assets/Scripts/WorldSystem/Core/Base/BlockRegistry.cs:20)
-
-Atlas state: Found
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Base.BlockRegistry:Initialize () (at Assets/Scripts/WorldSystem/Core/Base/BlockRegistry.cs:69)
-VoxelGame.WorldSystem.Core.Base.BlockRegistry:Awake () (at Assets/Scripts/WorldSystem/Core/Base/BlockRegistry.cs:20)
-
-BlockRegistry initialization complete
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Base.BlockRegistry:Initialize () (at Assets/Scripts/WorldSystem/Core/Base/BlockRegistry.cs:75)
-VoxelGame.WorldSystem.Core.Base.BlockRegistry:Awake () (at Assets/Scripts/WorldSystem/Core/Base/BlockRegistry.cs:20)
-
-Processing chunk at int2(8, 8)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(8, 7)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(8, 6)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(8, 5)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(8, 4)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(8, 3)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(8, 2)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(8, 1)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(8, 0)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(8, -1)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(8, -2)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(8, -3)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(8, -4)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(8, -5)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(8, -6)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(8, -7)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(8, -8)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(7, 8)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(7, 7)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(7, 6)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(7, 5)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(7, 4)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(7, 3)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(7, 2)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(7, 1)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(7, 0)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(7, -1)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(7, -2)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(7, -3)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(7, -4)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(7, -5)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(7, -6)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(7, -7)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(7, -8)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(6, 8)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(6, 7)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(6, 6)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(6, 5)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(6, 4)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(6, 3)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(6, 2)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(6, 1)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(6, 0)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(6, -1)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(6, -2)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(6, -3)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(6, -4)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(6, -5)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(6, -6)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(6, -7)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(6, -8)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(5, 8)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(5, 7)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(5, 6)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First vertex color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:153)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Processing chunk at int2(5, 5)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:115)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-First block color: float4(0.6313726f, 0.4980392f, 0.3490196f, 1f)
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:116)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
-
-Generated mesh with 4 vertices
-UnityEngine.Debug:Log (object)
-VoxelGame.WorldSystem.Core.Processing.ChunkJobSystem:Update () (at Assets/Scripts/WorldSystem/Core/Processing/ChunkJobSystem.cs:150)
-VoxelGame.WorldSystem.Core.Management.WorldManager:Update () (at Assets/Scripts/WorldSystem/Core/Management/WorldManager.cs:122)
+Column generation: x=0, z=0, height=64
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e174d (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=0: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=32: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=64: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=96: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=128: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=160: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=192: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=224: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Generated chunk at int3(0, 15, 0). First few blocks: 3, 3, 3
+UnityEngine.Debug:Log (object)
+WorldSystem.Generation.ChunkGenerator:StartChunkGeneration (Unity.Mathematics.int3) (at Assets/Scripts/WorldSystem/Core/Generation/ChunkGenerator.cs:62)
+WorldSystem.Generation.ChunkGenerator:QueueChunkGeneration (Unity.Mathematics.int2) (at Assets/Scripts/WorldSystem/Core/Generation/ChunkGenerator.cs:33)
+WorldSystem.Base.ChunkManager:ProcessChunkQueue () (at Assets/Scripts/WorldSystem/Core/Base/ChunkManager.cs:186)
+WorldSystem.Base.ChunkManager:Update () (at Assets/Scripts/WorldSystem/Core/Base/ChunkManager.cs:96)
+
+Column generation: x=0, z=0, height=67
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e174d (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=0: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=32: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=64: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=96: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=128: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=160: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=192: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=224: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Generated chunk at int3(-1, 15, 0). First few blocks: 3, 3, 3
+UnityEngine.Debug:Log (object)
+WorldSystem.Generation.ChunkGenerator:StartChunkGeneration (Unity.Mathematics.int3) (at Assets/Scripts/WorldSystem/Core/Generation/ChunkGenerator.cs:62)
+WorldSystem.Generation.ChunkGenerator:QueueChunkGeneration (Unity.Mathematics.int2) (at Assets/Scripts/WorldSystem/Core/Generation/ChunkGenerator.cs:33)
+WorldSystem.Base.ChunkManager:ProcessChunkQueue () (at Assets/Scripts/WorldSystem/Core/Base/ChunkManager.cs:186)
+WorldSystem.Base.ChunkManager:Update () (at Assets/Scripts/WorldSystem/Core/Base/ChunkManager.cs:96)
+
+Column generation: x=0, z=0, height=63
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e174d (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=0: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=32: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=64: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=96: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=128: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=160: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=192: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=224: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Generated chunk at int3(0, 15, -1). First few blocks: 3, 3, 3
+UnityEngine.Debug:Log (object)
+WorldSystem.Generation.ChunkGenerator:StartChunkGeneration (Unity.Mathematics.int3) (at Assets/Scripts/WorldSystem/Core/Generation/ChunkGenerator.cs:62)
+WorldSystem.Generation.ChunkGenerator:QueueChunkGeneration (Unity.Mathematics.int2) (at Assets/Scripts/WorldSystem/Core/Generation/ChunkGenerator.cs:33)
+WorldSystem.Base.ChunkManager:ProcessChunkQueue () (at Assets/Scripts/WorldSystem/Core/Base/ChunkManager.cs:186)
+WorldSystem.Base.ChunkManager:Update () (at Assets/Scripts/WorldSystem/Core/Base/ChunkManager.cs:96)
+
+Column generation: x=0, z=0, height=67
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e174d (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=0: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=32: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=64: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=96: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=128: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=160: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=192: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=224: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Generated chunk at int3(0, 15, 1). First few blocks: 3, 3, 3
+UnityEngine.Debug:Log (object)
+WorldSystem.Generation.ChunkGenerator:StartChunkGeneration (Unity.Mathematics.int3) (at Assets/Scripts/WorldSystem/Core/Generation/ChunkGenerator.cs:62)
+WorldSystem.Generation.ChunkGenerator:QueueChunkGeneration (Unity.Mathematics.int2) (at Assets/Scripts/WorldSystem/Core/Generation/ChunkGenerator.cs:33)
+WorldSystem.Base.ChunkManager:ProcessChunkQueue () (at Assets/Scripts/WorldSystem/Core/Base/ChunkManager.cs:186)
+WorldSystem.Base.ChunkManager:Update () (at Assets/Scripts/WorldSystem/Core/Base/ChunkManager.cs:96)
+
+Column generation: x=0, z=0, height=64
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e174d (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=0: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=32: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=64: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=96: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=128: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=160: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=192: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=224: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Generated chunk at int3(1, 15, 0). First few blocks: 3, 3, 3
+UnityEngine.Debug:Log (object)
+WorldSystem.Generation.ChunkGenerator:StartChunkGeneration (Unity.Mathematics.int3) (at Assets/Scripts/WorldSystem/Core/Generation/ChunkGenerator.cs:62)
+WorldSystem.Generation.ChunkGenerator:QueueChunkGeneration (Unity.Mathematics.int2) (at Assets/Scripts/WorldSystem/Core/Generation/ChunkGenerator.cs:33)
+WorldSystem.Base.ChunkManager:ProcessChunkQueue () (at Assets/Scripts/WorldSystem/Core/Base/ChunkManager.cs:186)
+WorldSystem.Base.ChunkManager:Update () (at Assets/Scripts/WorldSystem/Core/Base/ChunkManager.cs:96)
+
+Column generation: x=0, z=0, height=57
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e174d (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=0: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=32: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=64: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=96: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=128: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=160: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=192: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=224: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Generated chunk at int3(-1, 15, -1). First few blocks: 3, 3, 3
+UnityEngine.Debug:Log (object)
+WorldSystem.Generation.ChunkGenerator:StartChunkGeneration (Unity.Mathematics.int3) (at Assets/Scripts/WorldSystem/Core/Generation/ChunkGenerator.cs:62)
+WorldSystem.Generation.ChunkGenerator:QueueChunkGeneration (Unity.Mathematics.int2) (at Assets/Scripts/WorldSystem/Core/Generation/ChunkGenerator.cs:33)
+WorldSystem.Base.ChunkManager:ProcessChunkQueue () (at Assets/Scripts/WorldSystem/Core/Base/ChunkManager.cs:186)
+WorldSystem.Base.ChunkManager:Update () (at Assets/Scripts/WorldSystem/Core/Base/ChunkManager.cs:96)
+
+Column generation: x=0, z=0, height=61
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e174d (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=0: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=32: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=64: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=96: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=128: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=160: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=192: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=224: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Generated chunk at int3(-1, 15, 1). First few blocks: 3, 3, 3
+UnityEngine.Debug:Log (object)
+WorldSystem.Generation.ChunkGenerator:StartChunkGeneration (Unity.Mathematics.int3) (at Assets/Scripts/WorldSystem/Core/Generation/ChunkGenerator.cs:62)
+WorldSystem.Generation.ChunkGenerator:QueueChunkGeneration (Unity.Mathematics.int2) (at Assets/Scripts/WorldSystem/Core/Generation/ChunkGenerator.cs:33)
+WorldSystem.Base.ChunkManager:ProcessChunkQueue () (at Assets/Scripts/WorldSystem/Core/Base/ChunkManager.cs:186)
+WorldSystem.Base.ChunkManager:Update () (at Assets/Scripts/WorldSystem/Core/Base/ChunkManager.cs:96)
+
+Column generation: x=0, z=0, height=66
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e174d (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=0: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=32: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=64: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=96: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=128: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=160: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=192: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=224: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Generated chunk at int3(1, 15, -1). First few blocks: 3, 3, 3
+UnityEngine.Debug:Log (object)
+WorldSystem.Generation.ChunkGenerator:StartChunkGeneration (Unity.Mathematics.int3) (at Assets/Scripts/WorldSystem/Core/Generation/ChunkGenerator.cs:62)
+WorldSystem.Generation.ChunkGenerator:QueueChunkGeneration (Unity.Mathematics.int2) (at Assets/Scripts/WorldSystem/Core/Generation/ChunkGenerator.cs:33)
+WorldSystem.Base.ChunkManager:ProcessChunkQueue () (at Assets/Scripts/WorldSystem/Core/Base/ChunkManager.cs:186)
+WorldSystem.Base.ChunkManager:Update () (at Assets/Scripts/WorldSystem/Core/Base/ChunkManager.cs:96)
+
+Column generation: x=0, z=0, height=66
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e174d (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
+
+Block at y=0: type=WorldSystem.Data.BlockType
+0x00007ff93a3316ee (Unity) Stacktrace::GetStacktrace
+0x00007ff938891b3a (Unity) DefaultBurstRuntimeLogCallback
+0x00007ff93819539a (Unity) BurstCompilerService_CUSTOM_RuntimeLog
+0x00007ffa5f1e195f (b18a42a296d029970eaf1024c0fad8f) Unity.Jobs.IJobParallelForExtensions.ParallelForJobStruct`1<WorldSystem.Jobs.ChunkGenerationJob>.Execute(ref WorldSystem.Jobs.ChunkGenerationJob jobData, System.IntPtr additionalPtr, System.IntPtr bufferRangePatchData, ref Unity.Jobs.LowLevel.Unsafe.JobRanges ranges, int jobIndex) -> void_1a17c9416545ae7079718413b8a5101d from UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null (at C:/Users/ockid/OneDrive/Documents/Unity/2DSimulation/Library/PackageCache/com.unity.burst/.Runtime/unknown/unknown:0)
+0x00007ffa5f1e109d (b18a42a296d029970eaf1024c0fad8f) 5d5abdf87b69673dd81cd987200c85d5
+0x00007ff938bdc3c5 (Unity) ExecuteJob
+0x00007ff938bdc6ee (Unity) ExecuteJobCopyData
+0x00007ff938bd98e6 (Unity) ujob_execute_job
+0x00007ff938bd8a9f (Unity) lane_guts
+0x00007ff938bdb714 (Unity) worker_thread_routine
+0x00007ff938dd157d (Unity) Thread::RunThreadWrapper
+0x00007ffa7384259d (KERNEL32) BaseThreadInitThunk
+0x00007ffa7402af38 (ntdll) RtlUserThreadStart
 

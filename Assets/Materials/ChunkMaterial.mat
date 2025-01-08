@@ -107,11 +107,11 @@ Material:
     - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0
     - _AlphaToMask: 0
-    - _AtmosphereDensity: 0.2
+    - _AtmosphereDensity: 0.1
     - _AtmosphereEndHeight: 256
     - _AtmosphereHeight: 100
-    - _AtmosphereMaxOrthoSize: 256
-    - _AtmosphereMinOrthoSize: 30
+    - _AtmosphereMaxOrthoSize: 100
+    - _AtmosphereMinOrthoSize: 50
     - _AtmosphereStartHeight: 0
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
@@ -168,7 +168,7 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - _AtmosphereColor: {r: 0.5, g: 0.7, b: 1, a: 1}
+    - _AtmosphereColor: {r: 0.6, g: 0.8, b: 1, a: 1}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _CloudColor: {r: 1, g: 1, b: 1, a: 0.6}
     - _Color: {r: 1, g: 1, b: 1, a: 1}

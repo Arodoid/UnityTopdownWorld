@@ -1,4 +1,6 @@
 using UnityEngine;
+using WorldSystem.Base;
+using UnityEngine.UI;
 
 public class CameraController : MonoBehaviour
 {
@@ -12,6 +14,12 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float minZoom = 5f;
     [SerializeField] private float maxZoom = 100f;
     [SerializeField] private float zoomSmoothness = 0.1f;
+    
+    [Header("Y-Level Settings")]
+    [SerializeField] private int minYLevel = 0;
+    [SerializeField] private int maxYLevel = 20;
+    [SerializeField] private ChunkManager chunkManager;
+    [SerializeField] private Slider yLevelSlider;
     
     private Camera _camera;
     private Vector3 _targetPosition;
@@ -27,8 +35,40 @@ public class CameraController : MonoBehaviour
             _camera.orthographic = true;
         }
 
+        if (chunkManager == null)
+        {
+            Debug.LogError("ChunkManager reference is not set in CameraController!");
+        }
+
+        InitializeYLevelSlider();
+
         _targetPosition = transform.position;
         _targetZoom = _camera.orthographicSize;
+    }
+
+    private void InitializeYLevelSlider()
+    {
+        if (yLevelSlider != null)
+        {
+            yLevelSlider.minValue = minYLevel;
+            yLevelSlider.maxValue = maxYLevel;
+            yLevelSlider.wholeNumbers = true;
+            yLevelSlider.value = chunkManager != null ? chunkManager.ViewMaxYLevel : minYLevel;
+            
+            yLevelSlider.onValueChanged.AddListener(OnYLevelSliderChanged);
+        }
+        else
+        {
+            Debug.LogWarning("Y-Level Slider reference is not set in CameraController!");
+        }
+    }
+
+    private void OnYLevelSliderChanged(float value)
+    {
+        if (chunkManager != null)
+        {
+            chunkManager.ViewMaxYLevel = (int)value;
+        }
     }
 
     private void Update()
@@ -66,23 +106,32 @@ public class CameraController : MonoBehaviour
         float scrollDelta = Input.mouseScrollDelta.y;
         if (scrollDelta != 0)
         {
-            // Calculate zoom percentage (0 to 1) where 0 is minZoom and 1 is maxZoom
-            float currentZoomPercent = (_camera.orthographicSize - minZoom) / (maxZoom - minZoom);
-            
-            // Base zoom speed that scales with the current size
-            float currentZoomSpeed = _camera.orthographicSize * zoomSpeed;
-            
-            // Apply the zoom change
-            if (scrollDelta > 0) // Zooming in
+            if (Input.GetKey(KeyCode.LeftShift) && chunkManager != null)
             {
-                _targetZoom -= currentZoomSpeed;
+                // Y-Level control via scroll
+                int yLevelChange = scrollDelta > 0 ? 1 : -1;
+                int newYLevel = Mathf.Clamp(chunkManager.ViewMaxYLevel + yLevelChange, minYLevel, maxYLevel);
+                chunkManager.ViewMaxYLevel = newYLevel;
+                
+                // Update slider to match
+                if (yLevelSlider != null)
+                {
+                    yLevelSlider.value = newYLevel;
+                }
             }
-            else // Zooming out
+            else
             {
-                _targetZoom += currentZoomSpeed;
+                // Regular zoom control
+                float currentZoomPercent = (_camera.orthographicSize - minZoom) / (maxZoom - minZoom);
+                float currentZoomSpeed = _camera.orthographicSize * zoomSpeed;
+                
+                if (scrollDelta > 0)
+                    _targetZoom -= currentZoomSpeed;
+                else
+                    _targetZoom += currentZoomSpeed;
+                
+                _targetZoom = Mathf.Clamp(_targetZoom, minZoom, maxZoom);
             }
-            
-            _targetZoom = Mathf.Clamp(_targetZoom, minZoom, maxZoom);
         }
         
         _camera.orthographicSize = Mathf.Lerp(_camera.orthographicSize, _targetZoom, zoomSmoothness);

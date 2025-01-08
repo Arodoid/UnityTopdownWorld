@@ -982,13 +982,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8170ef2138736141804d5741550b173, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 15
+  moveSpeed: 8
   fastMoveMultiplier: 3
   movementSmoothness: 0.2
-  zoomSpeed: 10
+  zoomSpeed: 0.2
   minZoom: 8
-  maxZoom: 10000
-  zoomSmoothness: 0.1
+  maxZoom: 200
+  zoomSmoothness: 0.03
 --- !u!114 &1488966432
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1098,6 +1098,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2070139063}
   - component: {fileID: 2070139064}
+  - component: {fileID: 2070139066}
+  - component: {fileID: 2070139065}
   m_Layer: 0
   m_Name: WorldSystem
   m_TagString: Untagged
@@ -1136,25 +1138,53 @@ MonoBehaviour:
   chunkMaterial: {fileID: 2100000, guid: 26e4bd165616e8447a5fbfcd222b0ba3, type: 2}
   loadDistance: 10000
   chunkLoadBuffer: 1.2
-  poolSize: 10000
-  maxChunks: 512
   bufferTimeSeconds: 10
-  atmosphereColor: {r: 0.5, g: 0.7, b: 1, a: 1}
-  atmosphereDensity: 0.2
+  poolSize: 1000
+  maxChunks: 512
+  viewMaxYLevel: 20
+--- !u!114 &2070139065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2070139062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5c15c2237aa9ce40b65f3d28bcaba0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetMaterial: {fileID: 2100000, guid: 9878376fcffdc9444a78e39f29b5ba46, type: 2}
+  cloudScale: 25
+  cloudSpeed: 0.05
+  cloudDensity: 0.3
+  cloudHeight: 100
+  cloudMaxOrthoSize: 100
+  cloudMinOrthoSize: 20
+  cloudColor: {r: 1, g: 1, b: 1, a: 0.6}
+  cloudShadowStrength: 0.3
+  shadowSoftness: 0
+  overcastFactor: 0
+--- !u!114 &2070139066
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2070139062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90e42d5819578bb44aff1369aa90716c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetMaterial: {fileID: 2100000, guid: 26e4bd165616e8447a5fbfcd222b0ba3, type: 2}
+  mainCamera: {fileID: 1488966428}
+  atmosphereColor: {r: 0.6, g: 0.8, b: 1, a: 1}
+  atmosphereDensity: 0.1
   atmosphereStartHeight: 0
   atmosphereEndHeight: 256
-  atmosphereMaxOrthoSize: 256
-  atmosphereMinOrthoSize: 30
-  cloudScale: 300
-  cloudSpeed: 0.03
-  cloudDensity: 0.15
-  cloudHeight: 150
-  cloudMaxOrthoSize: 120
-  cloudMinOrthoSize: 70
-  cloudColor: {r: 1, g: 1, b: 1, a: 0.6}
-  cloudShadowStrength: 1.3
-  shadowSoftness: 1
-  overcastFactor: 0
+  atmosphereMaxOrthoSize: 100
+  atmosphereMinOrthoSize: 50
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

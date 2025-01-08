@@ -24,14 +24,22 @@ namespace WorldSystem.Data
         public byte blockType;
     }
 
-    public struct ChunkData
+    public struct ChunkData : System.IDisposable
     {
-        public const int SIZE = 16;
-        public int3 position;
+        public const int SIZE = 32;
+        public const int HEIGHT = 256;
+        public int3 position;  // Y component now represents absolute height
         public bool isEdited;
-        public bool isFullyOpaque;
         public NativeArray<byte> blocks;
         public NativeArray<HeightPoint> heightMap;
+
+        public void Dispose()
+        {
+            if (blocks.IsCreated)
+                blocks.Dispose();
+            if (heightMap.IsCreated)
+                heightMap.Dispose();
+        }
     }
 
     public struct MeshData

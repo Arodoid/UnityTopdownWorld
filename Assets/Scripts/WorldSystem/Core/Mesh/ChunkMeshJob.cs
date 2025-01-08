@@ -34,57 +34,88 @@ namespace WorldSystem.Jobs
         [NativeDisableParallelForRestriction]
         public NativeArray<float3> shadowNormals;
 
+        // Add new field for processed blocks tracking
+        [NativeDisableParallelForRestriction]
+        public NativeArray<bool> processed;
+
         public void Execute(int index)
         {
-            int z = index;
-            if (z >= ChunkData.SIZE) return;
+            // Skip the per-row processing since we'll handle the entire heightmap at once
+            if (index != 0) return;
 
-            int vertexStart = z * ChunkData.SIZE * 4;
-            int triStart = z * ChunkData.SIZE * 6;
-            int currentVertex = vertexStart;
-            int currentTri = triStart;
+            int currentVertex = 0;
+            int currentTri = 0;
 
-            int x = 0;
-            while (x < ChunkData.SIZE)
+            // Iterate through each cell
+            for (int z = 0; z < ChunkData.SIZE; z++)
             {
-                var currentPoint = heightMap[z * ChunkData.SIZE + x];
-                if (currentPoint.blockType == 0) // Air block
+                for (int x = 0; x < ChunkData.SIZE; x++)
                 {
-                    x++;
-                    continue;
+                    int cellIndex = z * ChunkData.SIZE + x;
+                    if (processed[cellIndex]) continue;
+
+                    var currentPoint = heightMap[cellIndex];
+                    if (currentPoint.blockType == 0) // Air block
+                    {
+                        processed[cellIndex] = true;
+                        continue;
+                    }
+
+                    // Find similar height blocks to combine in both X and Z directions
+                    int width = 1;
+                    int depth = 1;
+
+                    // Expand in X direction
+                    while (x + width < ChunkData.SIZE)
+                    {
+                        var nextPoint = heightMap[z * ChunkData.SIZE + x + width];
+                        if (nextPoint.blockType != currentPoint.blockType || 
+                            nextPoint.height != currentPoint.height)
+                            break;
+                        width++;
+                    }
+
+                    // Expand in Z direction
+                    bool canExpandDepth = true;
+                    while (z + depth < ChunkData.SIZE && canExpandDepth)
+                    {
+                        // Check entire row for matching blocks
+                        for (int dx = 0; dx < width; dx++)
+                        {
+                            var nextPoint = heightMap[(z + depth) * ChunkData.SIZE + x + dx];
+                            if (nextPoint.blockType != currentPoint.blockType || 
+                                nextPoint.height != currentPoint.height)
+                            {
+                                canExpandDepth = false;
+                                break;
+                            }
+                        }
+                        if (canExpandDepth)
+                            depth++;
+                    }
+
+                    // Mark all cells in the rectangle as processed
+                    for (int dz = 0; dz < depth; dz++)
+                        for (int dx = 0; dx < width; dx++)
+                            processed[(z + dz) * ChunkData.SIZE + (x + dx)] = true;
+
+                    // Create quad for this rectangle
+                    float4 color = blockDefinitions[currentPoint.blockType].color;
+                    AddGreedyQuad(ref currentVertex, ref currentTri, x, currentPoint.height, z, width, depth, color);
                 }
-
-                // Find similar height blocks to combine
-                int width = 1;
-                while (x + width < ChunkData.SIZE)
-                {
-                    var nextPoint = heightMap[z * ChunkData.SIZE + x + width];
-                    if (nextPoint.blockType != currentPoint.blockType || 
-                        nextPoint.height != currentPoint.height)
-                        break;
-                    width++;
-                }
-
-                // Use the full height value now, not just within chunk
-                float y = currentPoint.height; // No longer need to modulo by ChunkData.SIZE
-
-                // Create quad for this strip
-                float4 color = blockDefinitions[currentPoint.blockType].color;
-                AddQuad(ref currentVertex, ref currentTri, x, y, z, width, color);
-
-                x += width;
             }
 
-            ProcessShadowMesh(z, ref currentVertex, ref currentTri);
-            StoreMeshCounts(z, vertexStart, triStart, currentVertex, currentTri);
+            ProcessShadowMesh(0, ref currentVertex, ref currentTri);
+            StoreMeshCounts(0, 0, 0, currentVertex, currentTri);
         }
 
-        private void AddQuad(ref int currentVertex, ref int currentTri, int x, float y, int z, int width, float4 color)
+        private void AddGreedyQuad(ref int currentVertex, ref int currentTri, int x, float y, int z, 
+            int width, int depth, float4 color)
         {
-            // Add vertices
+            // Add vertices for the rectangular quad
             vertices[currentVertex + 0] = new float3(x, y, z);
-            vertices[currentVertex + 1] = new float3(x, y, z + 1);
-            vertices[currentVertex + 2] = new float3(x + width, y, z + 1);
+            vertices[currentVertex + 1] = new float3(x, y, z + depth);
+            vertices[currentVertex + 2] = new float3(x + width, y, z + depth);
             vertices[currentVertex + 3] = new float3(x + width, y, z);
 
             // Add triangles
@@ -95,10 +126,10 @@ namespace WorldSystem.Jobs
             triangles[currentTri + 4] = currentVertex + 2;
             triangles[currentTri + 5] = currentVertex + 3;
 
-            // Add UVs
+            // Add UVs (scaled by width and depth for proper texturing)
             uvs[currentVertex + 0] = new float2(0, 0);
-            uvs[currentVertex + 1] = new float2(0, 1);
-            uvs[currentVertex + 2] = new float2(width, 1);
+            uvs[currentVertex + 1] = new float2(0, depth);
+            uvs[currentVertex + 2] = new float2(width, depth);
             uvs[currentVertex + 3] = new float2(width, 0);
 
             // Add colors

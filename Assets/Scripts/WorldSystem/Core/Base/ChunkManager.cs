@@ -14,46 +14,48 @@ namespace WorldSystem.Base
         [SerializeField] private Camera mainCamera;
         [SerializeField] private Material chunkMaterial;
 
-        [SerializeField] private float loadDistance = 100f;  // Fallback for perspective camera if orthographic is false for whatever reason
-        [SerializeField] private float chunkLoadBuffer = 1.2f; // 1.0 = exact fit, 1.2 = 20% extra, etc.
+        [SerializeField] private float loadDistance = 100f;
+        [SerializeField] private float chunkLoadBuffer = 1.2f;
+        [SerializeField] private float bufferTimeSeconds = 30f;
         
         private HashSet<int2> _visibleChunkPositions = new();
         private PriorityQueue<int2> _chunkLoadQueue = new();
         private Vector3 _lastCameraPosition;
         private float _lastCameraHeight;
-        private const float UPDATE_THRESHOLD = 16f; // Only update when camera moves 1 chunk
+        private float _lastOrthoSize;
+        private const float UPDATE_THRESHOLD = 16f;
 
-        [SerializeField] private int poolSize = 512; // Adjust based on your max visible chunks
+        [SerializeField] private int poolSize = 512;
         private ChunkPool _chunkPool;
 
-        [SerializeField] private int maxChunks = 512; // Maximum total chunks that can exist
+        [SerializeField] private int maxChunks = 512;
 
         private IChunkMeshBuilder _meshBuilder;
 
-        private float _lastOrthoSize; // Add this field for tracking orthographic size changes.
-        [SerializeField] private float bufferTimeSeconds = 5f; // Add this field for buffer time configuration
+        [SerializeField] private int viewMaxYLevel = 20;
+        public int ViewMaxYLevel
+        {
+            get => viewMaxYLevel;
+            set
+            {
+                if (viewMaxYLevel != value)
+                {
+                    viewMaxYLevel = value;
+                    HandleYLevelChange();
+                }
+            }
+        }
 
-        [Header("Atmosphere Settings")]
-        [SerializeField] private Color atmosphereColor = new Color(0.6f, 0.8f, 1.0f, 1.0f);
-        [SerializeField] private float atmosphereDensity = 0.5f;
-        [SerializeField] private float atmosphereStartHeight = 20f;
-        [SerializeField] private float atmosphereEndHeight = 100f;
-        [SerializeField] private float atmosphereMaxOrthoSize = 100f;
-        [SerializeField] private float atmosphereMinOrthoSize = 20f;
+        private int _lastViewMaxYLevel;  // Track Y-level changes
 
-        [Header("Cloud Settings")]
-        [SerializeField] private float cloudScale = 20f;
-        [SerializeField] private float cloudSpeed = 0.05f;
-        [SerializeField] private float cloudDensity = 0.3f;
-        [SerializeField] private float cloudHeight = 100f;
-        [SerializeField] private float cloudMaxOrthoSize = 100f;
-        [SerializeField] private float cloudMinOrthoSize = 20f;
-        [SerializeField] private Color cloudColor = new Color(1, 1, 1, 0.6f);
-        [SerializeField] private float cloudShadowStrength = 0.3f;
+        private Dictionary<int2, HashSet<int>> _generatedYLevels = new();
 
-        [Header("Shadow Settings")]
-        [SerializeField] private float shadowSoftness = 0.3f;
-        [SerializeField] private float overcastFactor = 0f;
+        private Dictionary<int2, NativeArray<byte>> _chunkBlockData = new();
+        private HashSet<int2> _generatedChunks = new();
+
+        [SerializeField] private int maxCachedChunks = 2048;
+
+        private PriorityQueue<int2> _chunkDistanceQueue = new();
 
         void Awake()
         {
@@ -62,10 +64,13 @@ namespace WorldSystem.Base
             _chunkGenerator.OnChunkGenerated += OnChunkGenerated;
 
             _chunkPool = new ChunkPool(chunkMaterial, transform, poolSize, maxChunks, bufferTimeSeconds);
+            _lastViewMaxYLevel = viewMaxYLevel;  // Initialize last known Y-level
             UpdateVisibleChunks();
 
-            // Set initial material properties
-            UpdateMaterialProperties();
+            // Initialize last known positions
+            _lastCameraPosition = mainCamera.transform.position;
+            _lastCameraHeight = _lastCameraPosition.y;
+            _lastOrthoSize = mainCamera.orthographicSize;
         }
 
         void Update()
@@ -74,10 +79,16 @@ namespace WorldSystem.Base
             float currentHeight = currentCamPos.y;
             float currentOrthoSize = mainCamera.orthographicSize;
             
-            // Only update chunks if camera moved enough or ortho size changed
-            if (Vector3.Distance(_lastCameraPosition, currentCamPos) > UPDATE_THRESHOLD ||
+            // Check if Y-level has changed
+            if (_lastViewMaxYLevel != viewMaxYLevel)
+            {
+                HandleYLevelChange();
+                _lastViewMaxYLevel = viewMaxYLevel;
+            }
+            // Regular position update check
+            else if (Vector3.Distance(_lastCameraPosition, currentCamPos) > UPDATE_THRESHOLD ||
                 Mathf.Abs(_lastCameraHeight - currentHeight) > UPDATE_THRESHOLD ||
-                Mathf.Abs(_lastOrthoSize - currentOrthoSize) > 0.01f)  // Small threshold for ortho changes
+                Mathf.Abs(_lastOrthoSize - currentOrthoSize) > 0.01f)
             {
                 UpdateVisibleChunks();
                 QueueMissingChunks();
@@ -88,12 +99,8 @@ namespace WorldSystem.Base
                 _lastOrthoSize = currentOrthoSize;
             }
 
-            // This still needs to run every frame to process the queue
             ProcessChunkQueue();
             _meshBuilder.Update();
-
-            // Update material properties
-            UpdateMaterialProperties();
         }
 
         void UpdateVisibleChunks()
@@ -107,21 +114,17 @@ namespace WorldSystem.Base
                 float orthoWidth = mainCamera.orthographicSize * 2f * aspect;
                 float orthoHeight = mainCamera.orthographicSize * 2f;
                 
-                // Apply buffer to the view distances
                 orthoWidth *= chunkLoadBuffer;
                 orthoHeight *= chunkLoadBuffer;
                 
-                // Calculate chunk distances for width and height separately
                 int chunkDistanceX = Mathf.CeilToInt((orthoWidth * 0.5f) / ChunkData.SIZE);
                 int chunkDistanceZ = Mathf.CeilToInt((orthoHeight * 0.5f) / ChunkData.SIZE);
 
-                // Convert camera position to chunk coordinates
                 int2 centerChunk = new int2(
                     Mathf.FloorToInt(camPos.x / ChunkData.SIZE),
                     Mathf.FloorToInt(camPos.z / ChunkData.SIZE)
                 );
 
-                // Use different ranges for X and Z to create a rectangular area
                 for (int x = -chunkDistanceX; x <= chunkDistanceX; x++)
                 for (int z = -chunkDistanceZ; z <= chunkDistanceZ; z++)
                 {
@@ -131,8 +134,7 @@ namespace WorldSystem.Base
             }
             else
             {
-                // Fallback for perspective camera (using the buffer as a direct multiplier)
-                float viewDistance = Mathf.Min(loadDistance, camPos.y * 2f) * chunkLoadBuffer;
+                float viewDistance = loadDistance * chunkLoadBuffer;
                 int2 centerChunk = new int2(
                     Mathf.FloorToInt(camPos.x / ChunkData.SIZE),
                     Mathf.FloorToInt(camPos.z / ChunkData.SIZE)
@@ -153,22 +155,61 @@ namespace WorldSystem.Base
             Vector3 camPos = mainCamera.transform.position;
             foreach (var chunkPos in _visibleChunkPositions)
             {
-                if (!_chunkPool.HasActiveChunkAtPosition(chunkPos) && 
-                    !_chunkGenerator.IsGenerating(chunkPos) && 
-                    !_chunkLoadQueue.Contains(chunkPos))
+                if (!_generatedChunks.Contains(chunkPos))
                 {
-                    float priority = Vector2.Distance(
-                        new Vector2(camPos.x, camPos.z),
-                        new Vector2(chunkPos.x * ChunkData.SIZE, chunkPos.y * ChunkData.SIZE)
-                    );
-                    _chunkLoadQueue.Enqueue(chunkPos, priority);
+                    if (!_chunkGenerator.IsGenerating(chunkPos) && !_chunkLoadQueue.Contains(chunkPos))
+                    {
+                        float priority = Vector2.Distance(
+                            new Vector2(camPos.x, camPos.z),
+                            new Vector2(chunkPos.x * ChunkData.SIZE, chunkPos.y * ChunkData.SIZE)
+                        );
+                        _chunkLoadQueue.Enqueue(chunkPos, priority);
+                    }
+                }
+                else if (!_generatedYLevels.TryGetValue(chunkPos, out var yLevels) || 
+                         !yLevels.Contains(viewMaxYLevel))
+                {
+                    CreateChunkObject(chunkPos, _chunkBlockData[chunkPos], default);
+                    
+                    if (!_generatedYLevels.ContainsKey(chunkPos))
+                    {
+                        _generatedYLevels[chunkPos] = new HashSet<int>();
+                    }
+                    _generatedYLevels[chunkPos].Add(viewMaxYLevel);
+                }
+                else
+                {
+                    var chunkResult = _chunkPool.GetChunk(chunkPos, viewMaxYLevel);
+                    if (chunkResult != null)
+                    {
+                        var (chunk, _, _) = chunkResult.Value;
+                        chunk.SetActive(true);
+                    }
                 }
             }
         }
 
         private void OnChunkGenerated(ChunkData chunkData)
         {
-            CreateChunkObject(chunkData.position, chunkData.blocks, chunkData.heightMap);
+            int2 position2D = new int2(chunkData.position.x, chunkData.position.z);
+            
+            if (!_generatedChunks.Contains(position2D))
+            {
+                var permanentBlocks = new NativeArray<byte>(chunkData.blocks.Length, 
+                    Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
+                permanentBlocks.CopyFrom(chunkData.blocks);
+                
+                _chunkBlockData[position2D] = permanentBlocks;
+                _generatedChunks.Add(position2D);
+            }
+
+            if (!_generatedYLevels.ContainsKey(position2D))
+            {
+                _generatedYLevels[position2D] = new HashSet<int>();
+            }
+            _generatedYLevels[position2D].Add(viewMaxYLevel);
+
+            CreateChunkObject(position2D, chunkData.blocks, default);
         }
 
         void ProcessChunkQueue()
@@ -186,46 +227,33 @@ namespace WorldSystem.Base
             }
         }
 
-        void CreateChunkObject(int3 position, NativeArray<byte> blocks, NativeArray<HeightPoint> heightMap)
+        void CreateChunkObject(int2 position, NativeArray<byte> blocks, NativeArray<HeightPoint> heightMap)
         {
-            // Convert 3D position to 2D position for mesh creation
-            int2 position2D = new int2(position.x, position.z);
-            
-            var chunkResult = _chunkPool.GetChunk(position2D);
+            var chunkResult = _chunkPool.GetChunk(position, viewMaxYLevel);
             if (chunkResult == null)
             {
-                Debug.LogWarning($"Cannot create chunk at {position}: At maximum chunk limit ({maxChunks}). Consider increasing maxChunks if needed.");
+                Debug.LogWarning($"Cannot create chunk at {position}: At maximum chunk limit ({maxChunks})");
                 return;
             }
 
             var (chunk, meshFilter, shadowMeshFilter) = chunkResult.Value;
-            
-            // Create a copy of heightMap for the mesh job
-            var heightMapCopy = new NativeArray<HeightPoint>(heightMap.Length, Allocator.Persistent);
-            heightMapCopy.CopyFrom(heightMap);
-            
-            _meshBuilder.QueueMeshBuild(position2D, heightMapCopy, meshFilter, shadowMeshFilter);
+            _meshBuilder.QueueMeshBuild(position, blocks, meshFilter, shadowMeshFilter, viewMaxYLevel);
         }
 
         void CleanupDistantChunks()
         {
-            // Get all active chunk positions from the pool
-            var activeChunkPositions = _chunkPool.GetActiveChunkPositions();
+            var activeChunkPositions = _chunkPool.GetActiveChunkPositions().ToList();
             
-            // Find chunks that are no longer visible
-            var chunksToRemove = activeChunkPositions
-                .Where(pos => !_visibleChunkPositions.Contains(pos))
-                .ToList();
-
-            // Move them to inactive buffer
-            foreach (var pos in chunksToRemove)
+            foreach (var (pos, yLevel) in activeChunkPositions)
             {
-                _chunkPool.DeactivateChunk(pos);
+                if (!_visibleChunkPositions.Contains(pos))
+                {
+                    _chunkPool.DeactivateChunk(pos, yLevel);
+                }
             }
 
             _chunkPool.CheckBufferTimeout();
 
-            // Clean queue
             var newQueue = new PriorityQueue<int2>();
             while (_chunkLoadQueue.Count > 0)
             {
@@ -239,46 +267,8 @@ namespace WorldSystem.Base
                 }
             }
             _chunkLoadQueue = newQueue;
-        }
 
-        private void UpdateMaterialProperties()
-        {
-            // Atmosphere properties
-            chunkMaterial.SetColor("_AtmosphereColor", atmosphereColor);
-            chunkMaterial.SetFloat("_AtmosphereDensity", atmosphereDensity);
-            chunkMaterial.SetFloat("_AtmosphereStartHeight", atmosphereStartHeight);
-            chunkMaterial.SetFloat("_AtmosphereEndHeight", atmosphereEndHeight);
-            chunkMaterial.SetFloat("_AtmosphereMaxOrthoSize", atmosphereMaxOrthoSize);
-            chunkMaterial.SetFloat("_AtmosphereMinOrthoSize", atmosphereMinOrthoSize);
-            chunkMaterial.SetFloat("_OrthoSize", mainCamera.orthographicSize);
-
-            // Cloud and shadow properties
-            chunkMaterial.SetFloat("_ShadowSoftness", shadowSoftness);
-            chunkMaterial.SetFloat("_OvercastFactor", overcastFactor);
-            chunkMaterial.SetFloat("_CloudScale", cloudScale);
-            chunkMaterial.SetFloat("_CloudSpeed", cloudSpeed);
-            chunkMaterial.SetFloat("_CloudDensity", cloudDensity);
-            chunkMaterial.SetFloat("_CloudHeight", cloudHeight);
-            chunkMaterial.SetColor("_CloudColor", cloudColor);
-            chunkMaterial.SetFloat("_ShadowStrength", cloudShadowStrength);
-            chunkMaterial.SetFloat("_CloudMaxOrthoSize", cloudMaxOrthoSize);
-            chunkMaterial.SetFloat("_CloudMinOrthoSize", cloudMinOrthoSize);
-            
-            // Calculate shadow offset based on main directional light
-            Light mainLight = RenderSettings.sun;
-            if (mainLight != null)
-            {
-                Vector3 lightDir = -mainLight.transform.forward.normalized;
-                chunkMaterial.SetVector("_MainLightPosition", new Vector4(lightDir.x, lightDir.y, lightDir.z, 0));
-                
-                // We'll keep shadow offset for optimization/approximation at far distances
-                Vector2 shadowOffset = new Vector2(lightDir.x, lightDir.z) * (cloudHeight / -lightDir.y);
-                chunkMaterial.SetVector("_ShadowOffset", shadowOffset);
-            }
-
-            // Add shadow control properties
-            chunkMaterial.SetFloat("_ShadowSoftness", shadowSoftness);
-            chunkMaterial.SetFloat("_OvercastFactor", overcastFactor);
+            CleanupExcessChunks();
         }
 
         void OnDestroy()
@@ -286,12 +276,103 @@ namespace WorldSystem.Base
             _chunkGenerator.Dispose();
             _meshBuilder.Dispose();
             _chunkPool.Cleanup();
+
+            // Add cleanup for stored block data
+            foreach (var blocks in _chunkBlockData.Values)
+            {
+                if (blocks.IsCreated)
+                    blocks.Dispose();
+            }
+            _chunkBlockData.Clear();
         }
 
         private void UpdateShaderOrthoSize()
         {
             Camera cam = GetComponent<Camera>();
             Shader.SetGlobalFloat("_OrthoSize", cam.orthographicSize);
+        }
+
+        private void HandleYLevelChange()
+        {
+            foreach (var pos in _visibleChunkPositions)
+            {
+                if (!_generatedChunks.Contains(pos))
+                {
+                    if (!_chunkGenerator.IsGenerating(pos) && !_chunkLoadQueue.Contains(pos))
+                    {
+                        float priority = Vector2.Distance(
+                            new Vector2(mainCamera.transform.position.x, mainCamera.transform.position.z),
+                            new Vector2(pos.x * ChunkData.SIZE, pos.y * ChunkData.SIZE)
+                        );
+                        _chunkLoadQueue.Enqueue(pos, priority);
+                    }
+                }
+                else if (!_generatedYLevels.TryGetValue(pos, out var yLevels) || 
+                         !yLevels.Contains(viewMaxYLevel))
+                {
+                    CreateChunkObject(pos, _chunkBlockData[pos], default);
+                    
+                    if (!_generatedYLevels.ContainsKey(pos))
+                    {
+                        _generatedYLevels[pos] = new HashSet<int>();
+                    }
+                    _generatedYLevels[pos].Add(viewMaxYLevel);
+                }
+                else
+                {
+                    var chunkResult = _chunkPool.GetChunk(pos, viewMaxYLevel);
+                    if (chunkResult != null)
+                    {
+                        var (chunk, _, _) = chunkResult.Value;
+                        chunk.SetActive(true);
+                    }
+                }
+            }
+        }
+
+        private void CleanupExcessChunks()
+        {
+            if (_chunkBlockData.Count <= maxCachedChunks) return;
+
+            Vector3 camPos = mainCamera.transform.position;
+            int2 cameraPosInChunks = new int2(
+                Mathf.FloorToInt(camPos.x / ChunkData.SIZE),
+                Mathf.FloorToInt(camPos.z / ChunkData.SIZE)
+            );
+
+            _chunkDistanceQueue.Clear();
+            foreach (var chunkPos in _chunkBlockData.Keys)
+            {
+                if (_visibleChunkPositions.Contains(chunkPos)) continue;
+
+                float distance = Vector2.Distance(
+                    new Vector2(cameraPosInChunks.x, cameraPosInChunks.y),
+                    new Vector2(chunkPos.x, chunkPos.y)
+                );
+                _chunkDistanceQueue.Enqueue(chunkPos, -distance);
+            }
+
+            int chunksToRemove = _chunkBlockData.Count - maxCachedChunks;
+            for (int i = 0; i < chunksToRemove && _chunkDistanceQueue.Count > 0; i++)
+            {
+                var chunkPos = _chunkDistanceQueue.Dequeue();
+                
+                if (_chunkBlockData.TryGetValue(chunkPos, out var blocks))
+                {
+                    if (blocks.IsCreated)
+                        blocks.Dispose();
+                    _chunkBlockData.Remove(chunkPos);
+                }
+
+                _generatedChunks.Remove(chunkPos);
+                _generatedYLevels.Remove(chunkPos);
+            }
+        }
+
+        void OnGUI()
+        {
+            GUI.Label(new Rect(10, 10, 200, 20), 
+                $"Cached Chunks: {_chunkBlockData.Count}/{maxCachedChunks}");
         }
     }
 } 

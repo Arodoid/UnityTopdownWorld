@@ -3,6 +3,7 @@ using Unity.Burst;
 using Unity.Mathematics;
 using Unity.Collections;
 using WorldSystem.Data;
+using UnityEngine;
 
 namespace WorldSystem.Jobs
 {
@@ -16,61 +17,42 @@ namespace WorldSystem.Jobs
         // Output
         [NativeDisableParallelForRestriction]
         public NativeArray<byte> blocks;
-        [NativeDisableParallelForRestriction]
-        public NativeArray<HeightPoint> heightMap;
         public bool isFullyOpaque;
 
-        // Constants
+        // Simplified constants
         private const float NOISE_SCALE = 0.03f;
-        private const float HEIGHT_SCALE = 8f;
-        private const float BASE_HEIGHT = 64f;
-
-        private float GetNoise(float2 pos)
-        {
-            float2 worldPos = new float2(
-                (position.x * ChunkData.SIZE + pos.x) * NOISE_SCALE,
-                (position.z * ChunkData.SIZE + pos.y) * NOISE_SCALE
-            );
-
-            return noise.snoise(worldPos) * HEIGHT_SCALE + BASE_HEIGHT;
-        }
-
-        private BlockType GetBlockType(int worldHeight, int worldY)
-        {
-            if (worldY > worldHeight) return BlockType.Air;
-            if (worldY == worldHeight) return BlockType.Grass;
-            if (worldY > worldHeight - 3) return BlockType.Dirt;
-            return BlockType.Stone;
-        }
+        private const int TERRAIN_HEIGHT = 64; // Fixed base terrain height
 
         public void Execute(int index)
         {
             int x = index % ChunkData.SIZE;
             int z = index / ChunkData.SIZE;
 
-            // Calculate absolute world height for this column
-            float heightNoise = GetNoise(new float2(x, z));
-            int worldHeight = (int)math.clamp(heightNoise, 0, 255); // Use full world height range
-
-            // Store heightmap data
-            int mapIndex = z * ChunkData.SIZE + x;
-            heightMap[mapIndex] = new HeightPoint 
-            { 
-                height = (byte)worldHeight,
-                blockType = (byte)GetBlockType(worldHeight, worldHeight)
-            };
-
-            // Fill chunk data
-            isFullyOpaque = true;
-            int chunkBaseY = position.y * ChunkData.SIZE;
+            // Simple height calculation
+            float2 worldPos = new float2(
+                (position.x * ChunkData.SIZE + x) * NOISE_SCALE,
+                (position.z * ChunkData.SIZE + z) * NOISE_SCALE
+            );
             
-            for (int y = 0; y < ChunkData.SIZE; y++)
+            int height = TERRAIN_HEIGHT + (int)(noise.snoise(worldPos) * 8); // +/- 8 blocks variation
+
+            // Fill Chunk
+            for (int y = 0; y < ChunkData.HEIGHT; y++)
             {
-                int worldY = chunkBaseY + y;
                 int blockIndex = (y * ChunkData.SIZE * ChunkData.SIZE) + (z * ChunkData.SIZE) + x;
-                BlockType type = GetBlockType(worldHeight, worldY);
+                BlockType type;
+
+                if (y > height)
+                    type = BlockType.Air;
+                else if (y == height)
+                    type = BlockType.Grass;
+                else if (y >= height - 2)
+                    type = BlockType.Dirt;
+                else
+                    type = BlockType.Stone;
+
                 blocks[blockIndex] = (byte)type;
-                isFullyOpaque &= BlockColors.Definitions[(int)type].isOpaque;
+                isFullyOpaque &= type != BlockType.Air;
             }
         }
     }

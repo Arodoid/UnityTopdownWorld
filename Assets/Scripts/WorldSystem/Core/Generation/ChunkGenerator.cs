@@ -5,138 +5,115 @@ using UnityEngine;
 using System.Collections.Generic;
 using WorldSystem.Data;
 using WorldSystem.Jobs;
-using System.Linq;
+using System.Linq; 
 
 namespace WorldSystem.Generation
 {
     public class ChunkGenerator : IChunkGenerator
     {
-        private HashSet<int2> _columnsBeingProcessed = new();
-        private Dictionary<int2, (NativeArray<HeightPoint> heightMap, List<PendingChunk> chunks)> _pendingColumns = new();
-        private NativeArray<JobHandle> _batchHandles;
-        private const int BATCH_SIZE = 256;
+        // Track which chunks are currently being generated
+        private HashSet<int2> _chunksInProgress = new();
+        private Dictionary<int2, PendingChunk> _pendingChunks = new();
+        private JobHandle _lastJobHandle;
 
         public event System.Action<ChunkData> OnChunkGenerated;
 
-        public ChunkGenerator()
-        {
-            _batchHandles = new NativeArray<JobHandle>(BATCH_SIZE, Allocator.Persistent);
-        }
-
+        // Input: 2D position (x,z) where we want to generate a chunk
         public void QueueChunkGeneration(int2 position)
         {
-            if (_columnsBeingProcessed.Contains(position))
+            if (_chunksInProgress.Contains(position))
                 return;
 
-            _columnsBeingProcessed.Add(position);
-            
-            // Create one heightmap for the entire column
-            var heightMap = new NativeArray<HeightPoint>(ChunkData.SIZE * ChunkData.SIZE, Allocator.Persistent);
-            _pendingColumns[position] = (heightMap, new List<PendingChunk>());
-            
-            // Start with top chunk
-            StartChunkGeneration(new int3(position.x, 15, position.y));
+            _chunksInProgress.Add(position);
+            StartChunkGeneration(new int3(position.x, 0, position.y)); // Start at y=0
         }
 
         private void StartChunkGeneration(int3 position)
         {
-            var blocks = new NativeArray<byte>(ChunkData.SIZE * ChunkData.SIZE * ChunkData.SIZE, Allocator.Persistent);
-            var int2Pos = new int2(position.x, position.z);
-            
+            _lastJobHandle.Complete();
+
+            var blocks = new NativeArray<byte>(
+                ChunkData.SIZE * ChunkData.HEIGHT * ChunkData.SIZE, 
+                Allocator.TempJob,
+                NativeArrayOptions.ClearMemory
+            );
+
             var genJob = new ChunkGenerationJob
             {
                 position = position,
                 seed = 123,
                 blocks = blocks,
-                heightMap = _pendingColumns[int2Pos].heightMap,  // Use the column's heightMap
                 isFullyOpaque = true
             };
 
             var jobHandle = genJob.Schedule(ChunkData.SIZE * ChunkData.SIZE, 64);
-            
-            _pendingColumns[int2Pos].chunks.Add(new PendingChunk
+            _lastJobHandle = jobHandle;
+
+            _pendingChunks[new int2(position.x, position.z)] = new PendingChunk
             {
                 position = position,
                 jobHandle = jobHandle,
                 blocks = blocks,
-                isFullyOpaque = genJob.isFullyOpaque
-            });
+                isValid = true
+            };
         }
 
-        public bool IsGenerating(int2 position) => _columnsBeingProcessed.Contains(position);
-
+        // Output: Generated ChunkData via OnChunkGenerated event
         public void Update()
         {
-            foreach (var columnPos in _columnsBeingProcessed.ToList())
+            foreach (var pos in _chunksInProgress.ToList())
             {
-                var (heightMap, chunks) = _pendingColumns[columnPos];
-                if (chunks.Count == 0) continue;
+                if (!_pendingChunks.TryGetValue(pos, out var chunk) || !chunk.isValid) continue;
+                if (!chunk.jobHandle.IsCompleted) continue;
 
-                var currentChunk = chunks[chunks.Count - 1];
-                if (!currentChunk.jobHandle.IsCompleted) continue;
+                chunk.jobHandle.Complete();
 
-                currentChunk.jobHandle.Complete();
-                chunks.RemoveAt(chunks.Count - 1);
-
-                // If this is not our final chunk
-                if (!currentChunk.isFullyOpaque && currentChunk.position.y > 0)
+                var chunkData = new ChunkData
                 {
-                    var chunkData = new ChunkData
-                    {
-                        position = currentChunk.position,
-                        blocks = currentChunk.blocks,  // ChunkData takes ownership
-                        heightMap = heightMap,         // Share the column heightmap
-                        isEdited = false
-                    };
-                    OnChunkGenerated?.Invoke(chunkData);
-                    
-                    StartChunkGeneration(new int3(
-                        currentChunk.position.x,
-                        currentChunk.position.y - 1,
-                        currentChunk.position.z
-                    ));
-                }
-                else
+                    position = chunk.position,
+                    blocks = chunk.blocks,
+                    isEdited = false
+                };
+
+                OnChunkGenerated?.Invoke(chunkData);
+                _chunksInProgress.Remove(pos);
+                
+                // Mark as invalid instead of removing immediately
+                var invalidChunk = chunk;
+                invalidChunk.isValid = false;
+                _pendingChunks[pos] = invalidChunk;
+            }
+
+            // Cleanup completed chunks
+            foreach (var kvp in _pendingChunks.ToList())
+            {
+                if (!kvp.Value.isValid)
                 {
-                    // We're done with this column
-                    var chunkData = new ChunkData
-                    {
-                        position = currentChunk.position,
-                        blocks = currentChunk.blocks,  // ChunkData takes ownership
-                        heightMap = heightMap,         // Share the column heightmap
-                        isEdited = false
-                    };
-                    OnChunkGenerated?.Invoke(chunkData);
-                    
-                    _columnsBeingProcessed.Remove(columnPos);
-                    
-                    // Clean up any remaining chunks in the column
-                    foreach (var chunk in chunks)
-                    {
-                        chunk.jobHandle.Complete();
-                        if (chunk.blocks.IsCreated) chunk.blocks.Dispose();
-                    }
-                    _pendingColumns.Remove(columnPos);
+                    if (kvp.Value.blocks.IsCreated)
+                        kvp.Value.blocks.Dispose();
+                    _pendingChunks.Remove(kvp.Key);
                 }
             }
         }
+
+        public bool IsGenerating(int2 position) => _chunksInProgress.Contains(position);
 
         public void Dispose()
         {
-            foreach (var (heightMap, chunks) in _pendingColumns.Values)
+            _lastJobHandle.Complete();
+            
+            // Ensure all pending chunks are properly disposed
+            foreach (var chunk in _pendingChunks.Values)
             {
-                if (heightMap.IsCreated) heightMap.Dispose();
-                foreach (var chunk in chunks)
+                if (chunk.isValid && chunk.blocks.IsCreated)
                 {
                     chunk.jobHandle.Complete();
-                    if (chunk.blocks.IsCreated) chunk.blocks.Dispose();
+                    chunk.blocks.Dispose();
                 }
             }
-            _pendingColumns.Clear();
-            _columnsBeingProcessed.Clear();
-
-            if (_batchHandles.IsCreated)
-                _batchHandles.Dispose();
+            
+            _pendingChunks.Clear();
+            _chunksInProgress.Clear();
         }
 
         private struct PendingChunk
@@ -144,7 +121,7 @@ namespace WorldSystem.Generation
             public int3 position;
             public JobHandle jobHandle;
             public NativeArray<byte> blocks;
-            public bool isFullyOpaque;
+            public bool isValid;
         }
     }
-} 
+}

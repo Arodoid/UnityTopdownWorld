@@ -23,22 +23,40 @@ namespace WorldSystem.Mesh
             _blockDefs = new NativeArray<BlockDefinition>(BlockColors.Definitions, Allocator.Persistent);
         }
 
-        public void QueueMeshBuild(int2 position, NativeArray<HeightPoint> heightMap, MeshFilter meshFilter, MeshFilter shadowMeshFilter)
+        public void QueueMeshBuild(int2 position, NativeArray<byte> blocks, MeshFilter meshFilter, 
+            MeshFilter shadowMeshFilter, int maxYLevel)
         {
             if (_meshesBeingBuilt.Contains(position))
                 return;
 
             _meshesBeingBuilt.Add(position);
 
+            var heightMap = new NativeArray<HeightPoint>(ChunkData.SIZE * ChunkData.SIZE, Allocator.TempJob);
+
             // Allocate mesh data arrays
-            var vertices = new NativeArray<float3>(TOTAL_QUADS * VERTS_PER_QUAD, Allocator.Persistent);
-            var triangles = new NativeArray<int>(TOTAL_QUADS * TRIS_PER_QUAD, Allocator.Persistent);
-            var uvs = new NativeArray<float2>(TOTAL_QUADS * VERTS_PER_QUAD, Allocator.Persistent);
-            var colors = new NativeArray<float4>(TOTAL_QUADS * VERTS_PER_QUAD, Allocator.Persistent);
-            var meshCounts = new NativeArray<int>(ChunkData.SIZE * 4, Allocator.Persistent);
-            var shadowVertices = new NativeArray<float3>(TOTAL_QUADS * VERTS_PER_QUAD * 4, Allocator.Persistent);
-            var shadowTriangles = new NativeArray<int>(TOTAL_QUADS * TRIS_PER_QUAD * 4, Allocator.Persistent);
-            var shadowNormals = new NativeArray<float3>(TOTAL_QUADS * VERTS_PER_QUAD * 4, Allocator.Persistent);
+            var vertices = new NativeArray<float3>(TOTAL_QUADS * VERTS_PER_QUAD, Allocator.TempJob);
+            var triangles = new NativeArray<int>(TOTAL_QUADS * TRIS_PER_QUAD, Allocator.TempJob);
+            var uvs = new NativeArray<float2>(TOTAL_QUADS * VERTS_PER_QUAD, Allocator.TempJob);
+            var colors = new NativeArray<float4>(TOTAL_QUADS * VERTS_PER_QUAD, Allocator.TempJob);
+            var meshCounts = new NativeArray<int>(ChunkData.SIZE * 4, Allocator.TempJob);
+            var shadowVertices = new NativeArray<float3>(TOTAL_QUADS * VERTS_PER_QUAD * 4, Allocator.TempJob);
+            var shadowTriangles = new NativeArray<int>(TOTAL_QUADS * TRIS_PER_QUAD * 4, Allocator.TempJob);
+            var shadowNormals = new NativeArray<float3>(TOTAL_QUADS * VERTS_PER_QUAD * 4, Allocator.TempJob);
+
+            // Create a copy of the blocks array that we control
+            var blocksCopy = new NativeArray<byte>(blocks.Length, Allocator.TempJob);
+            blocksCopy.CopyFrom(blocks);
+
+            var heightMapJob = new HeightMapGenerationJob
+            {
+                blocks = blocksCopy,
+                heightMap = heightMap,
+                maxYLevel = maxYLevel
+            };
+
+            var heightMapHandle = heightMapJob.Schedule(ChunkData.SIZE * ChunkData.SIZE, 64);
+
+            var processed = new NativeArray<bool>(ChunkData.SIZE * ChunkData.SIZE, Allocator.TempJob);
 
             var meshJob = new ChunkMeshJob
             {
@@ -52,10 +70,11 @@ namespace WorldSystem.Mesh
                 meshCounts = meshCounts,
                 shadowVertices = shadowVertices,
                 shadowTriangles = shadowTriangles,
-                shadowNormals = shadowNormals
+                shadowNormals = shadowNormals,
+                processed = processed
             };
 
-            var jobHandle = meshJob.Schedule(ChunkData.SIZE, 1);
+            var jobHandle = meshJob.Schedule(ChunkData.SIZE, 1, heightMapHandle);
 
             _pendingMeshes.Add(new PendingMesh
             {
@@ -71,8 +90,38 @@ namespace WorldSystem.Mesh
                 shadowVertices = shadowVertices,
                 shadowTriangles = shadowTriangles,
                 shadowMeshFilter = shadowMeshFilter,
-                shadowNormals = shadowNormals
+                shadowNormals = shadowNormals,
+                blocks = blocksCopy,
+                processed = processed
             });
+        }
+
+        public void QueueMeshBuild(int2 position, NativeArray<byte> blocks, MeshFilter meshFilter, 
+            MeshFilter shadowMeshFilter)
+        {
+            QueueMeshBuild(position, blocks, meshFilter, shadowMeshFilter, ChunkData.HEIGHT);
+        }
+
+        private void CalculateHeightMap(NativeArray<byte> blocks, NativeArray<HeightPoint> heightMap)
+        {
+            // Can be made into a parallel job for better performance
+            for (int x = 0; x < ChunkData.SIZE; x++)
+            for (int z = 0; z < ChunkData.SIZE; z++)
+            {
+                for (int y = ChunkData.HEIGHT - 1; y >= 0; y--)
+                {
+                    var blockType = blocks[x + z * ChunkData.SIZE + y * ChunkData.SIZE * ChunkData.SIZE];
+                    if (blockType != 0)  // Found highest non-air block
+                    {
+                        heightMap[z * ChunkData.SIZE + x] = new HeightPoint
+                        {
+                            height = (byte)y,
+                            blockType = (byte)blockType
+                        };
+                        break;
+                    }
+                }
+            }
         }
 
         public bool IsBuildingMesh(int2 position) => _meshesBeingBuilt.Contains(position);
@@ -121,6 +170,8 @@ namespace WorldSystem.Mesh
             pendingMesh.shadowVertices.Dispose();
             pendingMesh.shadowTriangles.Dispose();
             pendingMesh.shadowNormals.Dispose();
+            pendingMesh.blocks.Dispose();  // Dispose of our copy
+            pendingMesh.processed.Dispose();
         }
 
         public void Dispose()
@@ -152,6 +203,8 @@ namespace WorldSystem.Mesh
             public NativeArray<int> shadowTriangles;
             public MeshFilter shadowMeshFilter;
             public NativeArray<float3> shadowNormals;
+            public NativeArray<byte> blocks;
+            public NativeArray<bool> processed;
         }
     }
 } 
