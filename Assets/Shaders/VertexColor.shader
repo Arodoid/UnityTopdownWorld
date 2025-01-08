@@ -28,6 +28,9 @@ Shader "Custom/VertexColor"
         _ShadowSoftness ("Shadow Softness", Range(0, 1)) = 0.3
         _OvercastFactor ("Overcast Factor", Range(0, 1)) = 0
         _OrthoFalloffMultiplier ("Ortho Falloff Multiplier", Range(0.001, 10)) = 1.0
+        _WorldSeed ("World Seed", Float) = 0
+        _ColorVariationStrength ("Color Variation Strength", Range(0, 0.2)) = 0.05
+        _ColorVariationScale ("Color Variation Scale", Range(1, 100)) = 25
     }
     SubShader
     {
@@ -109,14 +112,18 @@ Shader "Custom/VertexColor"
 
             float _OrthoFalloffMultiplier;
 
+            float _WorldSeed;
+            float _ColorVariationStrength;
+            float _ColorVariationScale;
+
             // Noise functions
-            float2 hash2(float2 p)
+            float2 hash2(float2 p, float seed)
             {
-                p = float2(dot(p,float2(127.1,311.7)), dot(p,float2(269.5,183.3)));
+                p = float2(dot(p,float2(127.1 + seed, 311.7)), dot(p,float2(269.5, 183.3 + seed)));
                 return -1.0 + 2.0 * frac(sin(p) * 43758.5453123);
             }
 
-            float noise(float2 p)
+            float noise(float2 p, float seed)
             {
                 const float K1 = 0.366025404;
                 const float K2 = 0.211324865;
@@ -128,18 +135,18 @@ Shader "Custom/VertexColor"
                 float2 c = a - 1.0 + 2.0 * K2;
                 
                 float3 h = max(0.5 - float3(dot(a,a), dot(b,b), dot(c,c)), 0.0);
-                float3 n = h * h * h * h * float3(dot(a, hash2(i)), dot(b, hash2(i + o)), dot(c, hash2(i + 1.0)));
+                float3 n = h * h * h * h * float3(dot(a, hash2(i, seed)), dot(b, hash2(i + o, seed)), dot(c, hash2(i + 1.0, seed)));
                 
                 return dot(n, float3(70.0, 70.0, 70.0));
             }
 
-            float fbm(float2 p)
+            float fbm(float2 p, float seed)
             {
                 float f = 0.0;
                 float w = 0.5;
                 for (int i = 0; i < 5; i++)
                 {
-                    f += w * noise(p);
+                    f += w * noise(p, seed);
                     p *= 2.0;
                     w *= 0.5;
                 }
@@ -264,7 +271,7 @@ Shader "Custom/VertexColor"
                 
                 float2 shadowUV = shadowSamplePos.xz / _CloudScale;
                 shadowUV.x += _Time.y * _CloudSpeed;
-                float cloudShadow = fbm(shadowUV);
+                float cloudShadow = fbm(shadowUV, _WorldSeed);
                 cloudShadow = smoothstep(_CloudDensity - 0.3, _CloudDensity + 0.3, cloudShadow);
                 
                 float shadowFactor = cloudShadow * _ShadowStrength;
@@ -275,7 +282,7 @@ Shader "Custom/VertexColor"
                 color.rgb *= (1.0 - shadowFactor);
 
                 // Now calculate and apply clouds ON TOP
-                float clouds = fbm(worldUV);
+                float clouds = fbm(worldUV, _WorldSeed);
                 clouds = smoothstep(_CloudDensity - 0.3, _CloudDensity + 0.3, clouds);
                 clouds *= orthoFactor;
                 
@@ -290,6 +297,13 @@ Shader "Custom/VertexColor"
                 
                 // Apply fog last
                 color.rgb = MixFog(color.rgb, input.fogFactor);
+                
+                // Calculate block position (round to nearest block)
+                float3 blockPos = floor(input.worldPos);
+                float2 noiseUV = blockPos.xz; // Use block coordinates directly, no scaling needed
+                float colorNoise = fbm(noiseUV, _WorldSeed);
+                float3 colorVariation = (colorNoise - 0.5) * _ColorVariationStrength;
+                color.rgb += colorVariation;
                 
                 return color;
             }

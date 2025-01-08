@@ -374,5 +374,12 @@ namespace WorldSystem.Base
             GUI.Label(new Rect(10, 10, 200, 20), 
                 $"Cached Chunks: {_chunkBlockData.Count}/{maxCachedChunks}");
         }
+
+        private void Start()
+        {
+            chunkMaterial.SetFloat("_WorldSeed", _chunkGenerator.seed);
+            chunkMaterial.SetFloat("_ColorVariationStrength", 0.05f);
+            chunkMaterial.SetFloat("_ColorVariationScale", 25f);
+        }
     }
 } 

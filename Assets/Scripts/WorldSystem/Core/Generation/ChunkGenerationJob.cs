@@ -4,6 +4,7 @@ using Unity.Mathematics;
 using Unity.Collections;
 using WorldSystem.Data;
 using UnityEngine;
+using WorldSystem.Generation;
 
 namespace WorldSystem.Jobs
 {
@@ -28,14 +29,14 @@ namespace WorldSystem.Jobs
             int x = index % ChunkData.SIZE;
             int z = index / ChunkData.SIZE;
 
-            // Simple height calculation
             float2 worldPos = new float2(
-                (position.x * ChunkData.SIZE + x) * NOISE_SCALE,
-                (position.z * ChunkData.SIZE + z) * NOISE_SCALE
+                position.x * ChunkData.SIZE + x,
+                position.z * ChunkData.SIZE + z
             );
             
-            int height = TERRAIN_HEIGHT + (int)(noise.snoise(worldPos) * 8); // +/- 8 blocks variation
-
+            // Use centralized noise
+            int height = TERRAIN_HEIGHT + (int)(NoiseUtility.FBM(worldPos * NOISE_SCALE, seed) * 8);
+            
             // Fill Chunk
             for (int y = 0; y < ChunkData.HEIGHT; y++)
             {

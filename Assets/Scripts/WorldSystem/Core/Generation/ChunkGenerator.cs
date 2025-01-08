@@ -11,6 +11,13 @@ namespace WorldSystem.Generation
 {
     public class ChunkGenerator : IChunkGenerator
     {
+        public int seed { get; private set; }
+
+        public ChunkGenerator()
+        {
+            seed = UnityEngine.Random.Range(0, 99999); // Or however you want to set the seed
+        }
+
         // Track which chunks are currently being generated
         private HashSet<int2> _chunksInProgress = new();
         private Dictionary<int2, PendingChunk> _pendingChunks = new();
@@ -41,7 +48,7 @@ namespace WorldSystem.Generation
             var genJob = new ChunkGenerationJob
             {
                 position = position,
-                seed = 123,
+                seed = this.seed,
                 blocks = blocks,
                 isFullyOpaque = true
             };

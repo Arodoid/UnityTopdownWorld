@@ -56,8 +56,6 @@ namespace WorldSystem.Mesh
 
             var heightMapHandle = heightMapJob.Schedule(ChunkData.SIZE * ChunkData.SIZE, 64);
 
-            var processed = new NativeArray<bool>(ChunkData.SIZE * ChunkData.SIZE, Allocator.TempJob);
-
             var meshJob = new ChunkMeshJob
             {
                 heightMap = heightMap,
@@ -70,8 +68,7 @@ namespace WorldSystem.Mesh
                 meshCounts = meshCounts,
                 shadowVertices = shadowVertices,
                 shadowTriangles = shadowTriangles,
-                shadowNormals = shadowNormals,
-                processed = processed
+                shadowNormals = shadowNormals
             };
 
             var jobHandle = meshJob.Schedule(ChunkData.SIZE, 1, heightMapHandle);
@@ -91,8 +88,7 @@ namespace WorldSystem.Mesh
                 shadowTriangles = shadowTriangles,
                 shadowMeshFilter = shadowMeshFilter,
                 shadowNormals = shadowNormals,
-                blocks = blocksCopy,
-                processed = processed
+                blocks = blocksCopy  // Store the copy in the pending mesh
             });
         }
 
@@ -171,7 +167,6 @@ namespace WorldSystem.Mesh
             pendingMesh.shadowTriangles.Dispose();
             pendingMesh.shadowNormals.Dispose();
             pendingMesh.blocks.Dispose();  // Dispose of our copy
-            pendingMesh.processed.Dispose();
         }
 
         public void Dispose()
@@ -204,7 +199,6 @@ namespace WorldSystem.Mesh
             public MeshFilter shadowMeshFilter;
             public NativeArray<float3> shadowNormals;
             public NativeArray<byte> blocks;
-            public NativeArray<bool> processed;
         }
     }
 } 

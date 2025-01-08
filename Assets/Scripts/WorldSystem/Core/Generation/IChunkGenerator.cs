@@ -5,6 +5,7 @@ namespace WorldSystem.Generation
 {
     public interface IChunkGenerator
     {
+        int seed { get; }
         void QueueChunkGeneration(int2 position);
         bool IsGenerating(int2 position);
         void Update();
