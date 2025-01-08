@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using WorldSystem.Data;
 using WorldSystem.Jobs;
+using WorldSystem.Base;
 
 namespace WorldSystem.Mesh
 {
@@ -146,6 +147,24 @@ namespace WorldSystem.Mesh
                     shadowMesh.SetTriangles(pendingMesh.shadowTriangles.ToArray(), 0);
                     shadowMesh.RecalculateNormals();
                     pendingMesh.shadowMeshFilter.mesh = shadowMesh;
+
+                    // Get the chunk's GameObject and its parent (which should be the ChunkManager)
+                    var chunkObject = pendingMesh.meshFilter.gameObject;
+                    var chunkManager = chunkObject.transform.parent.GetComponent<ChunkManager>();
+                    
+                    // If this is a new Y-level chunk, deactivate the old one
+                    if (chunkManager != null)
+                    {
+                        var oldYLevel = chunkManager.ViewMaxYLevel - 1; // or whatever the previous Y-level was
+                        var pos = new int2(
+                            Mathf.RoundToInt(chunkObject.transform.position.x / ChunkData.SIZE),
+                            Mathf.RoundToInt(chunkObject.transform.position.z / ChunkData.SIZE)
+                        );
+                        chunkManager.ChunkPool?.DeactivateChunk(pos, oldYLevel);
+                    }
+
+                    // Activate the new chunk
+                    chunkObject.SetActive(true);
 
                     // Cleanup
                     CleanupPendingMesh(pendingMesh);

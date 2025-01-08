@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01b9744c67018ff49b60057b667277b1, type: 3}
+  m_Name: WorldGenerationSettings
+  m_EditorClassIdentifier: 
+  continentScale: 0.002
+  temperatureScale: 0.003
+  moistureScale: 0.0025
+  weirdnessScale: 0.004
+  erosionScale: 0.003
+  localVariationScale: 0.01
+  waterLevel: 64
+  oceanFloorMin: 20
+  oceanFloorMax: 30
+  mountainHeight: 100
+  oceanThreshold: 0.4
+  mountainThreshold: 0.7
+  forestThreshold: 0.6
+  localVariationStrength: 15
+  mountainVariationStrength: 20
+  forestVariationStrength: 8
+  plainsVariationStrength: 5
+  erosionStrength: 0.5
+  erosionDetailInfluence: 0.3

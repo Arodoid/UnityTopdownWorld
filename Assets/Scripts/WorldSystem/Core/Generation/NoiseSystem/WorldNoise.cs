@@ -15,16 +15,15 @@ namespace WorldSystem.Generation
         public static float SampleContinental(float2 pos, float scale, int seed)
         {
             float noiseValue = Sample(pos, scale, seed);
-            // Reshape noise to create more distinct continents
-            // Power function creates sharper transitions between ocean and land
-            return math.pow(noiseValue, 2.5f);
+            // More aggressive power for clearer ocean/land separation
+            return math.pow(noiseValue, 1.8f);
         }
 
         public static float SampleErosion(float2 pos, float scale, int seed)
         {
             float noiseValue = Sample(pos, scale, seed);
             float detail = Sample(pos, scale * 4, seed + 1000);
-            return math.lerp(noiseValue, detail, noiseValue * 0.5f);
+            return math.lerp(noiseValue, detail, 0.3f); // Reduced detail influence
         }
     }
 } 

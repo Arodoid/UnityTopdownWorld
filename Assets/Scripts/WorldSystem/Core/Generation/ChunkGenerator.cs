@@ -12,11 +12,14 @@ namespace WorldSystem.Generation
 {
     public class ChunkGenerator : IChunkGenerator
     {
-        public int seed { get; private set; }
+        public int seed { get; set; }
 
-        public ChunkGenerator()
+        private readonly WorldGenerationSettings _settings;
+
+        public ChunkGenerator(WorldGenerationSettings settings)
         {
-            seed = 123; // Or however you want to set the seed
+            seed = settings.seed;
+            _settings = settings;
         }
 
         // Track which chunks are currently being generated
@@ -56,7 +59,7 @@ namespace WorldSystem.Generation
             };
             var continentHandle = continentJob.Schedule(size, 64);
 
-            // 2. Generate biome regions
+            // 2. Generate biome data
             var biomeJob = new BiomeRegionJob
             {
                 chunkPosition = new int2(position.x, position.z),
@@ -72,7 +75,26 @@ namespace WorldSystem.Generation
                 position = position,
                 seed = this.seed,
                 biomeData = biomeData,
-                blocks = blocks
+                blocks = blocks,
+                waterLevel = _settings.waterLevel,
+                oceanThreshold = _settings.oceanThreshold,
+                mountainThreshold = _settings.mountainThreshold,
+                forestThreshold = _settings.forestThreshold,
+                mountainHeight = _settings.mountainHeight,
+                erosionStrength = _settings.erosionStrength,
+                erosionDetailInfluence = _settings.erosionDetailInfluence,
+                continentScale = _settings.continentScale,
+                temperatureScale = _settings.temperatureScale,
+                moistureScale = _settings.moistureScale,
+                weirdnessScale = _settings.weirdnessScale,
+                erosionScale = _settings.erosionScale,
+                localVariationScale = _settings.localVariationScale,
+                localVariationStrength = _settings.localVariationStrength,
+                mountainVariationStrength = _settings.mountainVariationStrength,
+                forestVariationStrength = _settings.forestVariationStrength,
+                plainsVariationStrength = _settings.plainsVariationStrength,
+                oceanFloorMin = _settings.oceanFloorMin,
+                oceanFloorMax = _settings.oceanFloorMax
             };
             var terrainHandle = terrainJob.Schedule(size, 64, biomeHandle);
 

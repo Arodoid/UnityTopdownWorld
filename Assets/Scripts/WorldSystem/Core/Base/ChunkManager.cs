@@ -27,7 +27,7 @@ namespace WorldSystem.Base
         private const float UPDATE_THRESHOLD = 16f;
 
         [SerializeField] private int poolSize = 512;
-        private ChunkPool _chunkPool;
+        public ChunkPool ChunkPool { get; private set; }
 
         [SerializeField] private int maxChunks = 512;
 
@@ -58,9 +58,19 @@ namespace WorldSystem.Base
 
         private PriorityQueue<int2> _chunkDistanceQueue = new();
 
+        private ChunkPool _chunkPool;
+
+        [SerializeField] private WorldGenerationSettings worldSettings;
+
         void Awake()
         {
-            _chunkGenerator = new ChunkGenerator();
+            if (worldSettings == null)
+            {
+                Debug.LogError("World Generation Settings not assigned!");
+                return;
+            }
+
+            _chunkGenerator = new ChunkGenerator(worldSettings);
             _meshBuilder = new ChunkMeshBuilder();
             _chunkGenerator.OnChunkGenerated += OnChunkGenerated;
 
@@ -367,6 +377,59 @@ namespace WorldSystem.Base
             chunkMaterial.SetFloat("_WorldSeed", _chunkGenerator.seed);
             chunkMaterial.SetFloat("_ColorVariationStrength", 0.05f);
             chunkMaterial.SetFloat("_ColorVariationScale", 25f);
+        }
+
+        public void ResetWorld()
+        {
+            // Complete any pending operations
+            _chunkGenerator?.Dispose();
+            _meshBuilder?.Dispose();
+
+            // Clear all chunk data
+            foreach (var chunk in _chunkBlockData)
+            {
+                if (chunk.Value.IsCreated)
+                    chunk.Value.Dispose();
+            }
+            _chunkBlockData.Clear();
+            _generatedChunks.Clear();
+            _generatedYLevels.Clear();
+            _visibleChunkPositions.Clear();
+            _chunkDistanceQueue.Clear();
+            _chunkLoadQueue.Clear();
+
+            // Reset the chunk pool
+            _chunkPool?.Cleanup();
+
+            // Create new instances
+            _chunkGenerator = new ChunkGenerator(worldSettings);
+            _meshBuilder = new ChunkMeshBuilder();
+            _chunkPool = new ChunkPool(chunkMaterial, transform, poolSize, maxChunks, bufferTimeSeconds);
+
+            // Reattach the event handler
+            _chunkGenerator.OnChunkGenerated += OnChunkGenerated;
+
+            // Force an immediate update of visible chunks and queue generation
+            UpdateVisibleChunks();
+            QueueMissingChunks(); // Add this to start generating new chunks
+            
+            // Update last known camera position to force immediate update
+            _lastCameraPosition = mainCamera.transform.position + new Vector3(UPDATE_THRESHOLD * 2, 0, 0);
+            _lastCameraHeight = _lastCameraPosition.y;
+            _lastOrthoSize = mainCamera.orthographicSize;
+        }
+
+        // Add this to allow external access to world settings
+        public void UpdateWorldSettings(WorldGenerationSettings newSettings)
+        {
+            if (newSettings == null)
+            {
+                Debug.LogError("Attempted to update world settings with null value!");
+                return;
+            }
+
+            worldSettings = newSettings;
+            ResetWorld();
         }
     }
 } 

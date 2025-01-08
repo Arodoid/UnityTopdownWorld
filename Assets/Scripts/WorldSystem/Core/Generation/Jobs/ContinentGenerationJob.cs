@@ -13,8 +13,8 @@ namespace WorldSystem.Generation.Jobs
         [ReadOnly] public int seed;
         public NativeArray<float> continentalness;
 
-        private const float CONTINENT_SCALE = 0.001f;
-        private const float OCEAN_THRESHOLD = 0.4f;
+        private const float CONTINENT_SCALE = 0.002f;
+        private const float OCEAN_THRESHOLD = 0.5f;
 
         public void Execute(int index)
         {

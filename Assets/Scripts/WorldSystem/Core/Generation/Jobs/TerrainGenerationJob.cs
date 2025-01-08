@@ -15,11 +15,32 @@ namespace WorldSystem.Generation.Jobs
         [NativeDisableParallelForRestriction]
         public NativeArray<byte> blocks;
 
-        private const float LOCAL_VARIATION_SCALE = 0.01f;
+        [ReadOnly] public float waterLevel;
+        [ReadOnly] public float oceanThreshold;
+        [ReadOnly] public float mountainThreshold;
+        [ReadOnly] public float forestThreshold;
+        [ReadOnly] public float mountainHeight;
+        [ReadOnly] public float erosionStrength;
+        [ReadOnly] public float erosionDetailInfluence;
+
+        [ReadOnly] public float localVariationScale;
+        [ReadOnly] public float localVariationStrength;
+
+        [ReadOnly] public float continentScale;
+        [ReadOnly] public float temperatureScale;
+        [ReadOnly] public float moistureScale;
+        [ReadOnly] public float weirdnessScale;
+        [ReadOnly] public float erosionScale;
+        [ReadOnly] public float mountainVariationStrength;
+        [ReadOnly] public float forestVariationStrength;
+        [ReadOnly] public float plainsVariationStrength;
+
+        [ReadOnly] public int oceanFloorMin;
+        [ReadOnly] public int oceanFloorMax;
+
         private const int WATER_LEVEL = 64;
         private const int OCEAN_FLOOR_MIN = 20;
         private const int OCEAN_FLOOR_MAX = 30;
-        private const float OCEAN_THRESHOLD = 0.4f;
 
         public void Execute(int index)
         {
@@ -34,37 +55,52 @@ namespace WorldSystem.Generation.Jobs
 
             BiomeData biome = biomeData[biomeIndex];
             
-            // Ocean floor has its own variation
+            // Use proper scales for noise sampling
+            float2 scaledPos = worldPos;
             float oceanFloorHeight = math.lerp(
                 OCEAN_FLOOR_MIN, 
                 OCEAN_FLOOR_MAX, 
-                WorldNoise.Sample(worldPos, 0.03f, seed + 500)
+                WorldNoise.Sample(scaledPos, continentScale, seed + 500)
             );
             
-            // Base height now considers water level
+            // Base height calculation with proper scaling
             float baseHeight;
-            if (biome.continentalness < OCEAN_THRESHOLD)
+            if (biome.continentalness < oceanThreshold)
             {
-                // Ocean depth gradually increases as continentalness decreases
-                float oceanDepthFactor = 1 - (biome.continentalness / OCEAN_THRESHOLD);
-                baseHeight = math.lerp(WATER_LEVEL, oceanFloorHeight, oceanDepthFactor);
+                float oceanDepthFactor = 1 - (biome.continentalness / oceanThreshold);
+                baseHeight = math.lerp(waterLevel, oceanFloorHeight, oceanDepthFactor);
             }
             else
             {
-                // Land height starts at water level and goes up
-                float landHeightFactor = (biome.continentalness - OCEAN_THRESHOLD) / (1 - OCEAN_THRESHOLD);
-                baseHeight = math.lerp(WATER_LEVEL, 100, landHeightFactor);
+                float landHeightFactor = (biome.continentalness - oceanThreshold) / (1 - oceanThreshold);
+                baseHeight = math.lerp(waterLevel, mountainHeight, landHeightFactor);
             }
 
-            // Add biome-specific variation
-            float biomeHeight = GetBiomeHeight(biome);
+            // Add biome-specific variations with proper strength values
+            float biomeVariation = 0;
+            if (biome.GetMountainWeight() > mountainThreshold)
+            {
+                biomeVariation = WorldNoise.Sample(scaledPos, weirdnessScale, seed + 1) * mountainVariationStrength;
+            }
+            else if (biome.GetForestWeight() > forestThreshold)
+            {
+                biomeVariation = WorldNoise.Sample(scaledPos, weirdnessScale, seed + 2) * forestVariationStrength;
+            }
+            else
+            {
+                biomeVariation = WorldNoise.Sample(scaledPos, weirdnessScale, seed + 3) * plainsVariationStrength;
+            }
+
+            // Add local variation with proper scale
+            float localVariation = WorldNoise.Sample(scaledPos, localVariationScale, seed) * localVariationStrength;
             
-            // Add local variation
-            float localVariation = WorldNoise.Sample(worldPos, LOCAL_VARIATION_SCALE, seed) * 15;
+            // Add erosion influence
+            float erosion = WorldNoise.Sample(scaledPos, erosionScale, seed + 4);
+            float erosionModifier = math.lerp(1f, 1f - erosionStrength, erosion);
             
-            // Clamp height to valid range
+            // Calculate final height
             int finalHeight = (int)math.clamp(
-                baseHeight + biomeHeight + localVariation,
+                (baseHeight + biomeVariation + localVariation) * erosionModifier,
                 0,
                 ChunkData.HEIGHT - 1
             );
@@ -86,7 +122,8 @@ namespace WorldSystem.Generation.Jobs
         {
             if (y > height)
             {
-                if (y <= WATER_LEVEL && biome.continentalness < 0.4f)
+                // Ensure ocean areas are properly filled with water
+                if (y <= WATER_LEVEL && biome.continentalness < oceanThreshold)
                     return BlockType.Water;
                 return BlockType.Air;
             }
@@ -94,104 +131,37 @@ namespace WorldSystem.Generation.Jobs
             if (y == height)
             {
                 // Underwater blocks
-                if (y < WATER_LEVEL && biome.continentalness < 0.4f)
+                if (y < WATER_LEVEL && biome.continentalness < oceanThreshold)
                 {
-                    return (y > WATER_LEVEL - 5) ? BlockType.Sand : BlockType.Stone;
+                    return (y > WATER_LEVEL - 5) ? BlockType.Sand : BlockType.Gravel;
                 }
                 
-                // Mountain peaks and cliffs
-                if (biome.continentalness > 0.7f)
+                // Mountain peaks
+                if (biome.continentalness > 0.7f &&y > 90)
                 {
-                    if (y > 100)
-                        return BlockType.Snow;
-                    return BlockType.Stone;
+                    return (y > 100) ? BlockType.Snow: BlockType.Stone;
                 }
                 
                 // Coastal areas
                 if (math.abs(y - WATER_LEVEL) <= 2)
                     return BlockType.Sand;
                     
-                // Normal terrain
-                return (y > 80) ? BlockType.Stone : BlockType.Grass;
+                // Normal terrain - vary based on temperature and height
+                if (y > 80)
+                    return BlockType.Stone;
+                if (biome.temperature < 0.2f)
+                    return BlockType.Snow;
+                if (biome.moisture > 0.6f)
+                    return BlockType.Grass;
+                if (biome.temperature > 0.7f)
+                    return BlockType.Sand;
+                return BlockType.Grass;
             }
             
             // Underground
             if (y > height - 3)
                 return BlockType.Dirt;
             return BlockType.Stone;
-        }
-
-        private float GetBiomeHeight(BiomeData biome)
-        {
-            const float DEEP_OCEAN_THRESHOLD = 0.3f;
-            const float OCEAN_THRESHOLD = 0.4f;
-            const float MOUNTAIN_THRESHOLD = 0.7f;
-            
-            // Ocean depth calculation
-            if (biome.continentalness < OCEAN_THRESHOLD)
-            {
-                // Create deeper oceans with some variation in depth
-                float oceanDepth = math.lerp(20f, WATER_LEVEL - 10,
-                    math.smoothstep(0f, OCEAN_THRESHOLD, biome.continentalness));
-                    
-                // Add underwater terrain variation
-                float underwaterNoise = biome.weirdness * 8f;
-                
-                // Create deeper trenches in deep ocean
-                if (biome.continentalness < DEEP_OCEAN_THRESHOLD)
-                {
-                    float trenchDepth = 15f * math.smoothstep(DEEP_OCEAN_THRESHOLD, 0f, biome.continentalness);
-                    return oceanDepth - trenchDepth + underwaterNoise;
-                }
-                
-                return oceanDepth + underwaterNoise;
-            }
-            
-            // Land height calculation (similar to before but adjusted thresholds)
-            float mountainWeight = math.smoothstep(0.65f, 0.75f, biome.continentalness) 
-                * math.smoothstep(0.3f, 0.0f, biome.temperature);
-            
-            float mountainBase = 120f;
-            float valleyBase = WATER_LEVEL + 5f; // Start valleys slightly above water level
-            
-            float heightVariation = math.pow(math.abs(biome.weirdness), 0.25f);
-            float mountainHeight = mountainBase * heightVariation;
-            float valleyDepth = 60f * mountainWeight * biome.erosion;
-            
-            float finalHeight;
-            
-            if (biome.continentalness > MOUNTAIN_THRESHOLD) // Mountain region
-            {
-                finalHeight = mountainHeight - valleyDepth;
-            }
-            else if (biome.continentalness < OCEAN_THRESHOLD + 0.1f) // Coastal region
-            {
-                // Smooth transition from ocean to land
-                float coastalFactor = math.smoothstep(
-                    OCEAN_THRESHOLD, 
-                    OCEAN_THRESHOLD + 0.1f, 
-                    biome.continentalness
-                );
-                finalHeight = math.lerp(WATER_LEVEL, WATER_LEVEL + 15f, coastalFactor);
-            }
-            else // Normal terrain
-            {
-                float transitionFactor = math.smoothstep(
-                    OCEAN_THRESHOLD + 0.1f, 
-                    MOUNTAIN_THRESHOLD, 
-                    biome.continentalness
-                );
-                finalHeight = math.lerp(
-                    valleyBase,
-                    mountainHeight - valleyDepth,
-                    transitionFactor
-                );
-            }
-            
-            // Add minimal noise to flat areas, more to mountains
-            float detailNoise = biome.weirdness * (biome.continentalness > 0.7f ? 15f : 2f);
-            
-            return finalHeight + detailNoise;
         }
     }
 } 

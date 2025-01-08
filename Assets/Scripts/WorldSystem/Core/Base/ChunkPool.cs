@@ -70,7 +70,6 @@ namespace WorldSystem.Base
             // Check active chunks first
             if (_activeChunks.TryGetValue(key, out chunkObject))
             {
-                // Already active and set up
                 return (chunkObject, 
                     chunkObject.GetComponent<MeshFilter>(),
                     chunkObject.transform.GetChild(0).GetComponent<MeshFilter>());
@@ -82,7 +81,7 @@ namespace WorldSystem.Base
                 chunkObject = inactiveData.gameObject;
                 _inactiveChunks.Remove(key);
                 _activeChunks[key] = chunkObject;
-                chunkObject.SetActive(true);
+                // Don't activate yet - let the mesh builder handle it
                 return (chunkObject,
                     chunkObject.GetComponent<MeshFilter>(),
                     chunkObject.transform.GetChild(0).GetComponent<MeshFilter>());
@@ -104,10 +103,10 @@ namespace WorldSystem.Base
                 chunkObject = CreateChunkGameObject();
             }
 
-            // Setup and activate the chunk
+            // Setup chunk but don't activate yet
             SetupChunkObject(chunkObject, position, yLevel);
             _activeChunks[key] = chunkObject;
-            chunkObject.SetActive(true);
+            chunkObject.SetActive(false); // Keep it hidden until mesh is ready
 
             return (chunkObject,
                 chunkObject.GetComponent<MeshFilter>(),
@@ -117,7 +116,11 @@ namespace WorldSystem.Base
         private void SetupChunkObject(GameObject chunk, int2 position, int yLevel)
         {
             chunk.name = $"Chunk_{position.x}_{position.y}_Y{yLevel}";
-            chunk.transform.position = new Vector3(position.x * ChunkData.SIZE, 0, position.y * ChunkData.SIZE);
+            chunk.transform.position = new Vector3(
+                position.x * ChunkData.SIZE, 
+                0, 
+                position.y * ChunkData.SIZE
+            );
             
             // Ensure components exist
             if (!chunk.TryGetComponent<MeshFilter>(out _))
