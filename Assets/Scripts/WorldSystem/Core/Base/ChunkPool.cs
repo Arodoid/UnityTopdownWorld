@@ -9,8 +9,8 @@ namespace WorldSystem.Base
     public class ChunkPool
     {
         private Queue<GameObject> _pool;
-        private Dictionary<int2, (float timestamp, GameObject gameObject)> _inactiveChunks;
-        private Dictionary<int2, GameObject> _activeChunks;
+        private Dictionary<(int2 position, int yLevel), (float timestamp, GameObject gameObject)> _inactiveChunks;
+        private Dictionary<(int2 position, int yLevel), GameObject> _activeChunks;
         
         private readonly Material _chunkMaterial;
         private readonly Transform _parentTransform;
@@ -33,8 +33,8 @@ namespace WorldSystem.Base
             _bufferTimeSeconds = bufferTimeSeconds;
             
             _pool = new Queue<GameObject>();
-            _inactiveChunks = new Dictionary<int2, (float timestamp, GameObject gameObject)>();
-            _activeChunks = new Dictionary<int2, GameObject>();
+            _inactiveChunks = new Dictionary<(int2 position, int yLevel), (float timestamp, GameObject gameObject)>();
+            _activeChunks = new Dictionary<(int2 position, int yLevel), GameObject>();
             
             InitializePool();
         }
@@ -53,155 +53,116 @@ namespace WorldSystem.Base
         {
             var chunk = new GameObject("Chunk");
             chunk.transform.parent = _parentTransform;
-            return chunk;
-        }
-
-        private GameObject CreateYLevelMesh(GameObject parentChunk, int yLevel)
-        {
-            var yLevelObject = new GameObject($"Y_Level_{yLevel}");
-            yLevelObject.transform.parent = parentChunk.transform;
-            yLevelObject.transform.localPosition = Vector3.zero;
             
-            // Add components for render mesh
-            yLevelObject.AddComponent<MeshFilter>();
-            yLevelObject.AddComponent<MeshRenderer>().material = _chunkMaterial;
-            
-            // Add components for shadow mesh
-            var shadowObject = new GameObject("Shadow Mesh");
-            shadowObject.transform.parent = yLevelObject.transform;
+            // Create shadow object immediately
+            var shadowObject = new GameObject("Shadow");
+            shadowObject.transform.parent = chunk.transform;
             shadowObject.transform.localPosition = Vector3.zero;
-            var shadowMeshFilter = shadowObject.AddComponent<MeshFilter>();
-            var shadowMeshRenderer = shadowObject.AddComponent<MeshRenderer>();
-            shadowMeshRenderer.material = _chunkMaterial;
-            shadowMeshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
-            shadowMeshRenderer.receiveShadows = false;
             
-            return yLevelObject;
+            return chunk;
         }
 
         public (GameObject chunk, MeshFilter meshFilter, MeshFilter shadowFilter)? GetChunk(int2 position, int yLevel)
         {
+            var key = (position, yLevel);
             GameObject chunkObject;
-            GameObject yLevelObject;
             
-            // First check if we have an active or inactive chunk at this position
-            if (_activeChunks.TryGetValue(position, out chunkObject))
+            // Check active chunks first
+            if (_activeChunks.TryGetValue(key, out chunkObject))
             {
-                // Chunk is already active
+                // Already active and set up
+                return (chunkObject, 
+                    chunkObject.GetComponent<MeshFilter>(),
+                    chunkObject.transform.GetChild(0).GetComponent<MeshFilter>());
             }
-            else if (_inactiveChunks.TryGetValue(position, out var inactiveData))
+            
+            // Check inactive chunks
+            if (_inactiveChunks.TryGetValue(key, out var inactiveData))
             {
-                // If chunk was inactive, reactivate it
                 chunkObject = inactiveData.gameObject;
-                _inactiveChunks.Remove(position);
-                _activeChunks[position] = chunkObject;
+                _inactiveChunks.Remove(key);
+                _activeChunks[key] = chunkObject;
                 chunkObject.SetActive(true);
+                return (chunkObject,
+                    chunkObject.GetComponent<MeshFilter>(),
+                    chunkObject.transform.GetChild(0).GetComponent<MeshFilter>());
             }
-            else if (_pool.Count > 0)
+
+            // Get or create new chunk
+            if (_pool.Count > 0)
             {
                 chunkObject = _pool.Dequeue();
-                chunkObject.SetActive(true);
-                _activeChunks[position] = chunkObject;
             }
             else if (TotalChunksInUse >= _maxChunks)
             {
                 ForceReclaimOldestChunks();
                 if (_pool.Count == 0) return null;
-                
                 chunkObject = _pool.Dequeue();
-                chunkObject.SetActive(true);
-                _activeChunks[position] = chunkObject;
             }
             else
             {
-                return null;
+                chunkObject = CreateChunkGameObject();
             }
 
-            // Modified Y-level handling - don't deactivate other levels immediately
-            foreach (Transform child in chunkObject.transform)
-            {
-                if (child.name.StartsWith("Y_Level_") && child.name != $"Y_Level_{yLevel}")
-                {
-                    // Removed the immediate deactivation
-                    continue;
-                }
-            }
+            // Setup and activate the chunk
+            SetupChunkObject(chunkObject, position, yLevel);
+            _activeChunks[key] = chunkObject;
+            chunkObject.SetActive(true);
 
-            // Try to find or create the requested Y-level
-            yLevelObject = FindYLevelMesh(chunkObject, yLevel);
-            if (yLevelObject == null)
-            {
-                yLevelObject = CreateYLevelMesh(chunkObject, yLevel);
-            }
-            yLevelObject.SetActive(true);
-
-            // Now deactivate other Y-levels only if this one is fully set up
-            foreach (Transform child in chunkObject.transform)
-            {
-                if (child.name.StartsWith("Y_Level_") && child.name != $"Y_Level_{yLevel}")
-                {
-                    child.gameObject.SetActive(false);
-                }
-            }
-
-            chunkObject.name = $"Chunk {position.x},{position.y}";
-            chunkObject.transform.position = new Vector3(position.x * ChunkData.SIZE, 0, position.y * ChunkData.SIZE);
-
-            var meshFilter = yLevelObject.GetComponent<MeshFilter>();
-            var shadowMeshFilter = yLevelObject.transform.GetChild(0).GetComponent<MeshFilter>();
-            
-            return (chunkObject, meshFilter, shadowMeshFilter);
+            return (chunkObject,
+                chunkObject.GetComponent<MeshFilter>(),
+                chunkObject.transform.GetChild(0).GetComponent<MeshFilter>());
         }
 
-        private GameObject FindYLevelMesh(GameObject chunkObject, int yLevel)
+        private void SetupChunkObject(GameObject chunk, int2 position, int yLevel)
         {
-            return chunkObject.transform.Find($"Y_Level_{yLevel}")?.gameObject;
+            chunk.name = $"Chunk_{position.x}_{position.y}_Y{yLevel}";
+            chunk.transform.position = new Vector3(position.x * ChunkData.SIZE, 0, position.y * ChunkData.SIZE);
+            
+            // Ensure components exist
+            if (!chunk.TryGetComponent<MeshFilter>(out _))
+                chunk.AddComponent<MeshFilter>();
+            if (!chunk.TryGetComponent<MeshRenderer>(out var renderer))
+                renderer = chunk.AddComponent<MeshRenderer>();
+            renderer.material = _chunkMaterial;
+
+            // Setup shadow object
+            var shadowObject = chunk.transform.GetChild(0);
+            if (!shadowObject.TryGetComponent<MeshFilter>(out _))
+                shadowObject.gameObject.AddComponent<MeshFilter>();
+            if (!shadowObject.TryGetComponent<MeshRenderer>(out var shadowRenderer))
+                shadowRenderer = shadowObject.gameObject.AddComponent<MeshRenderer>();
+            
+            shadowRenderer.material = _chunkMaterial;
+            shadowRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
+            shadowRenderer.receiveShadows = false;
         }
 
         private void ForceReclaimOldestChunks()
         {
             var oldestChunks = _inactiveChunks
                 .OrderBy(x => x.Value.timestamp)
-                .Take(_maxChunks / 4) // Reclaim 25% of max chunks
+                .Take(_maxChunks / 4)
                 .ToList();
 
             foreach (var old in oldestChunks)
             {
-                _pool.Enqueue(old.Value.gameObject);
+                var chunk = old.Value.gameObject;
+                chunk.SetActive(false);
+                _pool.Enqueue(chunk);
                 _inactiveChunks.Remove(old.Key);
             }
         }
 
         public void DeactivateChunk(int2 position, int yLevel)
         {
-            if (_activeChunks.TryGetValue(position, out var chunk))
+            var key = (position, yLevel);
+            if (_activeChunks.TryGetValue(key, out var chunk))
             {
-                var yLevelObject = FindYLevelMesh(chunk, yLevel);
-                if (yLevelObject != null)
-                {
-                    yLevelObject.SetActive(false);
-                }
-
-                // If no Y-level meshes are active, deactivate the whole chunk
-                if (!HasAnyActiveYLevels(chunk))
-                {
-                    _inactiveChunks[position] = (Time.time, chunk);
-                    chunk.SetActive(false);
-                    _activeChunks.Remove(position);
-                }
+                chunk.SetActive(false);
+                _inactiveChunks[key] = (Time.time, chunk);
+                _activeChunks.Remove(key);
             }
-        }
-
-        private bool HasAnyActiveYLevels(GameObject chunk)
-        {
-            foreach (Transform child in chunk.transform)
-            {
-                if (child.gameObject.activeSelf && child.name.StartsWith("Y_Level_"))
-                {
-                    return true;
-                }
-            }
-            return false;
         }
 
         public void CheckBufferTimeout()
@@ -217,7 +178,9 @@ namespace WorldSystem.Base
 
             foreach (var expired in expiredChunks)
             {
-                _pool.Enqueue(expired.Value.gameObject);
+                var chunk = expired.Value.gameObject;
+                chunk.SetActive(false);
+                _pool.Enqueue(chunk);
                 _inactiveChunks.Remove(expired.Key);
             }
         }
@@ -249,28 +212,17 @@ namespace WorldSystem.Base
 
         public bool HasChunkAtPosition(int2 position, int yLevel)
         {
-            return _activeChunks.ContainsKey(position) || _inactiveChunks.ContainsKey(position);
+            return _activeChunks.ContainsKey((position, yLevel)) || _inactiveChunks.ContainsKey((position, yLevel));
         }
 
         public IEnumerable<(int2 position, int yLevel)> GetActiveChunkPositions()
         {
-            // Convert dictionary keys to tuples with y-levels
-            return _activeChunks.SelectMany(chunk => 
-                chunk.Value.transform.GetComponentsInChildren<Transform>()
-                    .Where(t => t.name.StartsWith("Y_Level_"))
-                    .Select(t => (
-                        position: chunk.Key,
-                        yLevel: int.Parse(t.name.Replace("Y_Level_", ""))
-                    ))
-            );
+            return _activeChunks.Select(chunk => chunk.Key);
         }
 
         public bool HasActiveChunkAtPosition(int2 position, int yLevel)
         {
-            if (!_activeChunks.TryGetValue(position, out var chunk))
-                return false;
-            
-            return FindYLevelMesh(chunk, yLevel) != null;
+            return _activeChunks.ContainsKey((position, yLevel));
         }
     }
 } 

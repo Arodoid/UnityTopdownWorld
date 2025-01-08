@@ -84,49 +84,114 @@ namespace WorldSystem.Generation.Jobs
 
         private BlockType GetBlockType(int y, int height, BiomeData biome)
         {
-            // Water fills everything above ocean floor up to water level in ocean biomes
             if (y > height)
             {
-                if (biome.continentalness < OCEAN_THRESHOLD && y <= WATER_LEVEL)
+                if (y <= WATER_LEVEL && biome.continentalness < 0.4f)
                     return BlockType.Water;
                 return BlockType.Air;
             }
             
             if (y == height)
             {
-                if (biome.continentalness < OCEAN_THRESHOLD)
-                    return BlockType.Sand;  // Ocean floor
-                if (y <= WATER_LEVEL + 2)
-                    return BlockType.Sand;  // Beach
-                if (biome.temperature < 0.2f)
-                    return BlockType.Snow;
-                return BlockType.Grass;
+                // Underwater blocks
+                if (y < WATER_LEVEL && biome.continentalness < 0.4f)
+                {
+                    return (y > WATER_LEVEL - 5) ? BlockType.Sand : BlockType.Stone;
+                }
+                
+                // Mountain peaks and cliffs
+                if (biome.continentalness > 0.7f)
+                {
+                    if (y > 100)
+                        return BlockType.Snow;
+                    return BlockType.Stone;
+                }
+                
+                // Coastal areas
+                if (math.abs(y - WATER_LEVEL) <= 2)
+                    return BlockType.Sand;
+                    
+                // Normal terrain
+                return (y > 80) ? BlockType.Stone : BlockType.Grass;
             }
             
-            if (y >= height - 3)
-                return biome.continentalness < 0.4f ? BlockType.Sand : BlockType.Dirt;
-            
+            // Underground
+            if (y > height - 3)
+                return BlockType.Dirt;
             return BlockType.Stone;
         }
 
         private float GetBiomeHeight(BiomeData biome)
         {
-            // Mountains
-            float mountainWeight = math.smoothstep(0.6f, 0.8f, biome.continentalness) 
+            const float DEEP_OCEAN_THRESHOLD = 0.3f;
+            const float OCEAN_THRESHOLD = 0.4f;
+            const float MOUNTAIN_THRESHOLD = 0.7f;
+            
+            // Ocean depth calculation
+            if (biome.continentalness < OCEAN_THRESHOLD)
+            {
+                // Create deeper oceans with some variation in depth
+                float oceanDepth = math.lerp(20f, WATER_LEVEL - 10,
+                    math.smoothstep(0f, OCEAN_THRESHOLD, biome.continentalness));
+                    
+                // Add underwater terrain variation
+                float underwaterNoise = biome.weirdness * 8f;
+                
+                // Create deeper trenches in deep ocean
+                if (biome.continentalness < DEEP_OCEAN_THRESHOLD)
+                {
+                    float trenchDepth = 15f * math.smoothstep(DEEP_OCEAN_THRESHOLD, 0f, biome.continentalness);
+                    return oceanDepth - trenchDepth + underwaterNoise;
+                }
+                
+                return oceanDepth + underwaterNoise;
+            }
+            
+            // Land height calculation (similar to before but adjusted thresholds)
+            float mountainWeight = math.smoothstep(0.65f, 0.75f, biome.continentalness) 
                 * math.smoothstep(0.3f, 0.0f, biome.temperature);
-            float mountainHeight = 30 * mountainWeight * (biome.weirdness * 0.5f + 0.5f);
-
-            // Plains
-            float plainsWeight = math.smoothstep(0.3f, 0.7f, biome.moisture) 
-                * math.smoothstep(0.3f, 0.7f, biome.temperature);
-            float plainsHeight = 5 * plainsWeight;
-
-            // Desert
-            float desertWeight = math.smoothstep(0.7f, 1f, biome.temperature) 
-                * math.smoothstep(0.3f, 0.0f, biome.moisture);
-            float desertHeight = 8 * desertWeight * (math.abs(biome.weirdness) * 0.7f + 0.3f);
-
-            return math.max(math.max(mountainHeight, plainsHeight), desertHeight);
+            
+            float mountainBase = 120f;
+            float valleyBase = WATER_LEVEL + 5f; // Start valleys slightly above water level
+            
+            float heightVariation = math.pow(math.abs(biome.weirdness), 0.25f);
+            float mountainHeight = mountainBase * heightVariation;
+            float valleyDepth = 60f * mountainWeight * biome.erosion;
+            
+            float finalHeight;
+            
+            if (biome.continentalness > MOUNTAIN_THRESHOLD) // Mountain region
+            {
+                finalHeight = mountainHeight - valleyDepth;
+            }
+            else if (biome.continentalness < OCEAN_THRESHOLD + 0.1f) // Coastal region
+            {
+                // Smooth transition from ocean to land
+                float coastalFactor = math.smoothstep(
+                    OCEAN_THRESHOLD, 
+                    OCEAN_THRESHOLD + 0.1f, 
+                    biome.continentalness
+                );
+                finalHeight = math.lerp(WATER_LEVEL, WATER_LEVEL + 15f, coastalFactor);
+            }
+            else // Normal terrain
+            {
+                float transitionFactor = math.smoothstep(
+                    OCEAN_THRESHOLD + 0.1f, 
+                    MOUNTAIN_THRESHOLD, 
+                    biome.continentalness
+                );
+                finalHeight = math.lerp(
+                    valleyBase,
+                    mountainHeight - valleyDepth,
+                    transitionFactor
+                );
+            }
+            
+            // Add minimal noise to flat areas, more to mountains
+            float detailNoise = biome.weirdness * (biome.continentalness > 0.7f ? 15f : 2f);
+            
+            return finalHeight + detailNoise;
         }
     }
 } 

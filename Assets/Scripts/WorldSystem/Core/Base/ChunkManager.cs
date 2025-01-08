@@ -1,6 +1,7 @@
 using UnityEngine;
 using Unity.Mathematics;
 using Unity.Collections;
+using Unity.Jobs;
 using System.Collections.Generic;
 using WorldSystem.Data;
 using System.Linq;
@@ -152,39 +153,28 @@ namespace WorldSystem.Base
 
         void QueueMissingChunks()
         {
-            Vector3 camPos = mainCamera.transform.position;
-            foreach (var chunkPos in _visibleChunkPositions)
+            foreach (var pos in _visibleChunkPositions)
             {
-                if (!_generatedChunks.Contains(chunkPos))
+                // First check if we already have this chunk in memory
+                if (_generatedChunks.Contains(pos))
                 {
-                    if (!_chunkGenerator.IsGenerating(chunkPos) && !_chunkLoadQueue.Contains(chunkPos))
+                    // Even if chunk is generated, we need to ensure it's visible at current Y-level
+                    if (!_chunkPool.HasActiveChunkAtPosition(pos, viewMaxYLevel))
                     {
-                        float priority = Vector2.Distance(
-                            new Vector2(camPos.x, camPos.z),
-                            new Vector2(chunkPos.x * ChunkData.SIZE, chunkPos.y * ChunkData.SIZE)
-                        );
-                        _chunkLoadQueue.Enqueue(chunkPos, priority);
+                        if (_chunkBlockData.TryGetValue(pos, out var blocks))
+                        {
+                            CreateChunkObject(pos, blocks, default);
+                        }
                     }
                 }
-                else if (!_generatedYLevels.TryGetValue(chunkPos, out var yLevels) || 
-                         !yLevels.Contains(viewMaxYLevel))
+                // If not generated, queue it for generation
+                else if (!_chunkGenerator.IsGenerating(pos) && !_chunkLoadQueue.Contains(pos))
                 {
-                    CreateChunkObject(chunkPos, _chunkBlockData[chunkPos], default);
-                    
-                    if (!_generatedYLevels.ContainsKey(chunkPos))
-                    {
-                        _generatedYLevels[chunkPos] = new HashSet<int>();
-                    }
-                    _generatedYLevels[chunkPos].Add(viewMaxYLevel);
-                }
-                else
-                {
-                    var chunkResult = _chunkPool.GetChunk(chunkPos, viewMaxYLevel);
-                    if (chunkResult != null)
-                    {
-                        var (chunk, _, _) = chunkResult.Value;
-                        chunk.SetActive(true);
-                    }
+                    float priority = Vector2.Distance(
+                        new Vector2(mainCamera.transform.position.x, mainCamera.transform.position.z),
+                        new Vector2(pos.x * ChunkData.SIZE, pos.y * ChunkData.SIZE)
+                    );
+                    _chunkLoadQueue.Enqueue(pos, priority);
                 }
             }
         }
@@ -227,14 +217,10 @@ namespace WorldSystem.Base
             }
         }
 
-        void CreateChunkObject(int2 position, NativeArray<byte> blocks, NativeArray<HeightPoint> heightMap)
+        void CreateChunkObject(int2 position, NativeArray<byte> blocks, JobHandle dependency)
         {
             var chunkResult = _chunkPool.GetChunk(position, viewMaxYLevel);
-            if (chunkResult == null)
-            {
-                Debug.LogWarning($"Cannot create chunk at {position}: At maximum chunk limit ({maxChunks})");
-                return;
-            }
+            if (chunkResult == null) return;
 
             var (chunk, meshFilter, shadowMeshFilter) = chunkResult.Value;
             _meshBuilder.QueueMeshBuild(position, blocks, meshFilter, shadowMeshFilter, viewMaxYLevel);
@@ -294,6 +280,17 @@ namespace WorldSystem.Base
 
         private void HandleYLevelChange()
         {
+            // First, deactivate all chunks at the old Y-level
+            var activeChunks = _chunkPool.GetActiveChunkPositions().ToList();
+            foreach (var (pos, oldYLevel) in activeChunks)
+            {
+                if (oldYLevel != viewMaxYLevel)
+                {
+                    _chunkPool.DeactivateChunk(pos, oldYLevel);
+                }
+            }
+
+            // Then handle chunks at the new Y-level
             foreach (var pos in _visibleChunkPositions)
             {
                 if (!_generatedChunks.Contains(pos))
@@ -307,27 +304,17 @@ namespace WorldSystem.Base
                         _chunkLoadQueue.Enqueue(pos, priority);
                     }
                 }
-                else if (!_generatedYLevels.TryGetValue(pos, out var yLevels) || 
-                         !yLevels.Contains(viewMaxYLevel))
+                else if (_chunkBlockData.TryGetValue(pos, out var blocks))
                 {
-                    CreateChunkObject(pos, _chunkBlockData[pos], default);
-                    
-                    if (!_generatedYLevels.ContainsKey(pos))
+                    if (!_chunkPool.HasActiveChunkAtPosition(pos, viewMaxYLevel))
                     {
-                        _generatedYLevels[pos] = new HashSet<int>();
-                    }
-                    _generatedYLevels[pos].Add(viewMaxYLevel);
-                }
-                else
-                {
-                    var chunkResult = _chunkPool.GetChunk(pos, viewMaxYLevel);
-                    if (chunkResult != null)
-                    {
-                        var (chunk, _, _) = chunkResult.Value;
-                        chunk.SetActive(true);
+                        CreateChunkObject(pos, blocks, default);
                     }
                 }
             }
+
+            // Force an immediate cleanup check
+            _chunkPool.CheckBufferTimeout();
         }
 
         private void CleanupExcessChunks()
