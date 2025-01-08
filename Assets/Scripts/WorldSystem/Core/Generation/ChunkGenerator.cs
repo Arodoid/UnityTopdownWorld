@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using WorldSystem.Data;
 using WorldSystem.Jobs;
 using System.Linq; 
+using WorldSystem.Generation.Jobs;
 
 namespace WorldSystem.Generation
 {
@@ -15,7 +16,7 @@ namespace WorldSystem.Generation
 
         public ChunkGenerator()
         {
-            seed = UnityEngine.Random.Range(0, 99999); // Or however you want to set the seed
+            seed = 123; // Or however you want to set the seed
         }
 
         // Track which chunks are currently being generated
@@ -39,28 +40,51 @@ namespace WorldSystem.Generation
         {
             _lastJobHandle.Complete();
 
-            var blocks = new NativeArray<byte>(
-                ChunkData.SIZE * ChunkData.HEIGHT * ChunkData.SIZE, 
-                Allocator.TempJob,
-                NativeArrayOptions.ClearMemory
-            );
+            int size = ChunkData.SIZE * ChunkData.SIZE;
+            
+            // Allocate arrays for all generation steps
+            var blocks = new NativeArray<byte>(size * ChunkData.HEIGHT, Allocator.TempJob);
+            var continentalness = new NativeArray<float>(size, Allocator.TempJob);
+            var biomeData = new NativeArray<BiomeData>(size, Allocator.TempJob);
 
-            var genJob = new ChunkGenerationJob
+            // 1. Generate continents
+            var continentJob = new ContinentGenerationJob
+            {
+                chunkPosition = new int2(position.x, position.z),
+                seed = this.seed,
+                continentalness = continentalness
+            };
+            var continentHandle = continentJob.Schedule(size, 64);
+
+            // 2. Generate biome regions
+            var biomeJob = new BiomeRegionJob
+            {
+                chunkPosition = new int2(position.x, position.z),
+                seed = this.seed,
+                continentalness = continentalness,
+                biomeData = biomeData
+            };
+            var biomeHandle = biomeJob.Schedule(size, 64, continentHandle);
+
+            // 3. Generate terrain
+            var terrainJob = new TerrainGenerationJob
             {
                 position = position,
                 seed = this.seed,
-                blocks = blocks,
-                isFullyOpaque = true
+                biomeData = biomeData,
+                blocks = blocks
             };
+            var terrainHandle = terrainJob.Schedule(size, 64, biomeHandle);
 
-            var jobHandle = genJob.Schedule(ChunkData.SIZE * ChunkData.SIZE, 64);
-            _lastJobHandle = jobHandle;
+            _lastJobHandle = terrainHandle;
 
             _pendingChunks[new int2(position.x, position.z)] = new PendingChunk
             {
                 position = position,
-                jobHandle = jobHandle,
+                jobHandle = terrainHandle,
                 blocks = blocks,
+                continentalness = continentalness,
+                biomeData = biomeData,
                 isValid = true
             };
         }
@@ -85,7 +109,7 @@ namespace WorldSystem.Generation
                 OnChunkGenerated?.Invoke(chunkData);
                 _chunksInProgress.Remove(pos);
                 
-                // Mark as invalid instead of removing immediately
+                // Mark as invalid and clean up additional arrays
                 var invalidChunk = chunk;
                 invalidChunk.isValid = false;
                 _pendingChunks[pos] = invalidChunk;
@@ -98,6 +122,10 @@ namespace WorldSystem.Generation
                 {
                     if (kvp.Value.blocks.IsCreated)
                         kvp.Value.blocks.Dispose();
+                    if (kvp.Value.continentalness.IsCreated)
+                        kvp.Value.continentalness.Dispose();
+                    if (kvp.Value.biomeData.IsCreated)
+                        kvp.Value.biomeData.Dispose();
                     _pendingChunks.Remove(kvp.Key);
                 }
             }
@@ -109,13 +137,17 @@ namespace WorldSystem.Generation
         {
             _lastJobHandle.Complete();
             
-            // Ensure all pending chunks are properly disposed
             foreach (var chunk in _pendingChunks.Values)
             {
-                if (chunk.isValid && chunk.blocks.IsCreated)
+                if (chunk.isValid)
                 {
                     chunk.jobHandle.Complete();
-                    chunk.blocks.Dispose();
+                    if (chunk.blocks.IsCreated)
+                        chunk.blocks.Dispose();
+                    if (chunk.continentalness.IsCreated)
+                        chunk.continentalness.Dispose();
+                    if (chunk.biomeData.IsCreated)
+                        chunk.biomeData.Dispose();
                 }
             }
             
@@ -128,6 +160,8 @@ namespace WorldSystem.Generation
             public int3 position;
             public JobHandle jobHandle;
             public NativeArray<byte> blocks;
+            public NativeArray<float> continentalness;
+            public NativeArray<BiomeData> biomeData;
             public bool isValid;
         }
     }

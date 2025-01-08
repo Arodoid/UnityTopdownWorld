@@ -29,7 +29,7 @@ Shader "Custom/VertexColor"
         _OvercastFactor ("Overcast Factor", Range(0, 1)) = 0
         _OrthoFalloffMultiplier ("Ortho Falloff Multiplier", Range(0.001, 10)) = 1.0
         _WorldSeed ("World Seed", Float) = 0
-        _ColorVariationStrength ("Color Variation Strength", Range(0, 0.2)) = 0.05
+        _ColorVariationStrength ("Color Variation Strength", Range(0, 0.2)) = 0.02
         _ColorVariationScale ("Color Variation Scale", Range(1, 100)) = 25
     }
     SubShader

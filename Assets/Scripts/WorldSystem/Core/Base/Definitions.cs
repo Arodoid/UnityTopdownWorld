@@ -9,7 +9,9 @@ namespace WorldSystem.Data
         Grass = 1,
         Dirt = 2,
         Stone = 3,
-        Sand = 4
+        Sand = 4,
+        Water = 5,
+        Snow = 6
     }
 
     public struct BlockDefinition
@@ -78,6 +80,16 @@ namespace WorldSystem.Data
             // Sand
             new BlockDefinition { 
                 color = new float4(0.6f, 0.6f, 0.4f, 1f), 
+                isOpaque = true 
+            },
+            // Water
+            new BlockDefinition { 
+                color = new float4(0.1f, 0.15f, 0.95f, 0.8f), 
+                isOpaque = false 
+            },
+            // Snow
+            new BlockDefinition { 
+                color = new float4(0.95f, 0.95f, 0.95f, 1f), 
                 isOpaque = true 
             }
         };

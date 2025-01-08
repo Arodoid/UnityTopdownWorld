@@ -20,6 +20,8 @@ namespace WorldSystem.Environment
         [Header("Shadow Settings")]
         [SerializeField] private float shadowSoftness = 0.3f;
         [SerializeField] private float overcastFactor = 0f;
+        [SerializeField] private float shadowMaxOrthoSize = 100f;
+        [SerializeField] private float shadowMinOrthoSize = 20f;
 
         private void OnValidate()
         {
@@ -47,6 +49,8 @@ namespace WorldSystem.Environment
             // Shadow properties
             targetMaterial.SetFloat("_ShadowSoftness", shadowSoftness);
             targetMaterial.SetFloat("_OvercastFactor", overcastFactor);
+            targetMaterial.SetFloat("_ShadowMaxOrthoSize", shadowMaxOrthoSize);
+            targetMaterial.SetFloat("_ShadowMinOrthoSize", shadowMinOrthoSize);
 
             // Calculate shadow offset based on main directional light
             Light mainLight = RenderSettings.sun;
