@@ -17,10 +17,14 @@ namespace WorldSystem.Generation
         [ReadOnly] public float DefaultLayerDepth;
         [ReadOnly] public byte DefaultSubsurfaceBlock;
         [ReadOnly] public byte DefaultDeepBlock;
+        [ReadOnly] public bool EnableTerrainHeight;
+        [ReadOnly] public bool EnableCaves;
+        [ReadOnly] public bool EnableWater;
         
         [NativeDisableParallelForRestriction]
         public NativeArray<byte> Blocks;
         [WriteOnly] public NativeArray<Core.HeightPoint> HeightMap;
+        [ReadOnly] public NoiseSettings GlobalDensityNoise;
 
         public void Execute(int index)
         {
@@ -56,7 +60,7 @@ namespace WorldSystem.Generation
                 int blockIndex = GetBlockIndex(x, y, z);
                 if (blockIndex >= 0 && blockIndex < Blocks.Length)
                 {
-                    Blocks[blockIndex] = DetermineBlockType(y, heightInt, terrainHeight, biomeWeights);
+                    Blocks[blockIndex] = DetermineBlockType(x, y, z, heightInt, terrainHeight, biomeWeights);
                 }
             }
         }
@@ -81,36 +85,84 @@ namespace WorldSystem.Generation
             return terrainHeight;
         }
 
-        private byte DetermineBlockType(int worldY, int heightInt, float exactHeight, NativeArray<float> biomeWeights)
+        private byte DetermineBlockType(int x, int y, int z, int heightInt, float exactHeight, NativeArray<float> biomeWeights)
         {
-            // If we're above the terrain height
-            if (worldY > heightInt)
+            // If terrain height is disabled, use flat terrain at sea level
+            int effectiveHeight = EnableTerrainHeight ? heightInt : (int)SeaLevel;
+
+            // Check for 3D terrain generation first if enabled
+            if (EnableCaves)
             {
-                // Add water blocks between sea level and terrain height
-                if (worldY <= SeaLevel && worldY > heightInt)
+                float3 worldPos = new float3(
+                    ChunkPosition.x * Core.ChunkData.SIZE + x,
+                    y,
+                    ChunkPosition.z * Core.ChunkData.SIZE + z
+                );
+
+                float noise = NoiseUtility.Sample3D(worldPos, GlobalDensityNoise);
+                float density = 0f;
+                float totalWeight = 0f;
+                
+                for (int i = 0; i < Biomes.Length; i++)
+                {
+                    var densitySettings = Biomes[i].DensitySettings;
+                    float weight = biomeWeights[i];
+                    
+                    if (weight > 0.01f)
+                    {
+                        float heightRatio = math.max(0, y - densitySettings.GradientStartHeight) / Core.ChunkData.HEIGHT;
+                        float verticalGradient = math.pow(1.0f - heightRatio, densitySettings.VerticalBias);
+                        float heightFactor = verticalGradient * densitySettings.HeightScale + densitySettings.HeightOffset;
+                        
+                        float localDensity = (noise * 2f - 1f) + densitySettings.DensityBias + heightFactor;
+                        
+                        density += localDensity * weight;
+                        totalWeight += weight;
+                    }
+                }
+                
+                if (totalWeight > 0)
+                {
+                    density /= totalWeight;
+                    
+                    // If density is very high, force block placement even above terrain height
+                    if (density > 0.5f)
+                    {
+                        var dominantBiome = GetDominantBiome(biomeWeights);
+                        return (byte)dominantBiome.Layer1.BlockType;
+                    }
+                    // Create air pockets/caves where density is low
+                    else if (density < -0.1f)
+                    {
+                        return (byte)BlockType.Air;
+                    }
+                }
+            }
+
+            // Regular height-based terrain generation
+            if (y > effectiveHeight)
+            {
+                if (EnableWater && y <= SeaLevel)
                     return (byte)BlockType.Water;
                 return (byte)BlockType.Air;
             }
 
-            float depth = heightInt - worldY;
-            var dominantBiome = GetDominantBiome(biomeWeights);
-
             // Surface block
-            if (worldY == heightInt)
+            if (y == effectiveHeight)
             {
-                return DetermineSurfaceBlock(exactHeight, dominantBiome);
+                return DetermineSurfaceBlock(exactHeight, GetDominantBiome(biomeWeights));
             }
 
             // Layer blocks
-            if (CheckLayer(dominantBiome.Layer1, depth, worldY, heightInt, out byte blockType))
+            if (CheckLayer(GetDominantBiome(biomeWeights).Layer1, effectiveHeight - y, y, effectiveHeight, out byte blockType))
                 return blockType;
-            if (dominantBiome.LayerCount > 1 && CheckLayer(dominantBiome.Layer2, depth, worldY, heightInt, out blockType))
+            if (GetDominantBiome(biomeWeights).LayerCount > 1 && CheckLayer(GetDominantBiome(biomeWeights).Layer2, effectiveHeight - y, y, effectiveHeight, out blockType))
                 return blockType;
-            if (dominantBiome.LayerCount > 2 && CheckLayer(dominantBiome.Layer3, depth, worldY, heightInt, out blockType))
+            if (GetDominantBiome(biomeWeights).LayerCount > 2 && CheckLayer(GetDominantBiome(biomeWeights).Layer3, effectiveHeight - y, y, effectiveHeight, out blockType))
                 return blockType;
 
             // Default deep blocks
-            return depth < DefaultLayerDepth ? DefaultSubsurfaceBlock : DefaultDeepBlock;
+            return effectiveHeight - y < DefaultLayerDepth ? DefaultSubsurfaceBlock : DefaultDeepBlock;
         }
 
         private bool CheckLayer(BiomeBlockLayer layer, float depth, int worldY, int heightInt, out byte blockType)

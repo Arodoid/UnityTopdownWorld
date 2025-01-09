@@ -61,8 +61,34 @@ namespace WorldSystem.Generation
     }
 
     [System.Serializable]
+    public struct TerrainDensitySettings
+    {
+        [Header("3D Terrain Density")]
+        [Tooltip("Base density value (negative = air, positive = solid)")]
+        [Range(-200f, 200f)]
+        public float DensityBias;
+
+        [Tooltip("How quickly density changes with height")]
+        [Range(0.000001f, 100f)]
+        public float HeightScale;
+
+        [Tooltip("Vertical offset for density transition")]
+        [Range(-300f, 300f)]
+        public float HeightOffset;
+
+        [Tooltip("Controls how sharply the vertical gradient changes (higher = sharper)")]
+        [Range(0.1f, 10f)]
+        public float VerticalBias;
+
+        [Tooltip("Height at which the vertical gradient starts to take effect")]
+        [Range(0f, 256f)]
+        public float GradientStartHeight;
+    }
+
+    [System.Serializable]
     public struct BiomeSettings
     {
+        [Header("Basic Biome Settings")]
         [Tooltip("Unique identifier for this biome")]
         public int BiomeId;
 
@@ -71,10 +97,19 @@ namespace WorldSystem.Generation
 
         [Tooltip("Humidity value (0-1) affects biome placement")]
         public float Humidity;
-        
+
+        [Tooltip("Preferred continentalness value (0-1: ocean to inland)")]
+        public float Continentalness;
+
+        [Header("Height Settings")]
         [Tooltip("Settings that control the terrain height and shape")]
         public BiomeHeightSettings HeightSettings;
 
+        [Header("3D Terrain Generation")]
+        [Tooltip("Settings for 3D terrain density")]
+        public TerrainDensitySettings DensitySettings;
+
+        [Header("Layer Settings")]
         [Tooltip("First ground layer (usually top soil)")]
         public BiomeBlockLayer Layer1;
 
@@ -86,7 +121,8 @@ namespace WorldSystem.Generation
 
         [Tooltip("Number of active layers (1-3)")]
         public int LayerCount;
-        
+
+        [Header("Surface Settings")]
         [Tooltip("Block type used on the surface")]
         public BlockType DefaultSurfaceBlock;
 
@@ -95,9 +131,6 @@ namespace WorldSystem.Generation
 
         [Tooltip("Depth below sea level to switch to underwater block")]
         public float UnderwaterThreshold;
-
-        [Tooltip("Preferred continentalness value (0-1: ocean to inland)")]
-        public float Continentalness;
     }
 
     public struct ClimateParameters

@@ -6,21 +6,21 @@ namespace WorldSystem.Generation
     [CreateAssetMenu(fileName = "WorldGenSettings", menuName = "WorldGen/Settings")]
     public class WorldGenSettings : ScriptableObject
     {
+        [Header("Generation Toggles")]
+        public bool EnableTerrainHeight = true;
+        public bool Enable3DTerrain = true;
+        public bool EnableWater = true;
+
         [Header("Basic World Settings")]
         [Tooltip("Size of each chunk in blocks (32x32 horizontal area)")]
         public int ChunkSize = 32;
-
-        [Tooltip("Maximum height of the world in blocks")]
         public int WorldHeight = 256;
-
-        [Tooltip("Height at which water appears")]
         public float SeaLevel = 64;
         
         [Header("Biome Settings")]
-        [Tooltip("Controls how biomes are distributed across the world")]
         public NoiseSettings BiomeNoiseSettings = new NoiseSettings
         {
-            Scale = 1000,      // Much larger value for smaller biomes
+            Scale = 1000,
             Amplitude = 1,     
             Frequency = 0.01f, 
             Octaves = 4,      
@@ -29,24 +29,25 @@ namespace WorldSystem.Generation
             Seed = 42         
         };
 
-        [Tooltip("Array of all biome configurations")]
         public BiomeSettings[] Biomes;
-
-        [Tooltip("How far biomes blend together")]
         public int BiomeBlendDistance = 4;
-
-        [Tooltip("Default biome ID to use if no other biome is suitable")]
-        public int DefaultBiomeId = 0;
         
         [Header("Global Layer Settings")]
-        [Tooltip("Default depth of the surface layer")]
         public float DefaultLayerDepth = 4f;
-
-        [Tooltip("Block type used for the layer just below surface")]
         public BlockType DefaultSubsurfaceBlock = BlockType.Dirt;
-
-        [Tooltip("Block type used for the deepest layer")]
         public BlockType DefaultDeepBlock = BlockType.Stone;
+
+        [Header("Global 3D Terrain Settings")]
+        public NoiseSettings GlobalDensityNoise = new NoiseSettings
+        {
+            Scale = 50f,
+            Amplitude = 1f,
+            Frequency = 0.03f,
+            Octaves = 3,
+            Persistence = 0.5f,
+            Lacunarity = 2f,
+            Seed = 42
+        };
 
         private void OnValidate()
         {
@@ -60,7 +61,7 @@ namespace WorldSystem.Generation
                         BiomeId = 0,
                         Temperature = 0.5f,
                         Humidity = 0.5f,
-                        Continentalness = 0.1f,  // Very low for deep ocean
+                        Continentalness = 0.1f,
                         HeightSettings = new BiomeHeightSettings
                         {
                             BaseHeight = 20,
@@ -77,135 +78,132 @@ namespace WorldSystem.Generation
                             },
                             SeaLevelOffset = -20
                         },
-                        Layer1 = new BiomeBlockLayer
+                        DensitySettings = new TerrainDensitySettings
                         {
-                            BlockType = BlockType.Sand,
-                            MinDepth = 0,
-                            MaxDepth = 3
+                            DensityBias = 0.8f,            // Very solid
+                            HeightScale = 0.2f,            // Minimal height influence
+                            HeightOffset = -0.1f,          // Shift density down
+                            VerticalBias = 4.0f,           // Very sharp vertical falloff
+                            GradientStartHeight = 32f      // Start low
                         },
-                        Layer2 = new BiomeBlockLayer
-                        {
-                            BlockType = BlockType.Stone,
-                            MinDepth = 3,
-                            MaxDepth = float.MaxValue
-                        },
+                        Layer1 = new BiomeBlockLayer { BlockType = BlockType.Sand, MinDepth = 0, MaxDepth = 3 },
+                        Layer2 = new BiomeBlockLayer { BlockType = BlockType.Stone, MinDepth = 3, MaxDepth = float.MaxValue },
                         LayerCount = 2,
                         DefaultSurfaceBlock = BlockType.Sand,
                         UnderwaterSurfaceBlock = BlockType.Sand,
                         UnderwaterThreshold = 2
                     },
 
-                    // Beach Biome
+                    // Beach/Coastal
                     new BiomeSettings
                     {
                         BiomeId = 1,
                         Temperature = 0.5f,
                         Humidity = 0.5f,
-                        Continentalness = 0.3f,  // Low-medium for beaches
+                        Continentalness = 0.3f,
                         HeightSettings = new BiomeHeightSettings
                         {
                             BaseHeight = 62,
-                            HeightVariation = 4,
+                            HeightVariation = 8,
                             TerrainNoiseSettings = new NoiseSettings
                             {
-                                Scale = 40,
-                                Amplitude = 1.0f,
-                                Frequency = 0.05f,
+                                Scale = 100,
+                                Amplitude = 1f,
+                                Frequency = 0.02f,
                                 Octaves = 4,
                                 Persistence = 0.5f,
-                                Lacunarity = 2.0f,
+                                Lacunarity = 2f,
                                 Seed = 42
                             },
-                            SeaLevelOffset = 0
+                            SeaLevelOffset = -2
                         },
-                        Layer1 = new BiomeBlockLayer
+                        DensitySettings = new TerrainDensitySettings
                         {
-                            BlockType = BlockType.Sand,
-                            MinDepth = 0,
-                            MaxDepth = 4
+                            DensityBias = 0.3f,            // Mostly solid
+                            HeightScale = 0.4f,            // Moderate height influence
+                            HeightOffset = 0f,             // No offset
+                            VerticalBias = 2.5f,           // Sharper vertical falloff
+                            GradientStartHeight = 64f      // Start at sea level
                         },
-                        Layer2 = new BiomeBlockLayer
-                        {
-                            BlockType = BlockType.Stone,
-                            MinDepth = 4,
-                            MaxDepth = float.MaxValue
-                        },
+                        Layer1 = new BiomeBlockLayer { BlockType = BlockType.Sand, MinDepth = 0, MaxDepth = 4 },
+                        Layer2 = new BiomeBlockLayer { BlockType = BlockType.Stone, MinDepth = 4, MaxDepth = float.MaxValue },
                         LayerCount = 2,
                         DefaultSurfaceBlock = BlockType.Sand,
                         UnderwaterSurfaceBlock = BlockType.Sand,
-                        UnderwaterThreshold = 2
+                        UnderwaterThreshold = 1
                     },
 
-                    // Plains Biome
+                    // Plains
                     new BiomeSettings
                     {
                         BiomeId = 2,
                         Temperature = 0.5f,
                         Humidity = 0.5f,
-                        Continentalness = 0.6f,  // Medium-high for plains
+                        Continentalness = 0.6f,
                         HeightSettings = new BiomeHeightSettings
                         {
                             BaseHeight = 68,
-                            HeightVariation = 16,
+                            HeightVariation = 12,
                             TerrainNoiseSettings = new NoiseSettings
                             {
-                                Scale = 100,
-                                Amplitude = 1.2f,
-                                Frequency = 0.03f,
-                                Octaves = 5,
+                                Scale = 120,
+                                Amplitude = 1f,
+                                Frequency = 0.02f,
+                                Octaves = 4,
                                 Persistence = 0.5f,
-                                Lacunarity = 2.2f,
+                                Lacunarity = 2f,
                                 Seed = 42
                             },
                             SeaLevelOffset = 4
                         },
-                        Layer1 = new BiomeBlockLayer
+                        DensitySettings = new TerrainDensitySettings
                         {
-                            BlockType = BlockType.Dirt,
-                            MinDepth = 0,
-                            MaxDepth = 4
+                            DensityBias = 0.3f,            // Mostly solid
+                            HeightScale = 0.4f,            // Moderate height influence
+                            HeightOffset = 0f,             // No offset
+                            VerticalBias = 2.5f,           // Sharper vertical falloff
+                            GradientStartHeight = 64f      // Start at sea level
                         },
-                        Layer2 = new BiomeBlockLayer
-                        {
-                            BlockType = BlockType.Stone,
-                            MinDepth = 4,
-                            MaxDepth = float.MaxValue
-                        },
+                        Layer1 = new BiomeBlockLayer { BlockType = BlockType.Dirt, MinDepth = 0, MaxDepth = 4 },
+                        Layer2 = new BiomeBlockLayer { BlockType = BlockType.Stone, MinDepth = 4, MaxDepth = float.MaxValue },
                         LayerCount = 2,
                         DefaultSurfaceBlock = BlockType.Grass,
                         UnderwaterSurfaceBlock = BlockType.Dirt,
                         UnderwaterThreshold = 2
                     },
 
-                    // Mountains Biome
+                    // Mountains
                     new BiomeSettings
                     {
                         BiomeId = 3,
                         Temperature = 0.5f,
                         Humidity = 0.5f,
-                        Continentalness = 0.9f,  // Very high for mountains
+                        Continentalness = 0.9f,
                         HeightSettings = new BiomeHeightSettings
                         {
                             BaseHeight = 90,
-                            HeightVariation = 120,
+                            HeightVariation = 45,
                             TerrainNoiseSettings = new NoiseSettings
                             {
-                                Scale = 200,
-                                Amplitude = 2.0f,
+                                Scale = 150,
+                                Amplitude = 1.2f,
                                 Frequency = 0.015f,
-                                Octaves = 7,
-                                Persistence = 0.7f,
-                                Lacunarity = 2.8f,
+                                Octaves = 5,
+                                Persistence = 0.6f,
+                                Lacunarity = 2.2f,
                                 Seed = 42
                             },
-                            SeaLevelOffset = 20
+                            SeaLevelOffset = 26
                         },
-                        Layer1 = new BiomeBlockLayer
+                        DensitySettings = new TerrainDensitySettings
                         {
-                            BlockType = BlockType.Stone,
-                            MinDepth = 0,
-                            MaxDepth = float.MaxValue
+                            DensityBias = -0.3f,           // More caves
+                            HeightScale = 0.6f,            // Strong height influence
+                            HeightOffset = 0.2f,           // Shift density up slightly
+                            VerticalBias = 1.2f,           // Gradual vertical falloff
+                            GradientStartHeight = 80f      // Start vertical falloff higher up
                         },
+                        Layer1 = new BiomeBlockLayer { BlockType = BlockType.Stone, MinDepth = 0, MaxDepth = float.MaxValue },
                         LayerCount = 1,
                         DefaultSurfaceBlock = BlockType.Stone,
                         UnderwaterSurfaceBlock = BlockType.Stone,
@@ -213,13 +211,6 @@ namespace WorldSystem.Generation
                     }
                 };
             }
-
-            // Validate basic settings
-            ChunkSize = Mathf.Max(16, ChunkSize);
-            WorldHeight = Mathf.Max(64, WorldHeight);
-            SeaLevel = Mathf.Clamp(SeaLevel, 0, WorldHeight);
-            BiomeBlendDistance = Mathf.Max(1, BiomeBlendDistance);
-            DefaultLayerDepth = Mathf.Max(1, DefaultLayerDepth);
         }
     }
 } 

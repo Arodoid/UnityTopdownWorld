@@ -98,6 +98,9 @@ namespace WorldSystem.Generation
 
             var job = new TerrainGenerationJob
             {
+                EnableTerrainHeight = settings.EnableTerrainHeight,
+                EnableCaves = settings.Enable3DTerrain,
+                EnableWater = settings.EnableWater,
                 ChunkPosition = chunkPos,
                 Blocks = blocks,
                 HeightMap = heightMap,
@@ -106,7 +109,8 @@ namespace WorldSystem.Generation
                 SeaLevel = settings.SeaLevel,
                 DefaultLayerDepth = settings.DefaultLayerDepth,
                 DefaultSubsurfaceBlock = (byte)settings.DefaultSubsurfaceBlock,
-                DefaultDeepBlock = (byte)settings.DefaultDeepBlock
+                DefaultDeepBlock = (byte)settings.DefaultDeepBlock,
+                GlobalDensityNoise = settings.GlobalDensityNoise
             };
 
             job.Schedule(Data.ChunkData.SIZE * Data.ChunkData.SIZE, 64).Complete();

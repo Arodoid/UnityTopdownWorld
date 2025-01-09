@@ -13,9 +13,11 @@ public static class NoiseUtility
         float noiseHeight = 0;
         float amplitudeSum = 0;
 
+        float3 scaledPos = position / settings.Scale;
+
         for (int i = 0; i < settings.Octaves; i++)
         {
-            float3 pos = position * frequency;
+            float3 pos = scaledPos * frequency;
             float noiseValue = noise.snoise(pos + settings.Seed);
             noiseValue = noiseValue * 0.5f + 0.5f;
             
