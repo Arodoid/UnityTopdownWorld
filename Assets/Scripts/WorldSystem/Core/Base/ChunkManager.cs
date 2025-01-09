@@ -375,8 +375,8 @@ namespace WorldSystem.Base
         private void Start()
         {
             chunkMaterial.SetFloat("_WorldSeed", _worldGenerator.seed);
-            chunkMaterial.SetFloat("_ColorVariationStrength", 0.05f);
-            chunkMaterial.SetFloat("_ColorVariationScale", 25f);
+            chunkMaterial.SetFloat("_ColorVariationStrength", 0.02f);
+            chunkMaterial.SetFloat("_ColorVariationScale", 1f);
         }
 
         private void RequestChunkGeneration(int2 position)

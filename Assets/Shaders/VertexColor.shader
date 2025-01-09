@@ -266,18 +266,33 @@ Shader "Custom/VertexColor"
                 // Calculate and apply cloud shadows BEFORE clouds
                 float3 lightDir = normalize(_MainLightPosition.xyz);
                 float3 worldPos = input.worldPos;
+                
+                // Calculate ray length to cloud height
                 float rayLength = (_CloudHeight - worldPos.y) / lightDir.y;
                 float3 shadowSamplePos = worldPos + lightDir * rayLength;
-                
+
+                // Check if the shadow sample point is below terrain
+                bool shadowPointInTerrain = shadowSamplePos.y < worldPos.y;
+
+                // Calculate and apply cloud shadows
                 float2 shadowUV = shadowSamplePos.xz / _CloudScale;
                 shadowUV.x += _Time.y * _CloudSpeed;
                 float cloudShadow = fbm(shadowUV, _WorldSeed);
                 cloudShadow = smoothstep(_CloudDensity - 0.3, _CloudDensity + 0.3, cloudShadow);
-                
+
                 float shadowFactor = cloudShadow * _ShadowStrength;
                 shadowFactor *= (1.0 - saturate(rayLength / (_CloudHeight * 2.0)));
                 shadowFactor *= max(0, dot(input.normalWS, lightDir));
-                
+
+                // Smooth transition for shadows when they would intersect terrain
+                float shadowTerrainFade = smoothstep(0, 20, shadowSamplePos.y - worldPos.y); // 20 units fade distance
+                shadowFactor *= shadowTerrainFade;
+
+                // Only apply shadow if the ray hasn't intersected terrain
+                if (shadowPointInTerrain) {
+                    shadowFactor = 0;
+                }
+
                 // Apply shadow darkening to base color
                 color.rgb *= (1.0 - shadowFactor);
 
@@ -288,6 +303,10 @@ Shader "Custom/VertexColor"
                 
                 float cloudFade = 1.0 - saturate((input.worldPos.y - _CloudHeight) / (_CloudHeight * 0.5));
                 clouds *= cloudFade;
+                
+                // Smooth transition when clouds intersect terrain
+                float terrainFade = smoothstep(0, 20, _CloudHeight - input.worldPos.y); // 20 units fade distance
+                clouds *= terrainFade;
                 
                 // Blend clouds over the already shadowed terrain
                 color.rgb = lerp(color.rgb, _CloudColor.rgb, clouds * _CloudColor.a);

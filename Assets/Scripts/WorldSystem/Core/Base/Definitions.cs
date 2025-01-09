@@ -87,7 +87,7 @@ namespace WorldSystem.Data
             },
             // Water
             new BlockDefinition { 
-                color = new float4(0.1f, 0.15f, 0.95f, 0.8f), 
+                color = new float4(0.05f, 0.08f, 0.5f, 0.8f), 
                 isOpaque = false 
             },
             // Snow
