@@ -64,25 +64,29 @@ namespace WorldSystem.Generation
     public struct TerrainDensitySettings
     {
         [Header("3D Terrain Density")]
-        [Tooltip("Base density value (negative = air, positive = solid)")]
-        [Range(-200f, 200f)]
+        [Tooltip("Base density value (-1 = always air, 0 = neutral, 1 = always solid)")]
+        [Range(-1f, 1f)]
         public float DensityBias;
 
-        [Tooltip("How quickly density changes with height")]
-        [Range(0.000001f, 100f)]
+        [Tooltip("Overall strength of the height effect")]
+        [Range(0f, 1f)]
         public float HeightScale;
 
-        [Tooltip("Vertical offset for density transition")]
-        [Range(-300f, 300f)]
-        public float HeightOffset;
+        [Tooltip("Linear rate of density change with height (higher = faster falloff)")]
+        [Range(0f, 2f)]
+        public float LinearScale;
 
-        [Tooltip("Controls how sharply the vertical gradient changes (higher = sharper)")]
-        [Range(0.1f, 10f)]
+        [Tooltip("Exponential curve of density change (1 = linear, >1 = more exponential)")]
+        [Range(0f, 15f)]
         public float VerticalBias;
 
-        [Tooltip("Height at which the vertical gradient starts to take effect")]
+        [Tooltip("Y-level where vertical density changes begin")]
         [Range(0f, 256f)]
         public float GradientStartHeight;
+
+        [Tooltip("Fine-tune the final density")]
+        [Range(-1f, 1f)]
+        public float HeightOffset;
     }
 
     [System.Serializable]

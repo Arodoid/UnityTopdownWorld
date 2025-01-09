@@ -80,11 +80,9 @@ namespace WorldSystem.Generation
                         },
                         DensitySettings = new TerrainDensitySettings
                         {
-                            DensityBias = 0.8f,            // Very solid
-                            HeightScale = 0.2f,            // Minimal height influence
-                            HeightOffset = -0.1f,          // Shift density down
-                            VerticalBias = 4.0f,           // Very sharp vertical falloff
-                            GradientStartHeight = 32f      // Start low
+                            DensityBias = 100f,      // Very high positive number = always solid
+                            HeightScale = 0f,        // No height influence
+                            HeightOffset = 0f        // No offset
                         },
                         Layer1 = new BiomeBlockLayer { BlockType = BlockType.Sand, MinDepth = 0, MaxDepth = 3 },
                         Layer2 = new BiomeBlockLayer { BlockType = BlockType.Stone, MinDepth = 3, MaxDepth = float.MaxValue },
@@ -119,11 +117,9 @@ namespace WorldSystem.Generation
                         },
                         DensitySettings = new TerrainDensitySettings
                         {
-                            DensityBias = 0.3f,            // Mostly solid
-                            HeightScale = 0.4f,            // Moderate height influence
-                            HeightOffset = 0f,             // No offset
-                            VerticalBias = 2.5f,           // Sharper vertical falloff
-                            GradientStartHeight = 64f      // Start at sea level
+                            DensityBias = 100f,      // Very high positive number = always solid
+                            HeightScale = 0f,        // No height influence
+                            HeightOffset = 0f        // No offset
                         },
                         Layer1 = new BiomeBlockLayer { BlockType = BlockType.Sand, MinDepth = 0, MaxDepth = 4 },
                         Layer2 = new BiomeBlockLayer { BlockType = BlockType.Stone, MinDepth = 4, MaxDepth = float.MaxValue },
@@ -158,11 +154,9 @@ namespace WorldSystem.Generation
                         },
                         DensitySettings = new TerrainDensitySettings
                         {
-                            DensityBias = 0.3f,            // Mostly solid
-                            HeightScale = 0.4f,            // Moderate height influence
-                            HeightOffset = 0f,             // No offset
-                            VerticalBias = 2.5f,           // Sharper vertical falloff
-                            GradientStartHeight = 64f      // Start at sea level
+                            DensityBias = 100f,      // Very high positive number = always solid
+                            HeightScale = 0f,        // No height influence
+                            HeightOffset = 0f        // No offset
                         },
                         Layer1 = new BiomeBlockLayer { BlockType = BlockType.Dirt, MinDepth = 0, MaxDepth = 4 },
                         Layer2 = new BiomeBlockLayer { BlockType = BlockType.Stone, MinDepth = 4, MaxDepth = float.MaxValue },
@@ -197,11 +191,9 @@ namespace WorldSystem.Generation
                         },
                         DensitySettings = new TerrainDensitySettings
                         {
-                            DensityBias = -0.3f,           // More caves
-                            HeightScale = 0.6f,            // Strong height influence
-                            HeightOffset = 0.2f,           // Shift density up slightly
-                            VerticalBias = 1.2f,           // Gradual vertical falloff
-                            GradientStartHeight = 80f      // Start vertical falloff higher up
+                            DensityBias = 100f,      // Very high positive number = always solid
+                            HeightScale = 0f,        // No height influence
+                            HeightOffset = 0f        // No offset
                         },
                         Layer1 = new BiomeBlockLayer { BlockType = BlockType.Stone, MinDepth = 0, MaxDepth = float.MaxValue },
                         LayerCount = 1,

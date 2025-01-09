@@ -110,11 +110,27 @@ namespace WorldSystem.Generation
                     
                     if (weight > 0.01f)
                     {
-                        float heightRatio = math.max(0, y - densitySettings.GradientStartHeight) / Core.ChunkData.HEIGHT;
-                        float verticalGradient = math.pow(1.0f - heightRatio, densitySettings.VerticalBias);
-                        float heightFactor = verticalGradient * densitySettings.HeightScale + densitySettings.HeightOffset;
+                        // First calculate basic noise density
+                        float noiseValue = (noise * 2f - 1f) + densitySettings.DensityBias;
                         
-                        float localDensity = (noise * 2f - 1f) + densitySettings.DensityBias + heightFactor;
+                        // Then apply a strong vertical cutoff
+                        float distanceFromStart = y - densitySettings.GradientStartHeight;
+                        float verticalBias = 0f;
+                        
+                        if (distanceFromStart > 0)
+                        {
+                            // Above gradient start: bias towards air (negative density)
+                            float normalizedDistance = (distanceFromStart / 32f) * densitySettings.LinearScale;
+                            verticalBias = -math.pow(math.saturate(normalizedDistance), densitySettings.VerticalBias) * densitySettings.HeightScale;
+                        }
+                        else
+                        {
+                            // Below gradient start: bias towards solid (positive density)
+                            float normalizedDistance = (-distanceFromStart / 32f) * densitySettings.LinearScale;
+                            verticalBias = math.pow(math.saturate(normalizedDistance), densitySettings.VerticalBias) * densitySettings.HeightScale;
+                        }
+                        
+                        float localDensity = noiseValue + verticalBias + densitySettings.HeightOffset;
                         
                         density += localDensity * weight;
                         totalWeight += weight;
