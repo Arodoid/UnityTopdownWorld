@@ -743,13 +743,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1468477236}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.43400878, y: -0.23122151, z: 0.11629228, w: 0.86293054}
-  m_LocalPosition: {x: -37.786182, y: 59.789085, z: 27.861353}
+  m_LocalRotation: {x: 0.16773126, y: -0.25488698, z: 0.044943444, w: 0.95125127}
+  m_LocalPosition: {x: 0, y: 180, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 53.4, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 20, y: -30, z: 0}
 --- !u!1 &1488966424
 GameObject:
   m_ObjectHideFlags: 0
@@ -925,18 +925,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 112b921a3ce8d554d9fa82331eb31824, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cloudMaterial: {fileID: 2100000, guid: 9878376fcffdc9444a78e39f29b5ba46, type: 2}
-  cloudScale: 20
-  cloudSpeed: 0.05
-  cloudDensity: 0.3
-  cloudHeight: 100
-  cloudColor:
-    r: 1
-    g: 1
-    b: 1
-    a: 0.6
-  shadowStrength: 0.3
-  showDebug: 1
 --- !u!1 &1527284393
 GameObject:
   m_ObjectHideFlags: 0
@@ -1067,6 +1055,7 @@ MonoBehaviour:
   maxChunks: 512
   viewMaxYLevel: 256
   maxCachedChunks: 2048
+  worldSettings: {fileID: 11400000, guid: b0472a7c072491a4881254b41209238b, type: 2}
 --- !u!114 &2070139065
 MonoBehaviour:
   m_ObjectHideFlags: 0

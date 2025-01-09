@@ -12,7 +12,9 @@ namespace WorldSystem.Data
         Sand = 4,
         Water = 5,
         Snow = 6,
-        Gravel = 7
+        Gravel = 7,
+        Ice = 8,
+        Sandstone = 9
     }
 
     public struct BlockDefinition
@@ -31,7 +33,7 @@ namespace WorldSystem.Data
     {
         public const int SIZE = 32;
         public const int HEIGHT = 256;
-        public int3 position;  // Y component now represents absolute height
+        public int3 position;
         public bool isEdited;
         public NativeArray<byte> blocks;
         public NativeArray<HeightPoint> heightMap;
@@ -96,6 +98,16 @@ namespace WorldSystem.Data
             // Gravel
             new BlockDefinition { 
                 color = new float4(0.5f, 0.5f, 0.5f, 1f), 
+                isOpaque = true 
+            },
+            // Ice
+            new BlockDefinition { 
+                color = new float4(0.95f, 0.95f, 0.95f, 1f), 
+                isOpaque = true 
+            },
+            // Sandstone
+            new BlockDefinition { 
+                color = new float4(0.8f, 0.6f, 0.4f, 1f), 
                 isOpaque = true 
             }
         };
