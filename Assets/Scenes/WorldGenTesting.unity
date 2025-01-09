@@ -690,7 +690,7 @@ Light:
     m_Type: 1
     m_Resolution: -1
     m_CustomResolution: -1
-    m_Strength: 0.25
+    m_Strength: 0.5
     m_Bias: 0
     m_NormalBias: 0
     m_NearPlane: 0.1
@@ -907,7 +907,7 @@ MonoBehaviour:
   movementSmoothness: 0.15
   zoomSpeed: 0.2
   minZoom: 8
-  maxZoom: 200
+  maxZoom: 2000
   zoomSmoothness: 0.03
   minYLevel: 0
   maxYLevel: 256
@@ -1012,6 +1012,8 @@ GameObject:
   - component: {fileID: 2070139064}
   - component: {fileID: 2070139066}
   - component: {fileID: 2070139065}
+  - component: {fileID: 2070139067}
+  - component: {fileID: 2070139068}
   m_Layer: 0
   m_Name: WorldSystem
   m_TagString: Untagged
@@ -1069,14 +1071,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetMaterial: {fileID: 2100000, guid: 26e4bd165616e8447a5fbfcd222b0ba3, type: 2}
-  cloudScale: 120
+  cloudScale: 400
   cloudSpeed: 0.05
   cloudDensity: 0.3
   cloudHeight: 120
-  cloudMaxOrthoSize: 100
-  cloudMinOrthoSize: 20
+  cloudMaxOrthoSize: 230
+  cloudMinOrthoSize: 100
   cloudColor: {r: 1, g: 1, b: 1, a: 0.6}
-  cloudShadowStrength: 1.4
+  cloudShadowStrength: 4.5
   shadowSoftness: 1
   overcastFactor: 0
   shadowMaxOrthoSize: 100
@@ -1101,6 +1103,60 @@ MonoBehaviour:
   atmosphereEndHeight: 256
   atmosphereMaxOrthoSize: 140
   atmosphereMinOrthoSize: 50
+--- !u!114 &2070139067
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2070139062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdef8ce769b7a2a418fc30f91a0a6b6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetMaterial: {fileID: 2100000, guid: 26e4bd165616e8447a5fbfcd222b0ba3, type: 2}
+  directionalLight: {fileID: 1468477238}
+  intensity: 0.5
+  decay: 0.95
+  density: 0.5
+  weight: 0.5
+  samples: 16
+  rayColor:
+    r: 1
+    g: 0.9
+    b: 0.7
+    a: 1
+  maxDistance: 100
+  fadeDistance: 50
+  heightFadeStart: 50
+  heightFadeEnd: 100
+--- !u!114 &2070139068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2070139062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14d3f83580717e84597e22149cde7f2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetMaterial: {fileID: 2100000, guid: 26e4bd165616e8447a5fbfcd222b0ba3, type: 2}
+  rayIntensity: 0.3
+  rayLength: 2
+  rayCount: 8
+  raySpread: 0.5
+  heightInfluence: 0.5
+  raySpeed: 1
+  rayNoiseScale: 0.5
+  rayColor:
+    r: 0.1
+    g: 0.1
+    b: 0.1
+    a: 0.5
+  rayFalloff: 0.75
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
