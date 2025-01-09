@@ -95,5 +95,15 @@ namespace WorldSystem.Generation
 
         [Tooltip("Depth below sea level to switch to underwater block")]
         public float UnderwaterThreshold;
+
+        [Tooltip("Preferred continentalness value (0-1: ocean to inland)")]
+        public float Continentalness;
+    }
+
+    public struct ClimateParameters
+    {
+        public float Temperature;
+        public float Humidity;
+        public float Continentalness;
     }
 } 

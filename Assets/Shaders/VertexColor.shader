@@ -295,15 +295,17 @@ Shader "Custom/VertexColor"
                 // Apply atmospheric scattering AFTER clouds
                 color.rgb = ApplyAtmosphericScattering(color.rgb, input.worldPos);
                 
+                // Calculate block position (round to nearest block)
+                float2 blockPos = floor(input.worldPos.xz / _ColorVariationScale); // Scale the coordinates first
+                float2 noiseUV = blockPos; // Use scaled block coordinates
+                float colorNoise = fbm(noiseUV / _ColorVariationScale, _WorldSeed); // Additional scaling in noise
+                float3 colorVariation = (colorNoise - 0.5) * _ColorVariationStrength;
+                
+                // Apply variation after all other calculations but before fog
+                color.rgb += colorVariation;
+                
                 // Apply fog last
                 color.rgb = MixFog(color.rgb, input.fogFactor);
-                
-                // Calculate block position (round to nearest block)
-                float3 blockPos = floor(input.worldPos);
-                float2 noiseUV = blockPos.xz; // Use block coordinates directly, no scaling needed
-                float colorNoise = fbm(noiseUV, _WorldSeed);
-                float3 colorVariation = (colorNoise - 0.5) * _ColorVariationStrength;
-                color.rgb += colorVariation;
                 
                 return color;
             }

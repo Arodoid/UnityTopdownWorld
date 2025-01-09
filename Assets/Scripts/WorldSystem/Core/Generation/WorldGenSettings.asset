@@ -16,7 +16,7 @@ MonoBehaviour:
   WorldHeight: 256
   SeaLevel: 64
   BiomeNoiseSettings:
-    Scale: 100
+    Scale: 1000
     Amplitude: 1
     Frequency: 0.01
     Octaves: 4
