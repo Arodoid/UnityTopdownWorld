@@ -14,22 +14,12 @@ namespace WorldSystem.Generation
         [Tooltip("Size of each chunk in blocks (32x32 horizontal area)")]
         public int ChunkSize = 32;
         public int WorldHeight = 256;
-        public float SeaLevel = 64;
-        
-        [Header("Biome Settings")]
-        public NoiseSettings BiomeNoiseSettings = new NoiseSettings
-        {
-            Scale = 1000,
-            Amplitude = 1,     
-            Frequency = 0.01f, 
-            Octaves = 4,      
-            Persistence = 0.5f,
-            Lacunarity = 2,    
-            Seed = 42         
-        };
 
-        public BiomeSettings[] Biomes;
-        public int BiomeBlendDistance = 4;
+        [Header("Ocean Settings")]
+        public float SeaLevel = 64f;
+        public float OceanThreshold = 0.45f;   // Keep for ocean biome determination
+        public float SeaCaveDepth = 16f;       // How deep below sea level water can fill caves
+
         
         [Header("Global Layer Settings")]
         public float DefaultLayerDepth = 4f;
@@ -45,6 +35,21 @@ namespace WorldSystem.Generation
             Lacunarity = 2f,
             Seed = 42
         };
+        
+        [Header("Biome Settings")]
+        public int BiomeBlendDistance = 4;
+        public NoiseSettings BiomeNoiseSettings = new NoiseSettings
+        {
+            Scale = 1000,
+            Amplitude = 1,     
+            Frequency = 0.01f, 
+            Octaves = 4,      
+            Persistence = 0.5f,
+            Lacunarity = 2,    
+            Seed = 42         
+        };
+
+        public BiomeSettings[] Biomes;
 
         private void OnValidate()
         {

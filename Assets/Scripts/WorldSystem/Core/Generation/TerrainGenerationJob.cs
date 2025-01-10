@@ -16,7 +16,6 @@ namespace WorldSystem.Generation
         [ReadOnly] public float SeaLevel;
         [ReadOnly] public float DefaultLayerDepth;
         [ReadOnly] public byte DefaultDeepBlock;
-        [ReadOnly] public bool EnableTerrainHeight;
         [ReadOnly] public bool EnableCaves;
         [ReadOnly] public bool EnableWater;
         
@@ -25,6 +24,8 @@ namespace WorldSystem.Generation
         [NativeDisableParallelForRestriction]
         public NativeArray<Core.HeightPoint> HeightMap;
         [ReadOnly] public NoiseSettings GlobalDensityNoise;
+        [ReadOnly] public float OceanThreshold;
+        [ReadOnly] public float SeaCaveDepth;
 
         public void Execute(int index)
         {
@@ -87,14 +88,16 @@ namespace WorldSystem.Generation
 
         private byte DetermineBlockType(int x, int y, int z, NativeArray<float> biomeWeights)
         {
-            float3 worldPos = new float3(
+            float2 worldPos = new float2(
                 ChunkPosition.x * Core.ChunkData.SIZE + x,
-                y,
                 ChunkPosition.z * Core.ChunkData.SIZE + z
             );
 
+            bool isOceanRegion = ShouldGenerateOcean(worldPos);
+
             // Get base 3D noise value (-1 to 1)
-            float noise = NoiseUtility.Sample3D(worldPos, GlobalDensityNoise) * 2f - 1f;
+            float3 worldPos3D = new float3(worldPos.x, y, worldPos.y);
+            float noise = NoiseUtility.Sample3D(worldPos3D, GlobalDensityNoise) * 2f - 1f;
             
             float density = 0f;
             float totalWeight = 0f;
@@ -132,35 +135,20 @@ namespace WorldSystem.Generation
                         return (byte)dominantBiome.PrimaryBlock;
                     }
                 }
+                else if (EnableWater && y <= SeaLevel)
+                {
+                    float depthBelowSea = SeaLevel - y;
+
+                    // Only place water if we're near the surface in ocean regions
+                    // or if we're in any open space above sea cave depth
+                    if (depthBelowSea <= SeaCaveDepth || !isOceanRegion)
+                    {
+                        return (byte)BlockType.Water;
+                    }
+                }
             }
             
             return (byte)BlockType.Air;
-        }
-
-        private bool CheckLayer(BiomeBlockLayer layer, float depth, int worldY, int heightInt, out byte blockType)
-        {
-            blockType = 0;
-            if (depth >= layer.MinDepth && depth <= layer.MaxDepth)
-            {
-                if (layer.LayerNoise.Scale > 0)
-                {
-                    float noise = NoiseUtility.Sample3D(
-                        new float3(worldY, heightInt, depth), 
-                        layer.LayerNoise
-                    );
-                    if (noise > 0)
-                    {
-                        blockType = (byte)layer.BlockType;
-                        return true;
-                    }
-                }
-                else
-                {
-                    blockType = (byte)layer.BlockType;
-                    return true;
-                }
-            }
-            return false;
         }
 
         private byte DetermineSurfaceBlock(float height, BiomeSettings biome)
@@ -223,6 +211,23 @@ namespace WorldSystem.Generation
             }
 
             return density;
+        }
+
+        private bool ShouldGenerateOcean(float2 worldPos)
+        {
+            float continentalness = NoiseUtility.Sample2D(worldPos + 2000f, 
+                new NoiseSettings 
+                { 
+                    Scale = BiomeNoise.Scale * 3,
+                    Amplitude = BiomeNoise.Amplitude,
+                    Frequency = BiomeNoise.Frequency * 0.3f,
+                    Octaves = BiomeNoise.Octaves,
+                    Persistence = BiomeNoise.Persistence,
+                    Lacunarity = BiomeNoise.Lacunarity,
+                    Seed = BiomeNoise.Seed + 1000
+                });
+
+            return continentalness < OceanThreshold;
         }
     }
 }

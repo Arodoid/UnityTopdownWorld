@@ -99,7 +99,8 @@ namespace WorldSystem.Generation
                     DefaultLayerDepth = settings.DefaultLayerDepth,
                     EnableCaves = settings.Enable3DTerrain,
                     EnableWater = settings.EnableWater,
-                    GlobalDensityNoise = settings.GlobalDensityNoise
+                    GlobalDensityNoise = settings.GlobalDensityNoise,
+                    OceanThreshold = settings.OceanThreshold,
                 };
 
                 job.Schedule(Data.ChunkData.SIZE * Data.ChunkData.SIZE, 64).Complete();
