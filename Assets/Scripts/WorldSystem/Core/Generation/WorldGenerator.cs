@@ -50,39 +50,29 @@ namespace WorldSystem.Generation
                 BiomeId = 0,
                 Temperature = 0.5f,
                 Humidity = 0.5f,
-                HeightSettings = new BiomeHeightSettings
+                Continentalness = 0.5f,
+                DensitySettings = new TerrainDensitySettings
                 {
-                    BaseHeight = 64,
-                    HeightVariation = 32,
-                    TerrainNoiseSettings = new NoiseSettings
-                    {
-                        Scale = 100,
-                        Amplitude = 1,
-                        Frequency = 0.01f,
-                        Octaves = 4,
-                        Persistence = 0.5f,
-                        Lacunarity = 2,
-                        Seed = seed
-                    }
+                    DeepStart = 0,
+                    CaveStart = 40,
+                    CaveEnd = 60,
+                    SurfaceStart = 80,
+                    SurfaceEnd = 100,
+                    DeepBias = 1f,
+                    CaveBias = 0f,
+                    SurfaceBias = 0.5f,
+                    DeepTransitionScale = 0.1f,
+                    CaveTransitionScale = 1f,
+                    AirTransitionScale = 0.1f,
+                    DeepTransitionCurve = 2f,
+                    CaveTransitionCurve = 0.5f,
+                    AirTransitionCurve = 1.5f
                 },
-                Layer1 = new BiomeBlockLayer
-                {
-                    BlockType = BlockType.Dirt,
-                    MinDepth = 0,
-                    MaxDepth = 4,
-                    LayerNoise = new NoiseSettings()
-                },
-                Layer2 = new BiomeBlockLayer
-                {
-                    BlockType = BlockType.Stone,
-                    MinDepth = 4,
-                    MaxDepth = float.MaxValue,
-                    LayerNoise = new NoiseSettings()
-                },
-                LayerCount = 2,
-                DefaultSurfaceBlock = BlockType.Grass,
-                UnderwaterSurfaceBlock = BlockType.Sand,
-                UnderwaterThreshold = 2
+                PrimaryBlock = BlockType.Dirt,
+                SecondaryBlock = BlockType.Stone,
+                TopBlock = BlockType.Grass,
+                UnderwaterBlock = BlockType.Sand,
+                UnderwaterThreshold = 2f
             };
         }
 
@@ -91,50 +81,57 @@ namespace WorldSystem.Generation
         // Synchronous generation
         public void GenerateChunk(int3 chunkPos, Action<Data.ChunkData> callback)
         {
-            var blocks = new NativeArray<byte>(Data.ChunkData.SIZE * Data.ChunkData.SIZE * Data.ChunkData.HEIGHT, 
-                Allocator.TempJob);
-            var heightMap = new NativeArray<Core.HeightPoint>(Data.ChunkData.SIZE * Data.ChunkData.SIZE, 
-                Allocator.TempJob);
+            // Create native arrays with TempJob allocator
+            var blocks = new NativeArray<byte>(Data.ChunkData.SIZE * Data.ChunkData.SIZE * Data.ChunkData.HEIGHT, Allocator.TempJob);
+            var heightMap = new NativeArray<Core.HeightPoint>(Data.ChunkData.SIZE * Data.ChunkData.SIZE, Allocator.TempJob);
+            var finalHeightMap = new NativeArray<Data.HeightPoint>(Data.ChunkData.SIZE * Data.ChunkData.SIZE, Allocator.Persistent);
 
-            var job = new TerrainGenerationJob
+            try
             {
-                EnableTerrainHeight = settings.EnableTerrainHeight,
-                EnableCaves = settings.Enable3DTerrain,
-                EnableWater = settings.EnableWater,
-                ChunkPosition = chunkPos,
-                Blocks = blocks,
-                HeightMap = heightMap,
-                Biomes = biomesArray,
-                BiomeNoise = settings.BiomeNoiseSettings,
-                SeaLevel = settings.SeaLevel,
-                DefaultLayerDepth = settings.DefaultLayerDepth,
-                DefaultSubsurfaceBlock = (byte)settings.DefaultSubsurfaceBlock,
-                DefaultDeepBlock = (byte)settings.DefaultDeepBlock,
-                GlobalDensityNoise = settings.GlobalDensityNoise
-            };
-
-            job.Schedule(Data.ChunkData.SIZE * Data.ChunkData.SIZE, 64).Complete();
-
-            var chunkHeightMap = new NativeArray<Data.HeightPoint>(heightMap.Length, Allocator.TempJob);
-            for (int i = 0; i < heightMap.Length; i++)
-            {
-                chunkHeightMap[i] = new Data.HeightPoint
+                var job = new TerrainGenerationJob
                 {
-                    height = heightMap[i].height,
-                    blockType = heightMap[i].blockType
+                    ChunkPosition = chunkPos,
+                    Blocks = blocks,
+                    HeightMap = heightMap,
+                    Biomes = biomesArray,
+                    BiomeNoise = settings.BiomeNoiseSettings,
+                    SeaLevel = settings.SeaLevel,
+                    DefaultLayerDepth = settings.DefaultLayerDepth,
+                    EnableCaves = settings.Enable3DTerrain,
+                    EnableWater = settings.EnableWater,
+                    GlobalDensityNoise = settings.GlobalDensityNoise
                 };
+
+                job.Schedule(Data.ChunkData.SIZE * Data.ChunkData.SIZE, 64).Complete();
+
+                // Convert heightMap to final format
+                for (int i = 0; i < heightMap.Length; i++)
+                {
+                    finalHeightMap[i] = new Data.HeightPoint
+                    {
+                        height = heightMap[i].height,
+                        blockType = heightMap[i].blockType
+                    };
+                }
+
+                // Create the final chunk data
+                var chunkData = new Data.ChunkData
+                {
+                    position = chunkPos,
+                    blocks = new NativeArray<byte>(blocks, Allocator.Persistent),
+                    heightMap = finalHeightMap,
+                    isEdited = false
+                };
+
+                callback(chunkData);
             }
-
-            var chunkData = new Data.ChunkData
+            finally
             {
-                position = chunkPos,
-                blocks = blocks,
-                heightMap = chunkHeightMap,
-                isEdited = false
-            };
-
-            heightMap.Dispose();
-            callback(chunkData);
+                // Ensure we always dispose of temporary arrays
+                if (blocks.IsCreated) blocks.Dispose();
+                if (heightMap.IsCreated) heightMap.Dispose();
+                // Note: finalHeightMap is transferred to ChunkData ownership
+            }
         }
 
         // Asynchronous generation
