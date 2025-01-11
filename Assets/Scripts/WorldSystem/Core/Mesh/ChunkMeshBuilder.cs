@@ -1,6 +1,7 @@
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Collections;
+using Unity.Burst;
 using UnityEngine;
 using System.Collections.Generic;
 using WorldSystem.Data;
@@ -113,30 +114,64 @@ namespace WorldSystem.Mesh
                 {
                     pendingMesh.jobHandle.Complete();
 
-                    // Create render mesh
+                    // Create mesh data arrays on the job thread
+                    var meshDataJob = new MeshDataPreparationJob
+                    {
+                        vertices = pendingMesh.vertices,
+                        triangles = pendingMesh.triangles,
+                        uvs = pendingMesh.uvs,
+                        colors = pendingMesh.colors,
+                        normals = pendingMesh.normals,
+                        shadowVertices = pendingMesh.shadowVertices,
+                        shadowTriangles = pendingMesh.shadowTriangles,
+                        shadowNormals = pendingMesh.shadowNormals,
+                        
+                        // Output arrays
+                        preparedVertices = new NativeArray<Vector3>(pendingMesh.vertices.Length, Allocator.TempJob),
+                        preparedTriangles = new NativeArray<int>(pendingMesh.triangles.Length, Allocator.TempJob),
+                        preparedUVs = new NativeArray<Vector2>(pendingMesh.uvs.Length, Allocator.TempJob),
+                        preparedColors = new NativeArray<Color>(pendingMesh.colors.Length, Allocator.TempJob),
+                        preparedNormals = new NativeArray<Vector3>(pendingMesh.normals.Length, Allocator.TempJob),
+                        preparedShadowVertices = new NativeArray<Vector3>(pendingMesh.shadowVertices.Length, Allocator.TempJob),
+                        preparedShadowTriangles = new NativeArray<int>(pendingMesh.shadowTriangles.Length, Allocator.TempJob),
+                        preparedShadowNormals = new NativeArray<Vector3>(pendingMesh.shadowNormals.Length, Allocator.TempJob)
+                    };
+
+                    var dataPreparationHandle = meshDataJob.Schedule();
+                    dataPreparationHandle.Complete(); // We still need to complete this job since Unity's Mesh API is main-thread only
+
+                    // Create meshes using the prepared data
                     var mesh = new UnityEngine.Mesh();
-                    mesh.SetVertices(pendingMesh.vertices.Reinterpret<Vector3>());
-                    mesh.SetTriangles(pendingMesh.triangles.ToArray(), 0);
-                    mesh.SetUVs(0, pendingMesh.uvs.Reinterpret<Vector2>());
-                    mesh.SetColors(pendingMesh.colors.Reinterpret<Color>());
-                    mesh.SetNormals(pendingMesh.normals.Reinterpret<Vector3>());
+                    mesh.SetVertices(meshDataJob.preparedVertices);
+                    mesh.SetTriangles(meshDataJob.preparedTriangles.ToArray(), 0);
+                    mesh.SetUVs(0, meshDataJob.preparedUVs);
+                    mesh.SetColors(meshDataJob.preparedColors);
+                    mesh.SetNormals(meshDataJob.preparedNormals);
                     pendingMesh.meshFilter.mesh = mesh;
 
-                    // Create shadow mesh
                     var shadowMesh = new UnityEngine.Mesh();
-                    shadowMesh.SetVertices(pendingMesh.shadowVertices.Reinterpret<Vector3>());
-                    shadowMesh.SetTriangles(pendingMesh.shadowTriangles.ToArray(), 0);
-                    shadowMesh.SetNormals(pendingMesh.shadowNormals.Reinterpret<Vector3>());
+                    shadowMesh.SetVertices(meshDataJob.preparedShadowVertices);
+                    shadowMesh.SetTriangles(meshDataJob.preparedShadowTriangles.ToArray(), 0);
+                    shadowMesh.SetNormals(meshDataJob.preparedShadowNormals);
                     pendingMesh.shadowMeshFilter.mesh = shadowMesh;
 
-                    // Get the chunk's GameObject and its parent (which should be the ChunkManager)
+                    // Cleanup prepared data
+                    meshDataJob.preparedVertices.Dispose();
+                    meshDataJob.preparedTriangles.Dispose();
+                    meshDataJob.preparedUVs.Dispose();
+                    meshDataJob.preparedColors.Dispose();
+                    meshDataJob.preparedNormals.Dispose();
+                    meshDataJob.preparedShadowVertices.Dispose();
+                    meshDataJob.preparedShadowTriangles.Dispose();
+                    meshDataJob.preparedShadowNormals.Dispose();
+
+                    // Get the chunk's GameObject and handle activation
                     var chunkObject = pendingMesh.meshFilter.gameObject;
                     var chunkManager = chunkObject.transform.parent.GetComponent<ChunkManager>();
                     
-                    // If this is a new Y-level chunk, deactivate the old one
                     if (chunkManager != null)
                     {
-                        var oldYLevel = chunkManager.ViewMaxYLevel - 1; // or whatever the previous Y-level was
+                        var oldYLevel = chunkManager.ViewMaxYLevel - 1;
                         var pos = new int2(
                             Mathf.RoundToInt(chunkObject.transform.position.x / ChunkData.SIZE),
                             Mathf.RoundToInt(chunkObject.transform.position.z / ChunkData.SIZE)
@@ -144,7 +179,6 @@ namespace WorldSystem.Mesh
                         chunkManager.ChunkPool?.DeactivateChunk(pos, oldYLevel);
                     }
 
-                    // Activate the new chunk
                     chunkObject.SetActive(true);
 
                     // Cleanup
@@ -201,6 +235,58 @@ namespace WorldSystem.Mesh
             public NativeArray<float3> shadowNormals;
             public NativeArray<byte> blocks;
             public NativeArray<float3> normals;
+        }
+
+        [BurstCompile]
+        private struct MeshDataPreparationJob : IJob
+        {
+            // Input arrays
+            [ReadOnly] public NativeArray<float3> vertices;
+            [ReadOnly] public NativeArray<int> triangles;
+            [ReadOnly] public NativeArray<float2> uvs;
+            [ReadOnly] public NativeArray<float4> colors;
+            [ReadOnly] public NativeArray<float3> normals;
+            [ReadOnly] public NativeArray<float3> shadowVertices;
+            [ReadOnly] public NativeArray<int> shadowTriangles;
+            [ReadOnly] public NativeArray<float3> shadowNormals;
+
+            // Output arrays
+            public NativeArray<Vector3> preparedVertices;
+            public NativeArray<int> preparedTriangles;
+            public NativeArray<Vector2> preparedUVs;
+            public NativeArray<Color> preparedColors;
+            public NativeArray<Vector3> preparedNormals;
+            public NativeArray<Vector3> preparedShadowVertices;
+            public NativeArray<int> preparedShadowTriangles;
+            public NativeArray<Vector3> preparedShadowNormals;
+
+            public void Execute()
+            {
+                // Convert and copy mesh data
+                for (int i = 0; i < vertices.Length; i++)
+                {
+                    preparedVertices[i] = vertices[i];
+                    preparedUVs[i] = uvs[i];
+                    preparedColors[i] = new Color(colors[i].x, colors[i].y, colors[i].z, colors[i].w);
+                    preparedNormals[i] = normals[i];
+                }
+
+                for (int i = 0; i < triangles.Length; i++)
+                {
+                    preparedTriangles[i] = triangles[i];
+                }
+
+                for (int i = 0; i < shadowVertices.Length; i++)
+                {
+                    preparedShadowVertices[i] = shadowVertices[i];
+                    preparedShadowNormals[i] = shadowNormals[i];
+                }
+
+                for (int i = 0; i < shadowTriangles.Length; i++)
+                {
+                    preparedShadowTriangles[i] = shadowTriangles[i];
+                }
+            }
         }
     }
 } 

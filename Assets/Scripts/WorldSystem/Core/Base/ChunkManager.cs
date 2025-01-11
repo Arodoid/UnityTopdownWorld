@@ -67,6 +67,9 @@ namespace WorldSystem.Base
         private Dictionary<int2, (JobHandle handle, NativeArray<byte> blocks, 
             NativeArray<Core.HeightPoint> heightMap)> _pendingJobs = new();
 
+        // Add field to track heightmap arrays
+        private Dictionary<int2, NativeArray<Data.HeightPoint>> _chunkHeightMaps = new();
+
         // Create a job for heightmap conversion
         [BurstCompile]
         private struct HeightMapConversionJob : IJobParallelFor
@@ -213,6 +216,16 @@ namespace WorldSystem.Base
         {
             int2 position2D = new int2(chunk.position.x, chunk.position.z);
             
+            // Clean up old heightmap if it exists
+            if (_chunkHeightMaps.TryGetValue(position2D, out var oldHeightMap))
+            {
+                if (oldHeightMap.IsCreated)
+                    oldHeightMap.Dispose();
+            }
+            
+            // Store new heightmap
+            _chunkHeightMaps[position2D] = chunk.heightMap;
+
             if (!_generatedChunks.Contains(position2D))
             {
                 var permanentBlocks = new NativeArray<byte>(chunk.blocks.Length, 
@@ -349,11 +362,18 @@ namespace WorldSystem.Base
         {
             foreach (var job in _pendingJobs.Values)
             {
-                job.handle.Complete(); // Must complete jobs before disposing
+                job.handle.Complete();
                 if (job.blocks.IsCreated) job.blocks.Dispose();
                 if (job.heightMap.IsCreated) job.heightMap.Dispose();
             }
             _pendingJobs.Clear();
+            
+            foreach (var heightMap in _chunkHeightMaps.Values)
+            {
+                if (heightMap.IsCreated)
+                    heightMap.Dispose();
+            }
+            _chunkHeightMaps.Clear();
             
             _worldGenerator.Dispose();
             _meshBuilder.Dispose();
@@ -439,11 +459,20 @@ namespace WorldSystem.Base
             {
                 var chunkPos = _chunkDistanceQueue.Dequeue();
                 
+                // Clean up block data
                 if (_chunkBlockData.TryGetValue(chunkPos, out var blocks))
                 {
                     if (blocks.IsCreated)
                         blocks.Dispose();
                     _chunkBlockData.Remove(chunkPos);
+                }
+
+                // Clean up heightmap data
+                if (_chunkHeightMaps.TryGetValue(chunkPos, out var heightMap))
+                {
+                    if (heightMap.IsCreated)
+                        heightMap.Dispose();
+                    _chunkHeightMaps.Remove(chunkPos);
                 }
 
                 _generatedChunks.Remove(chunkPos);
