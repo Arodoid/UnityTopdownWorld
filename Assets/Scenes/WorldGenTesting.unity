@@ -1057,7 +1057,7 @@ MonoBehaviour:
   maxChunks: 512
   viewMaxYLevel: 256
   maxCachedChunks: 2048
-  worldSettings: {fileID: 11400000, guid: b0472a7c072491a4881254b41209238b, type: 2}
+  worldSettings: {fileID: 11400000, guid: 88bf205218441a34191cc9a363d70b03, type: 2}
 --- !u!114 &2070139065
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1115,22 +1115,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdef8ce769b7a2a418fc30f91a0a6b6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetMaterial: {fileID: 2100000, guid: 26e4bd165616e8447a5fbfcd222b0ba3, type: 2}
-  directionalLight: {fileID: 1468477238}
-  intensity: 0.5
-  decay: 0.95
-  density: 0.5
-  weight: 0.5
-  samples: 16
-  rayColor:
-    r: 1
-    g: 0.9
-    b: 0.7
-    a: 1
-  maxDistance: 100
-  fadeDistance: 50
-  heightFadeStart: 50
-  heightFadeEnd: 100
 --- !u!114 &2070139068
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1143,20 +1127,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14d3f83580717e84597e22149cde7f2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetMaterial: {fileID: 2100000, guid: 26e4bd165616e8447a5fbfcd222b0ba3, type: 2}
-  rayIntensity: 0.3
-  rayLength: 2
-  rayCount: 8
-  raySpread: 0.5
-  heightInfluence: 0.5
-  raySpeed: 1
-  rayNoiseScale: 0.5
-  rayColor:
-    r: 0.1
-    g: 0.1
-    b: 0.1
-    a: 0.5
-  rayFalloff: 0.75
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

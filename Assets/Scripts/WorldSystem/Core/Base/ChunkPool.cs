@@ -1,5 +1,6 @@
 using UnityEngine;
 using Unity.Mathematics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using WorldSystem.Data;
@@ -20,6 +21,8 @@ namespace WorldSystem.Base
         
         private float _lastBufferCheck;
         private const float BUFFER_CHECK_INTERVAL = 1f;
+
+        private Queue<(int2 position, int yLevel, Action<GameObject> callback)> _pendingChunkSetups = new();
 
         public int TotalChunksInUse => _activeChunks.Count + _inactiveChunks.Count + _pool.Count;
         public bool HasAvailableChunk => _pool.Count > 0 || TotalChunksInUse < _maxChunks;
@@ -193,20 +196,20 @@ namespace WorldSystem.Base
             foreach (var chunk in _activeChunks.Values)
             {
                 if (chunk != null)
-                    Object.Destroy(chunk);
+                    UnityEngine.Object.Destroy(chunk);
             }
             
             foreach (var inactive in _inactiveChunks.Values)
             {
                 if (inactive.gameObject != null)
-                    Object.Destroy(inactive.gameObject);
+                    UnityEngine.Object.Destroy(inactive.gameObject);
             }
             
             while (_pool.Count > 0)
             {
                 var chunk = _pool.Dequeue();
                 if (chunk != null)
-                    Object.Destroy(chunk);
+                    UnityEngine.Object.Destroy(chunk);
             }
             
             _activeChunks.Clear();
@@ -226,6 +229,30 @@ namespace WorldSystem.Base
         public bool HasActiveChunkAtPosition(int2 position, int yLevel)
         {
             return _activeChunks.ContainsKey((position, yLevel));
+        }
+
+        public void QueueChunkSetup(int2 position, int yLevel, Action<GameObject> callback)
+        {
+            _pendingChunkSetups.Enqueue((position, yLevel, callback));
+        }
+
+        public void ProcessPendingSetups(int maxPerFrame = 8)
+        {
+            int processed = 0;
+            while (_pendingChunkSetups.Count > 0 && processed < maxPerFrame)
+            {
+                var (pos, yLevel, callback) = _pendingChunkSetups.Dequeue();
+                
+                // Use GetChunk instead of CreateAndSetupChunk
+                var chunkResult = GetChunk(pos, yLevel);
+                if (chunkResult.HasValue)
+                {
+                    var (chunk, _, _) = chunkResult.Value;
+                    callback(chunk);
+                }
+                
+                processed++;
+            }
         }
     }
 } 

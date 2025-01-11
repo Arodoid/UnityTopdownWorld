@@ -17,36 +17,36 @@ MonoBehaviour:
   SeaLevel: 64
   OceanThreshold: 0.45
   GlobalDensityNoise:
-    Scale: 53.4
-    Amplitude: 1
+    Scale: 3
+    Amplitude: 1.38
     Frequency: 0.03
     Octaves: 3
     Persistence: 0.5
     Lacunarity: 2
     Seed: 42
   BiomeNoiseSettings:
-    Scale: 1.46
+    Scale: 3
     Amplitude: 1
     Frequency: 0.01
     Octaves: 4
     Persistence: 0.5
     Lacunarity: 2
     Seed: 42
-  BiomeFalloff: 13.9
+  BiomeFalloff: 35.5
   Biomes:
   - BiomeId: 0
     Temperature: 1
     Humidity: 1
-    Continentalness: 0
+    Continentalness: 0.6
     DensitySettings:
       DeepStart: 4
       CaveStart: 10
       CaveEnd: 40
       SurfaceStart: 55
-      SurfaceEnd: 60
+      SurfaceEnd: 58
       DeepBias: 1
       CaveBias: 1
-      SurfaceBias: 1
+      SurfaceBias: 0.7
       DeepTransitionScale: 1
       CaveTransitionScale: 1
       AirTransitionScale: 1
@@ -61,7 +61,7 @@ MonoBehaviour:
   - BiomeId: 1
     Temperature: 1
     Humidity: 1
-    Continentalness: 0.6
+    Continentalness: 0.7
     DensitySettings:
       DeepStart: 0
       CaveStart: 40
@@ -70,7 +70,7 @@ MonoBehaviour:
       SurfaceEnd: 70
       DeepBias: 1
       CaveBias: 1
-      SurfaceBias: 1
+      SurfaceBias: 0.7
       DeepTransitionScale: 1
       CaveTransitionScale: 1
       AirTransitionScale: 1
@@ -85,7 +85,7 @@ MonoBehaviour:
   - BiomeId: 2
     Temperature: 1
     Humidity: 1
-    Continentalness: 0.63
+    Continentalness: 0.78
     DensitySettings:
       DeepStart: 0
       CaveStart: 40
@@ -94,13 +94,13 @@ MonoBehaviour:
       SurfaceEnd: 110
       DeepBias: 1
       CaveBias: 1
-      SurfaceBias: 1
+      SurfaceBias: 0.43
       DeepTransitionScale: 1
       CaveTransitionScale: 1
-      AirTransitionScale: 1
+      AirTransitionScale: 0.35
       DeepTransitionCurve: 1
       CaveTransitionCurve: 1
-      AirTransitionCurve: 1
+      AirTransitionCurve: 0.91
     PrimaryBlock: 3
     SecondaryBlock: 2
     TopBlock: 3

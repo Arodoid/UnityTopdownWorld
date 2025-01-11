@@ -136,16 +136,26 @@ namespace WorldSystem.Generation
         }
 
         // Asynchronous generation
-        public void GenerateChunkAsync(int2 position, Action<Data.ChunkData> callback)
+        public JobHandle GenerateChunkAsync(int3 chunkPos, NativeArray<byte> blocks, 
+            NativeArray<Core.HeightPoint> heightMap, Action<Data.ChunkData> callback)
         {
-            if (generatingChunks.Contains(position)) return;
-            
-            generatingChunks.Add(position);
-            var chunkPos = new int3(position.x, 0, position.y);
-            GenerateChunk(chunkPos, (chunk) => {
-                generatingChunks.Remove(position);
-                callback(chunk);
-            });
+            var job = new TerrainGenerationJob
+            {
+                ChunkPosition = chunkPos,
+                Blocks = blocks,
+                HeightMap = heightMap,
+                Biomes = biomesArray,
+                BiomeNoise = settings.BiomeNoiseSettings,
+                BiomeFalloff = settings.BiomeFalloff,
+                SeaLevel = settings.SeaLevel,
+                EnableCaves = settings.Enable3DTerrain,
+                EnableWater = settings.EnableWater,
+                GlobalDensityNoise = settings.GlobalDensityNoise,
+                OceanThreshold = settings.OceanThreshold,
+            };
+
+            // Return the JobHandle instead of completing immediately
+            return job.Schedule(Data.ChunkData.SIZE * Data.ChunkData.SIZE, 64);
         }
 
         public void Dispose()

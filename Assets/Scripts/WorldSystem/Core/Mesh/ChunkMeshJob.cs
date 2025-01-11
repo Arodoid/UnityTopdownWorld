@@ -34,6 +34,10 @@ namespace WorldSystem.Jobs
         [NativeDisableParallelForRestriction]
         public NativeArray<float3> shadowNormals;
 
+        // Add normal output array
+        [NativeDisableParallelForRestriction]
+        public NativeArray<float3> normals;
+
         public void Execute(int index)
         {
             int z = index;
@@ -106,6 +110,13 @@ namespace WorldSystem.Jobs
             colors[currentVertex + 1] = color;
             colors[currentVertex + 2] = color;
             colors[currentVertex + 3] = color;
+
+            // Calculate and add normals (pointing up for top faces)
+            float3 normal = new float3(0, 1, 0);
+            normals[currentVertex + 0] = normal;
+            normals[currentVertex + 1] = normal;
+            normals[currentVertex + 2] = normal;
+            normals[currentVertex + 3] = normal;
 
             currentVertex += 4;
             currentTri += 6;

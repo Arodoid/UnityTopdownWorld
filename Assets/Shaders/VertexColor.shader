@@ -423,10 +423,40 @@ Shader "Custom/VertexColor"
                 // Apply atmospheric scattering AFTER clouds
                 color.rgb = ApplyAtmosphericScattering(color.rgb, input.worldPos);
                 
-                // Calculate block position (round to nearest block)
-                float2 blockPos = floor(input.worldPos.xz / _ColorVariationScale); // Scale the coordinates first
-                float2 noiseUV = blockPos; // Use scaled block coordinates
-                float colorNoise = fbm(noiseUV / _ColorVariationScale, _WorldSeed); // Additional scaling in noise
+                // Block-based random color variation with multiple layers
+                float2 blockPos = floor(input.worldPos.xz / _ColorVariationScale) * _ColorVariationScale;
+                
+                // First noise layer
+                float2 noiseUV = blockPos / (_ColorVariationScale * 1.0);
+                float colorNoise1 = fbm(noiseUV, _WorldSeed + 42.1);
+                
+                // Second noise layer at different scale and rotation
+                float2 rotatedUV1 = float2(
+                    blockPos.x * cos(0.7) - blockPos.y * sin(0.7),
+                    blockPos.x * sin(0.7) + blockPos.y * cos(0.7)
+                ) / (_ColorVariationScale * 2.3);
+                float colorNoise2 = fbm(rotatedUV1, _WorldSeed + 13.7);
+                
+                // Third noise layer with different rotation and scale
+                float2 rotatedUV2 = float2(
+                    blockPos.x * cos(1.3) - blockPos.y * sin(1.3),
+                    blockPos.x * sin(1.3) + blockPos.y * cos(1.3)
+                ) / (_ColorVariationScale * 3.7);
+                float colorNoise3 = fbm(rotatedUV2, _WorldSeed + 89.3);
+                
+                // Fourth noise layer for large-scale variation
+                float2 largeScaleUV = blockPos / (_ColorVariationScale * 5.5);
+                float colorNoise4 = fbm(largeScaleUV, _WorldSeed + 127.1);
+                
+                // Combine all noise layers with different weights
+                float colorNoise = colorNoise1 * 0.4 + 
+                                  colorNoise2 * 0.3 + 
+                                  colorNoise3 * 0.2 + 
+                                  colorNoise4 * 0.1;
+                
+                // Make it more discrete/blocky
+                colorNoise = floor(colorNoise * 6) / 6.0;
+                
                 float3 colorVariation = (colorNoise - 0.5) * _ColorVariationStrength;
                 
                 // Apply variation after all other calculations but before fog

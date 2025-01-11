@@ -7,6 +7,7 @@ using WorldSystem.Data;
 using System.Linq;
 using WorldSystem.Mesh;
 using WorldSystem.Generation;
+using Unity.Burst;
 
 namespace WorldSystem.Base
 {
@@ -61,6 +62,27 @@ namespace WorldSystem.Base
         [SerializeField] private WorldGenSettings worldSettings;
 
         private Dictionary<int2, Data.ChunkData> chunks = new();
+
+        // Add this field to track pending jobs
+        private Dictionary<int2, (JobHandle handle, NativeArray<byte> blocks, 
+            NativeArray<Core.HeightPoint> heightMap)> _pendingJobs = new();
+
+        // Create a job for heightmap conversion
+        [BurstCompile]
+        private struct HeightMapConversionJob : IJobParallelFor
+        {
+            [ReadOnly] public NativeArray<Core.HeightPoint> sourceHeightMap;
+            public NativeArray<Data.HeightPoint> targetHeightMap;
+
+            public void Execute(int i)
+            {
+                targetHeightMap[i] = new Data.HeightPoint
+                {
+                    height = sourceHeightMap[i].height,
+                    blockType = sourceHeightMap[i].blockType
+                };
+            }
+        }
 
         void Awake()
         {
@@ -212,14 +234,74 @@ namespace WorldSystem.Base
 
         void ProcessChunkQueue()
         {
-            _meshBuilder.Update();
+            // First, check for completed jobs
+            var completedJobs = new List<int2>();
+            foreach (var kvp in _pendingJobs)
+            {
+                if (kvp.Value.handle.IsCompleted)
+                {
+                    // Complete the job and process results
+                    kvp.Value.handle.Complete();
+                    
+                    // Convert heightMap in parallel
+                    var finalHeightMap = new NativeArray<Data.HeightPoint>(
+                        ChunkData.SIZE * ChunkData.SIZE, Allocator.Persistent);
+                    
+                    var conversionJob = new HeightMapConversionJob
+                    {
+                        sourceHeightMap = kvp.Value.heightMap,
+                        targetHeightMap = finalHeightMap
+                    };
+                    
+                    var conversionHandle = conversionJob.Schedule(finalHeightMap.Length, 64);
+                    conversionHandle.Complete();  // Still needs completion but faster than single-threaded
+                    
+                    // Create the final chunk data
+                    var chunkData = new Data.ChunkData
+                    {
+                        position = new int3(kvp.Key.x, viewMaxYLevel, kvp.Key.y),
+                        blocks = new NativeArray<byte>(kvp.Value.blocks, Allocator.Persistent),
+                        heightMap = finalHeightMap,
+                        isEdited = false
+                    };
 
-            while (_chunkLoadQueue.Count > 0)
+                    OnChunkGenerated(chunkData);
+                    
+                    // Cleanup
+                    kvp.Value.blocks.Dispose();
+                    kvp.Value.heightMap.Dispose();
+                    completedJobs.Add(kvp.Key);
+                }
+            }
+
+            // Remove completed jobs
+            foreach (var pos in completedJobs)
+            {
+                _pendingJobs.Remove(pos);
+            }
+
+            // Schedule new jobs
+            while (_chunkLoadQueue.Count > 0 && _pendingJobs.Count < 8) // Limit concurrent jobs
             {
                 var pos = _chunkLoadQueue.Dequeue();
-                var chunkPos = new int3(pos.x, viewMaxYLevel, pos.y);
-                
-                _worldGenerator.GenerateChunk(chunkPos, OnChunkGenerated);
+                if (!_pendingJobs.ContainsKey(pos) && !_generatedChunks.Contains(pos))
+                {
+                    var blocks = new NativeArray<byte>(
+                        ChunkData.SIZE * ChunkData.SIZE * ChunkData.HEIGHT, 
+                        Allocator.TempJob);
+                    var heightMap = new NativeArray<Core.HeightPoint>(
+                        ChunkData.SIZE * ChunkData.SIZE, 
+                        Allocator.TempJob);
+                        
+                    var handle = _worldGenerator.GenerateChunkAsync(
+                        new int3(pos.x, viewMaxYLevel, pos.y),
+                        blocks,
+                        heightMap,
+                        null  // We'll handle the callback manually when job completes
+                    );
+                    
+                    _pendingJobs.Add(pos, (handle, blocks, heightMap));
+                }
             }
         }
 
@@ -265,6 +347,14 @@ namespace WorldSystem.Base
 
         void OnDestroy()
         {
+            foreach (var job in _pendingJobs.Values)
+            {
+                job.handle.Complete(); // Must complete jobs before disposing
+                if (job.blocks.IsCreated) job.blocks.Dispose();
+                if (job.heightMap.IsCreated) job.heightMap.Dispose();
+            }
+            _pendingJobs.Clear();
+            
             _worldGenerator.Dispose();
             _meshBuilder.Dispose();
             _chunkPool.Cleanup();
@@ -383,8 +473,24 @@ namespace WorldSystem.Base
         {
             if (!_generatedChunks.Contains(position))
             {
+                var blocks = new NativeArray<byte>(ChunkData.SIZE * ChunkData.SIZE * ChunkData.HEIGHT, 
+                    Allocator.TempJob);
+                var heightMap = new NativeArray<Core.HeightPoint>(ChunkData.SIZE * ChunkData.SIZE, 
+                    Allocator.TempJob);
+                    
+                var chunkPos = new int3(position.x, viewMaxYLevel, position.y);
+                var handle = _worldGenerator.GenerateChunkAsync(
+                    chunkPos,
+                    blocks,
+                    heightMap,
+                    (chunk) => {
+                        OnChunkGenerated(chunk);
+                        blocks.Dispose();
+                        heightMap.Dispose();
+                    }
+                );
+                
                 _generatedChunks.Add(position);
-                _worldGenerator.GenerateChunkAsync(position, (Data.ChunkData chunk) => OnChunkGenerated(chunk));
             }
         }
 

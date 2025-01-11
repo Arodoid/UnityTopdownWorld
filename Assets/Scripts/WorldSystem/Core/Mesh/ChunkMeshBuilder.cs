@@ -39,6 +39,7 @@ namespace WorldSystem.Mesh
             var triangles = new NativeArray<int>(TOTAL_QUADS * TRIS_PER_QUAD, Allocator.TempJob);
             var uvs = new NativeArray<float2>(TOTAL_QUADS * VERTS_PER_QUAD, Allocator.TempJob);
             var colors = new NativeArray<float4>(TOTAL_QUADS * VERTS_PER_QUAD, Allocator.TempJob);
+            var normals = new NativeArray<float3>(TOTAL_QUADS * VERTS_PER_QUAD, Allocator.TempJob);
             var meshCounts = new NativeArray<int>(ChunkData.SIZE * 4, Allocator.TempJob);
             var shadowVertices = new NativeArray<float3>(TOTAL_QUADS * VERTS_PER_QUAD * 4, Allocator.TempJob);
             var shadowTriangles = new NativeArray<int>(TOTAL_QUADS * TRIS_PER_QUAD * 4, Allocator.TempJob);
@@ -65,6 +66,7 @@ namespace WorldSystem.Mesh
                 triangles = triangles,
                 uvs = uvs,
                 colors = colors,
+                normals = normals,
                 blockDefinitions = _blockDefs,
                 meshCounts = meshCounts,
                 shadowVertices = shadowVertices,
@@ -82,6 +84,7 @@ namespace WorldSystem.Mesh
                 triangles = triangles,
                 uvs = uvs,
                 colors = colors,
+                normals = normals,
                 meshFilter = meshFilter,
                 heightMap = heightMap,
                 meshCounts = meshCounts,
@@ -97,28 +100,6 @@ namespace WorldSystem.Mesh
             MeshFilter shadowMeshFilter)
         {
             QueueMeshBuild(position, blocks, meshFilter, shadowMeshFilter, ChunkData.HEIGHT);
-        }
-
-        private void CalculateHeightMap(NativeArray<byte> blocks, NativeArray<HeightPoint> heightMap)
-        {
-            // Can be made into a parallel job for better performance
-            for (int x = 0; x < ChunkData.SIZE; x++)
-            for (int z = 0; z < ChunkData.SIZE; z++)
-            {
-                for (int y = ChunkData.HEIGHT - 1; y >= 0; y--)
-                {
-                    var blockType = blocks[x + z * ChunkData.SIZE + y * ChunkData.SIZE * ChunkData.SIZE];
-                    if (blockType != 0)  // Found highest non-air block
-                    {
-                        heightMap[z * ChunkData.SIZE + x] = new HeightPoint
-                        {
-                            height = (byte)y,
-                            blockType = (byte)blockType
-                        };
-                        break;
-                    }
-                }
-            }
         }
 
         public bool IsBuildingMesh(int2 position) => _meshesBeingBuilt.Contains(position);
@@ -138,14 +119,14 @@ namespace WorldSystem.Mesh
                     mesh.SetTriangles(pendingMesh.triangles.ToArray(), 0);
                     mesh.SetUVs(0, pendingMesh.uvs.Reinterpret<Vector2>());
                     mesh.SetColors(pendingMesh.colors.Reinterpret<Color>());
-                    mesh.RecalculateNormals();
+                    mesh.SetNormals(pendingMesh.normals.Reinterpret<Vector3>());
                     pendingMesh.meshFilter.mesh = mesh;
 
                     // Create shadow mesh
                     var shadowMesh = new UnityEngine.Mesh();
                     shadowMesh.SetVertices(pendingMesh.shadowVertices.Reinterpret<Vector3>());
                     shadowMesh.SetTriangles(pendingMesh.shadowTriangles.ToArray(), 0);
-                    shadowMesh.RecalculateNormals();
+                    shadowMesh.SetNormals(pendingMesh.shadowNormals.Reinterpret<Vector3>());
                     pendingMesh.shadowMeshFilter.mesh = shadowMesh;
 
                     // Get the chunk's GameObject and its parent (which should be the ChunkManager)
@@ -180,6 +161,7 @@ namespace WorldSystem.Mesh
             pendingMesh.triangles.Dispose();
             pendingMesh.uvs.Dispose();
             pendingMesh.colors.Dispose();
+            pendingMesh.normals.Dispose();
             pendingMesh.meshCounts.Dispose();
             pendingMesh.heightMap.Dispose();
             pendingMesh.shadowVertices.Dispose();
@@ -218,6 +200,7 @@ namespace WorldSystem.Mesh
             public MeshFilter shadowMeshFilter;
             public NativeArray<float3> shadowNormals;
             public NativeArray<byte> blocks;
+            public NativeArray<float3> normals;
         }
     }
 } 
