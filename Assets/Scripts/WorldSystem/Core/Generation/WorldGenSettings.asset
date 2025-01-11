@@ -12,26 +12,97 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4375eb9f9daaf094b9ab3535644a8bc2, type: 3}
   m_Name: WorldGenSettings
   m_EditorClassIdentifier: 
-  ChunkSize: 32
-  WorldHeight: 256
+  Enable3DTerrain: 1
+  EnableWater: 1
   SeaLevel: 64
-  BiomeNoiseSettings:
-    Scale: 1000
-    Amplitude: 1
-    Frequency: 0.01
-    Octaves: 4
-    Persistence: 0.5
-    Lacunarity: 2
-    Seed: 42
-  Biomes: []
-  BiomeBlendDistance: 4
-  DefaultSubsurfaceBlock: 2
-  DefaultDeepBlock: 3
-  GlobalCaveNoise:
-    Scale: 50
+  OceanThreshold: 0.45
+  GlobalDensityNoise:
+    Scale: 53.4
     Amplitude: 1
     Frequency: 0.03
     Octaves: 3
     Persistence: 0.5
     Lacunarity: 2
     Seed: 42
+  BiomeNoiseSettings:
+    Scale: 1.46
+    Amplitude: 1
+    Frequency: 0.01
+    Octaves: 4
+    Persistence: 0.5
+    Lacunarity: 2
+    Seed: 42
+  BiomeFalloff: 13.9
+  Biomes:
+  - BiomeId: 0
+    Temperature: 1
+    Humidity: 1
+    Continentalness: 0
+    DensitySettings:
+      DeepStart: 4
+      CaveStart: 10
+      CaveEnd: 40
+      SurfaceStart: 55
+      SurfaceEnd: 60
+      DeepBias: 1
+      CaveBias: 1
+      SurfaceBias: 1
+      DeepTransitionScale: 1
+      CaveTransitionScale: 1
+      AirTransitionScale: 1
+      DeepTransitionCurve: 1
+      CaveTransitionCurve: 1
+      AirTransitionCurve: 1
+    PrimaryBlock: 4
+    SecondaryBlock: 3
+    TopBlock: 1
+    UnderwaterBlock: 4
+    UnderwaterThreshold: 2
+  - BiomeId: 1
+    Temperature: 1
+    Humidity: 1
+    Continentalness: 0.6
+    DensitySettings:
+      DeepStart: 0
+      CaveStart: 40
+      CaveEnd: 60
+      SurfaceStart: 64
+      SurfaceEnd: 70
+      DeepBias: 1
+      CaveBias: 1
+      SurfaceBias: 1
+      DeepTransitionScale: 1
+      CaveTransitionScale: 1
+      AirTransitionScale: 1
+      DeepTransitionCurve: 1
+      CaveTransitionCurve: 1
+      AirTransitionCurve: 1
+    PrimaryBlock: 1
+    SecondaryBlock: 2
+    TopBlock: 1
+    UnderwaterBlock: 4
+    UnderwaterThreshold: 2
+  - BiomeId: 2
+    Temperature: 1
+    Humidity: 1
+    Continentalness: 0.63
+    DensitySettings:
+      DeepStart: 0
+      CaveStart: 40
+      CaveEnd: 60
+      SurfaceStart: 100
+      SurfaceEnd: 110
+      DeepBias: 1
+      CaveBias: 1
+      SurfaceBias: 1
+      DeepTransitionScale: 1
+      CaveTransitionScale: 1
+      AirTransitionScale: 1
+      DeepTransitionCurve: 1
+      CaveTransitionCurve: 1
+      AirTransitionCurve: 1
+    PrimaryBlock: 3
+    SecondaryBlock: 2
+    TopBlock: 3
+    UnderwaterBlock: 4
+    UnderwaterThreshold: 2

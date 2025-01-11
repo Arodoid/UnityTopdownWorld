@@ -38,6 +38,10 @@ namespace WorldSystem.Generation
             Seed = 42         
         };
 
+        [Tooltip("Higher values make biome transitions sharper (default: 1)")]
+        [Range(0.1f, 100f)]
+        public float BiomeFalloff = 1f;
+
         public BiomeSettings[] Biomes;
 
         private void OnValidate()

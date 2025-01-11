@@ -17,6 +17,7 @@ namespace WorldSystem.Generation
         [ReadOnly] public byte DefaultDeepBlock;
         [ReadOnly] public bool EnableCaves;
         [ReadOnly] public bool EnableWater;
+        [ReadOnly] public float BiomeFalloff;
         
         [NativeDisableParallelForRestriction]
         public NativeArray<byte> Blocks;
@@ -39,7 +40,7 @@ namespace WorldSystem.Generation
 
             // Get biome weights
             using var biomeWeights = new NativeArray<float>(Biomes.Length, Allocator.Temp);
-            var biomeGen = new BiomeGenerator(BiomeNoise, Biomes, 4);
+            var biomeGen = new BiomeGenerator(BiomeNoise, Biomes, BiomeFalloff);
             biomeGen.GetBiomeWeights(worldPos, biomeWeights);
 
             // Generate blocks for this column
@@ -134,8 +135,6 @@ namespace WorldSystem.Generation
             for (int i = 0; i < Biomes.Length; i++)
             {
                 float weight = biomeWeights[i];
-                if (weight > 0.01f)
-                {
                     var biome = Biomes[i];
                     var settings = biome.DensitySettings;
                     
@@ -165,7 +164,6 @@ namespace WorldSystem.Generation
                     underwaterBlock = GetWeightedBlock(underwaterBlock, biome.UnderwaterBlock, weight);
                     
                     totalWeight += weight;
-                }
             }
 
             if (totalWeight > 0)

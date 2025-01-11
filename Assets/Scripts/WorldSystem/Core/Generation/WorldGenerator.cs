@@ -95,6 +95,7 @@ namespace WorldSystem.Generation
                     HeightMap = heightMap,
                     Biomes = biomesArray,
                     BiomeNoise = settings.BiomeNoiseSettings,
+                    BiomeFalloff = settings.BiomeFalloff,
                     SeaLevel = settings.SeaLevel,
                     EnableCaves = settings.Enable3DTerrain,
                     EnableWater = settings.EnableWater,

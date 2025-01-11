@@ -27,7 +27,7 @@ public static class NoiseUtility
             frequency *= settings.Lacunarity;
         }
 
-        return math.clamp(noiseHeight / amplitudeSum, -1f, 1f);
+        return math.clamp(noiseHeight / amplitudeSum * settings.Amplitude, -1f, 1f);
     }
 
     [BurstCompile]
