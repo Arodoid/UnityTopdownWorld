@@ -31,6 +31,13 @@ Shader "Custom/VertexColor"
         _WorldSeed ("World Seed", Float) = 0
         _ColorVariationStrength ("Color Variation Strength", Range(0, 0.2)) = 0.02
         _ColorVariationScale ("Color Variation Scale", Range(1, 100)) = 25
+        _WaterNoiseScale ("Water Noise Scale", Range(1, 100)) = 20
+        _WaterNoiseSpeed ("Water Noise Speed", Range(0, 10)) = 2
+        _WaterShineStrength ("Water Shine Strength", Range(0, 1)) = 0.3
+        _WaterRippleStrength ("Water Ripple Strength", Range(0, 1)) = 0.15
+        _WaveSpeed ("Wave Speed", Range(0, 5)) = 1
+        _WaveStrength ("Wave Strength", Range(0, 0.5)) = 0.2
+        _WaveDistance ("Wave Distance", Range(1, 3)) = 1
     }
     SubShader
     {
@@ -56,6 +63,8 @@ Shader "Custom/VertexColor"
             
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+
+            #define CHUNK_SIZE 32  // This should match ChunkData.SIZE
 
             struct Attributes
             {
@@ -116,6 +125,79 @@ Shader "Custom/VertexColor"
             float _ColorVariationStrength;
             float _ColorVariationScale;
 
+            float _WaterNoiseScale;
+            float _WaterNoiseSpeed;
+            float _WaterShineStrength;
+            float _WaterRippleStrength;
+
+            float _WaveSpeed;
+            float _WaveStrength;
+            float _WaveDistance;
+
+            struct WaterEdgeInfo {
+                bool isEdge;
+                float4 edgeDir; // x,y,z,w represent right,left,up,down edges
+            };
+
+            WaterEdgeInfo GetWaterEdgeInfo(float2 uv)
+            {
+                WaterEdgeInfo info;
+                info.isEdge = false;
+                info.edgeDir = float4(0, 0, 0, 0);
+                
+                // Check neighboring blocks (using UV coordinates)
+                float2 offsets[4] = {
+                    float2(1.0/CHUNK_SIZE, 0),    // right
+                    float2(-1.0/CHUNK_SIZE, 0),   // left
+                    float2(0, 1.0/CHUNK_SIZE),    // up
+                    float2(0, -1.0/CHUNK_SIZE)    // down
+                };
+                
+                for (int i = 0; i < 4; i++)
+                {
+                    float2 samplePos = uv + offsets[i];
+                    float4 sampleColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, samplePos);
+                    
+                    // If neighbor is not water (alpha == 1.0)
+                    if (sampleColor.a >= 1.0)
+                    {
+                        info.isEdge = true;
+                        info.edgeDir[i] = 1.0;
+                    }
+                }
+                
+                return info;
+            }
+
+            float GetWaveOffset(float2 blockPos, WaterEdgeInfo edgeInfo, float time)
+            {
+                if (!edgeInfo.isEdge)
+                    return 0;
+                    
+                float waveOffset = 0;
+                float2 waveDir = float2(0, 0);
+                
+                // Combine wave directions based on edges
+                if (edgeInfo.edgeDir.x > 0) waveDir += float2(-1, 0);  // right edge, wave moves left
+                if (edgeInfo.edgeDir.y > 0) waveDir += float2(1, 0);   // left edge, wave moves right
+                if (edgeInfo.edgeDir.z > 0) waveDir += float2(0, -1);  // up edge, wave moves down
+                if (edgeInfo.edgeDir.w > 0) waveDir += float2(0, 1);   // down edge, wave moves up
+                
+                if (length(waveDir) > 0)
+                {
+                    waveDir = normalize(waveDir);
+                    float2 waveFront = blockPos + waveDir * time * _WaveSpeed;
+                    float distanceFromEdge = length(waveFront - blockPos);
+                    
+                    // Create a more pronounced wave pattern
+                    float wave = sin(distanceFromEdge * 3.14159 * 2.0 - time * _WaveSpeed * 3.0);
+                    wave = sign(wave) * 0.5; // Make it more blocky
+                    waveOffset = wave * _WaveStrength * (1.0 - saturate(distanceFromEdge / _WaveDistance));
+                }
+                
+                return waveOffset;
+            }
+
             // Noise functions
             float2 hash2(float2 p, float seed)
             {
@@ -151,6 +233,33 @@ Shader "Custom/VertexColor"
                     w *= 0.5;
                 }
                 return f;
+            }
+
+            float waterNoise(float2 uv, float time)
+            {
+                // Scale down the UV coordinates and round to create distinct blocks
+                float2 blockUV = floor(uv * (1.0 / _WaterNoiseScale)) * _WaterNoiseScale;
+                
+                // Add world position offset to reduce pattern repetition
+                float2 worldOffset = floor(uv / 100.0) * 73.156; // Large prime number helps break repetition
+                
+                // Create two separate block-based patterns that will alternate
+                float noise1 = noise(blockUV + float2(time, 0) + worldOffset, _WorldSeed);
+                float noise2 = noise(blockUV * 1.5 + float2(0, time * 0.7) - worldOffset * 0.7, _WorldSeed + 1.0);
+                
+                // Make the pattern more discrete/blocky
+                noise1 = floor(noise1 * 3) / 3.0;
+                noise2 = floor(noise2 * 3) / 3.0;
+                
+                // Add a third noise layer at a different scale to break up patterns
+                float noise3 = noise(blockUV * 0.7 + float2(time * 0.5, time * 0.3) + worldOffset * 0.3, _WorldSeed + 2.0);
+                noise3 = floor(noise3 * 2) / 2.0;
+                
+                // Combine the patterns with varying weights
+                float combined = (noise1 * 0.5 + noise2 * 0.3 + noise3 * 0.2);
+                
+                // Make it even more discrete
+                return floor(combined * 4) / 4.0;
             }
 
             Varyings vert(Attributes input)
@@ -325,6 +434,43 @@ Shader "Custom/VertexColor"
                 
                 // Apply fog last
                 color.rgb = MixFog(color.rgb, input.fogFactor);
+                
+                if (input.color.a < 1.0) // Water check
+                {
+                    // Calculate block position
+                    float2 blockPos = floor(input.worldPos.xz);
+                    float time = _Time.y * _WaterNoiseSpeed;
+                    
+                    // Get edge information and wave offset
+                    WaterEdgeInfo edgeInfo = GetWaterEdgeInfo(input.uv);
+                    float waveOffset = GetWaveOffset(blockPos, edgeInfo, _Time.y);
+                    
+                    // Generate block-based water pattern
+                    float waterPattern = waterNoise(blockPos, time);
+                    
+                    // Simplified shininess that varies per block
+                    float3 viewDir = normalize(_WorldSpaceCameraPos - input.worldPos);
+                    float3 normalUp = float3(0, 1, 0);
+                    float fresnel = pow(1.0 - saturate(dot(normalUp, viewDir)), 2);
+                    fresnel = floor(fresnel * 3) / 3.0;
+                    
+                    // Combine effects
+                    float3 waterColor = color.rgb;
+                    waterColor += waterPattern * _WaterRippleStrength;
+                    waterColor += fresnel * _WaterShineStrength;
+                    
+                    // Add wave effect more prominently
+                    waterColor += float3(waveOffset, waveOffset, waveOffset) * 0.5; // Make waves more visible
+                    
+                    // Make water more vibrant
+                    waterColor *= float3(1.1, 1.2, 1.3);
+                    
+                    color.rgb = waterColor;
+                    color.a = 0.9;
+                    
+                    // Debug visualization - uncomment to see edge detection
+                    // if (edgeInfo.isEdge) color.rgb = float3(1, 0, 0);
+                }
                 
                 return color;
             }

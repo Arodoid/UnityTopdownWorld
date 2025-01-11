@@ -10,19 +10,9 @@ namespace WorldSystem.Generation
         public bool Enable3DTerrain = true;
         public bool EnableWater = true;
 
-        [Header("Basic World Settings")]
-        [Tooltip("Size of each chunk in blocks (32x32 horizontal area)")]
-        public int ChunkSize = 32;
-        public int WorldHeight = 256;
-
         [Header("Ocean Settings")]
         public float SeaLevel = 64f;
         public float OceanThreshold = 0.45f;   // Keep for ocean biome determination
-        public float SeaCaveDepth = 16f;       // How deep below sea level water can fill caves
-
-        
-        [Header("Global Layer Settings")]
-        public float DefaultLayerDepth = 4f;
 
         [Header("Global 3D Terrain Settings")]
         public NoiseSettings GlobalDensityNoise = new NoiseSettings
@@ -37,7 +27,6 @@ namespace WorldSystem.Generation
         };
         
         [Header("Biome Settings")]
-        public int BiomeBlendDistance = 4;
         public NoiseSettings BiomeNoiseSettings = new NoiseSettings
         {
             Scale = 1000,

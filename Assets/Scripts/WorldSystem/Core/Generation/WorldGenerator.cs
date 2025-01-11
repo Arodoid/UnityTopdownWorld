@@ -96,7 +96,6 @@ namespace WorldSystem.Generation
                     Biomes = biomesArray,
                     BiomeNoise = settings.BiomeNoiseSettings,
                     SeaLevel = settings.SeaLevel,
-                    DefaultLayerDepth = settings.DefaultLayerDepth,
                     EnableCaves = settings.Enable3DTerrain,
                     EnableWater = settings.EnableWater,
                     GlobalDensityNoise = settings.GlobalDensityNoise,

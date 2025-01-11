@@ -25,7 +25,6 @@ MonoBehaviour:
     Seed: 42
   Biomes: []
   BiomeBlendDistance: 4
-  DefaultLayerDepth: 4
   DefaultSubsurfaceBlock: 2
   DefaultDeepBlock: 3
   GlobalCaveNoise:

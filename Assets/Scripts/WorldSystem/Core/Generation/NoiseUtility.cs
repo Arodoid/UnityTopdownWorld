@@ -19,7 +19,6 @@ public static class NoiseUtility
         {
             float3 pos = scaledPos * frequency;
             float noiseValue = noise.snoise(pos + settings.Seed);
-            noiseValue = noiseValue * 0.5f + 0.5f;
             
             noiseHeight += noiseValue * amplitude;
             amplitudeSum += amplitude;
@@ -28,7 +27,7 @@ public static class NoiseUtility
             frequency *= settings.Lacunarity;
         }
 
-        return math.clamp(noiseHeight / amplitudeSum, 0f, 1f);
+        return math.clamp(noiseHeight / amplitudeSum, -1f, 1f);
     }
 
     [BurstCompile]

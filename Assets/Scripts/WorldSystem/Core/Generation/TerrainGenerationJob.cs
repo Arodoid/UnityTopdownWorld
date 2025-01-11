@@ -14,7 +14,6 @@ namespace WorldSystem.Generation
         [ReadOnly] public NativeArray<BiomeSettings> Biomes;
         [ReadOnly] public NoiseSettings BiomeNoise;
         [ReadOnly] public float SeaLevel;
-        [ReadOnly] public float DefaultLayerDepth;
         [ReadOnly] public byte DefaultDeepBlock;
         [ReadOnly] public bool EnableCaves;
         [ReadOnly] public bool EnableWater;
@@ -60,9 +59,31 @@ namespace WorldSystem.Generation
         private void StoreSurfaceInfo(int x, int z, NativeArray<float> biomeWeights)
         {
             int heightMapIndex = x + z * Core.ChunkData.SIZE;
-            var dominantBiome = GetDominantBiome(biomeWeights);
             
-            // Find the highest solid block in this column
+            // Blend surface parameters
+            float underwaterThreshold = 0f;
+            BlockType topBlock = BlockType.Air;
+            BlockType underwaterBlock = BlockType.Air;
+            float totalWeight = 0f;
+            
+            for (int i = 0; i < Biomes.Length; i++)
+            {
+                float weight = biomeWeights[i];
+                if (weight > 0.01f)
+                {
+                    underwaterThreshold += Biomes[i].UnderwaterThreshold * weight;
+                    topBlock = GetWeightedBlock(topBlock, Biomes[i].TopBlock, weight);
+                    underwaterBlock = GetWeightedBlock(underwaterBlock, Biomes[i].UnderwaterBlock, weight);
+                    totalWeight += weight;
+                }
+            }
+            
+            if (totalWeight > 0)
+            {
+                underwaterThreshold /= totalWeight;
+            }
+            
+            // Find surface height
             int surfaceHeight = 0;
             for (int y = Core.ChunkData.HEIGHT - 1; y >= 0; y--)
             {
@@ -74,10 +95,13 @@ namespace WorldSystem.Generation
                 }
             }
 
+            bool isUnderwater = surfaceHeight < SeaLevel + underwaterThreshold;
+            byte surfaceBlock = (byte)(isUnderwater ? underwaterBlock : topBlock);
+
             HeightMap[heightMapIndex] = new Core.HeightPoint
             {
                 height = (byte)math.clamp(surfaceHeight, 0, 255),
-                blockType = DetermineSurfaceBlock(surfaceHeight, dominantBiome)
+                blockType = surfaceBlock
             };
         }
 
@@ -92,86 +116,99 @@ namespace WorldSystem.Generation
                 ChunkPosition.x * Core.ChunkData.SIZE + x,
                 ChunkPosition.z * Core.ChunkData.SIZE + z
             );
-
-            bool isOceanRegion = ShouldGenerateOcean(worldPos);
-
-            // Get base 3D noise value (-1 to 1)
             float3 worldPos3D = new float3(worldPos.x, y, worldPos.y);
-            float noise = NoiseUtility.Sample3D(worldPos3D, GlobalDensityNoise) * 2f - 1f;
-            
+
+            // Blend ALL biome parameters
             float density = 0f;
+            float layerDepth = 0f;
+            float underwaterThreshold = 0f;
+            BlockType primaryBlock = BlockType.Air;
+            BlockType secondaryBlock = BlockType.Air;
+            BlockType topBlock = BlockType.Air;
+            BlockType underwaterBlock = BlockType.Air;
             float totalWeight = 0f;
+
+            // First blend density settings
+            TerrainDensitySettings blendedDensitySettings = new TerrainDensitySettings();
             
-            // Blend density settings from different biomes
             for (int i = 0; i < Biomes.Length; i++)
             {
                 float weight = biomeWeights[i];
                 if (weight > 0.01f)
                 {
-                    var densitySettings = Biomes[i].DensitySettings;
-                    float localDensity = CalculateDensity(noise, y, densitySettings);
-                    density += localDensity * weight;
+                    var biome = Biomes[i];
+                    var settings = biome.DensitySettings;
+                    
+                    // Blend density settings
+                    blendedDensitySettings.DeepStart += settings.DeepStart * weight;
+                    blendedDensitySettings.CaveStart += settings.CaveStart * weight;
+                    blendedDensitySettings.CaveEnd += settings.CaveEnd * weight;
+                    blendedDensitySettings.SurfaceStart += settings.SurfaceStart * weight;
+                    blendedDensitySettings.SurfaceEnd += settings.SurfaceEnd * weight;
+                    blendedDensitySettings.DeepBias += settings.DeepBias * weight;
+                    blendedDensitySettings.CaveBias += settings.CaveBias * weight;
+                    blendedDensitySettings.SurfaceBias += settings.SurfaceBias * weight;
+                    blendedDensitySettings.DeepTransitionScale += settings.DeepTransitionScale * weight;
+                    blendedDensitySettings.CaveTransitionScale += settings.CaveTransitionScale * weight;
+                    blendedDensitySettings.AirTransitionScale += settings.AirTransitionScale * weight;
+                    blendedDensitySettings.DeepTransitionCurve += settings.DeepTransitionCurve * weight;
+                    blendedDensitySettings.CaveTransitionCurve += settings.CaveTransitionCurve * weight;
+                    blendedDensitySettings.AirTransitionCurve += settings.AirTransitionCurve * weight;
+                    
+                    // Blend other parameters
+                    underwaterThreshold += biome.UnderwaterThreshold * weight;
+                    
+                    // For block types, use weighted voting
+                    primaryBlock = GetWeightedBlock(primaryBlock, biome.PrimaryBlock, weight);
+                    secondaryBlock = GetWeightedBlock(secondaryBlock, biome.SecondaryBlock, weight);
+                    topBlock = GetWeightedBlock(topBlock, biome.TopBlock, weight);
+                    underwaterBlock = GetWeightedBlock(underwaterBlock, biome.UnderwaterBlock, weight);
+                    
                     totalWeight += weight;
                 }
             }
-            
+
             if (totalWeight > 0)
             {
-                density /= totalWeight;
+                // Get base 3D noise value using global settings (or blend noise settings if biomes have different noise)
+                float noise = NoiseUtility.Sample3D(worldPos3D, GlobalDensityNoise);
+                
+                // Calculate density using blended settings
+                density = CalculateDensity(noise, y, blendedDensitySettings);
+
                 if (density > 0f)
                 {
-                    var dominantBiome = GetDominantBiome(biomeWeights);
                     int heightMapIndex = x + z * Core.ChunkData.SIZE;
                     float surfaceHeight = HeightMap[heightMapIndex].height;
                     float depthFromSurface = surfaceHeight - y;
 
-                    // Determine block type based on depth
-                    if (depthFromSurface > DefaultLayerDepth)
+                    // Use blended parameters for block selection
+                    if (depthFromSurface > layerDepth)
                     {
-                        return (byte)dominantBiome.SecondaryBlock;
+                        return (byte)secondaryBlock;
                     }
                     else
                     {
-                        return (byte)dominantBiome.PrimaryBlock;
+                        return (byte)primaryBlock;
                     }
                 }
                 else if (EnableWater && y <= SeaLevel)
                 {
-                    float depthBelowSea = SeaLevel - y;
-
-                    // Only place water if we're near the surface in ocean regions
-                    // or if we're in any open space above sea cave depth
-                    if (depthBelowSea <= SeaCaveDepth || !isOceanRegion)
-                    {
-                        return (byte)BlockType.Water;
-                    }
+                    return (byte)BlockType.Water;
                 }
             }
             
             return (byte)BlockType.Air;
         }
 
-        private byte DetermineSurfaceBlock(float height, BiomeSettings biome)
+        private BlockType GetWeightedBlock(BlockType currentBlock, BlockType newBlock, float weight)
         {
-            bool isUnderwater = height < SeaLevel + biome.UnderwaterThreshold;
-            return (byte)(isUnderwater ? biome.UnderwaterBlock : biome.TopBlock);
-        }
-
-        private BiomeSettings GetDominantBiome(NativeArray<float> weights)
-        {
-            int dominantIndex = 0;
-            float maxWeight = weights[0];
-            
-            for (int i = 1; i < weights.Length; i++)
+            // Simple weighted voting system for block types
+            if (currentBlock == BlockType.Air || weight > 0.5f)
             {
-                if (weights[i] > maxWeight)
-                {
-                    maxWeight = weights[i];
-                    dominantIndex = i;
-                }
+                return newBlock;
             }
-            
-            return Biomes[dominantIndex];
+            return currentBlock;
         }
 
         private float CalculateDensity(float baseNoise, float y, TerrainDensitySettings settings)
@@ -197,17 +234,17 @@ namespace WorldSystem.Generation
                 float curvedT = math.pow(t, settings.CaveTransitionCurve);
                 density += settings.CaveBias + (settings.SurfaceBias - settings.CaveBias) * curvedT;
             }
-            // Surface Zone
+            // Surface Zone - CONSTANT BIAS
             else if (y < settings.SurfaceEnd)
             {
                 density += settings.SurfaceBias;
             }
-            // Air Zone
+            // Air Transition - Now starts explicitly from SurfaceBias
             else
             {
                 float t = (y - settings.SurfaceEnd) / (settings.SurfaceEnd - settings.SurfaceStart);
                 float airBias = math.pow(t, settings.AirTransitionCurve) * settings.AirTransitionScale;
-                density -= airBias;
+                density = baseNoise + settings.SurfaceBias - airBias;  // Explicitly start from SurfaceBias
             }
 
             return density;
