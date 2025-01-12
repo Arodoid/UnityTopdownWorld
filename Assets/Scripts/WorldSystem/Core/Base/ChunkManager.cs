@@ -8,6 +8,8 @@ using System.Linq;
 using WorldSystem.Mesh;
 using WorldSystem.Generation;
 using Unity.Burst;
+using System.Threading.Tasks;
+using WorldSystem.Persistence;
 
 namespace WorldSystem.Base
 {
@@ -87,6 +89,9 @@ namespace WorldSystem.Base
             }
         }
 
+        private ChunkPersistenceManager _persistenceManager;
+        [SerializeField] private string worldName = "DefaultWorld";
+
         void Awake()
         {
             if (worldSettings == null)
@@ -105,6 +110,8 @@ namespace WorldSystem.Base
             _lastCameraPosition = mainCamera.transform.position;
             _lastCameraHeight = _lastCameraPosition.y;
             _lastOrthoSize = mainCamera.orthographicSize;
+
+            _persistenceManager = new ChunkPersistenceManager(worldName);
         }
 
         void Update()
@@ -498,7 +505,7 @@ namespace WorldSystem.Base
             chunkMaterial.SetFloat("_ColorVariationScale", 1f);
         }
 
-        private void RequestChunkGeneration(int2 position)
+        private async void RequestChunkGeneration(int2 position)
         {
             if (!_generatedChunks.Contains(position))
             {
@@ -507,17 +514,43 @@ namespace WorldSystem.Base
                 var heightMap = new NativeArray<Core.HeightPoint>(ChunkData.SIZE * ChunkData.SIZE, 
                     Allocator.TempJob);
                     
-                var chunkPos = new int3(position.x, viewMaxYLevel, position.y);
-                var handle = _worldGenerator.GenerateChunkAsync(
-                    chunkPos,
-                    blocks,
-                    heightMap,
-                    (chunk) => {
-                        OnChunkGenerated(chunk);
-                        blocks.Dispose();
-                        heightMap.Dispose();
+                // Check for existing modifications first
+                if (_persistenceManager.HasModifications(position))
+                {
+                    var chunkData = await _persistenceManager.LoadChunkAsync(position);
+                    if (chunkData != null)
+                    {
+                        // Generate base terrain
+                        var chunkPos = new int3(position.x, viewMaxYLevel, position.y);
+                        _worldGenerator.GenerateChunkAsync(
+                            chunkPos,
+                            blocks,
+                            heightMap,
+                            (chunk) => {
+                                // Apply modifications after generation
+                                _persistenceManager.ApplyModifications(position, blocks);
+                                OnChunkGenerated(chunk);
+                                blocks.Dispose();
+                                heightMap.Dispose();
+                            }
+                        );
                     }
-                );
+                }
+                else
+                {
+                    // Generate fresh chunk
+                    var chunkPos = new int3(position.x, viewMaxYLevel, position.y);
+                    _worldGenerator.GenerateChunkAsync(
+                        chunkPos,
+                        blocks,
+                        heightMap,
+                        (chunk) => {
+                            OnChunkGenerated(chunk);
+                            blocks.Dispose();
+                            heightMap.Dispose();
+                        }
+                    );
+                }
                 
                 _generatedChunks.Add(position);
             }
@@ -560,6 +593,118 @@ namespace WorldSystem.Base
             {
                 UpdateWorldSettings();
             }
+        }
+
+        public void ModifyBlock(int2 chunkPos, int blockIndex, byte newBlockType)
+        {
+            _persistenceManager.MarkBlockModified(chunkPos, blockIndex, newBlockType);
+            
+            // Trigger mesh update
+            if (_chunkBlockData.TryGetValue(chunkPos, out var blocks))
+            {
+                blocks[blockIndex] = newBlockType;
+                // Queue mesh rebuild
+                if (_meshBuilder != null && !_meshBuilder.IsBuildingMesh(chunkPos))
+                {
+                    var chunk = _chunkPool.GetChunk(chunkPos, viewMaxYLevel);
+                    if (chunk.HasValue)
+                    {
+                        _meshBuilder.QueueMeshBuild(chunkPos, blocks, 
+                            chunk.Value.meshFilter, chunk.Value.shadowFilter);
+                    }
+                }
+            }
+        }
+
+        void OnApplicationQuit()
+        {
+            _persistenceManager.SaveAll();
+        }
+
+        private async Task<ChunkData> GetOrGenerateChunk(int2 position)
+        {
+            // 1. Check memory first (fastest)
+            if (_chunkBlockData.TryGetValue(position, out var blocks))
+            {
+                return CreateChunkData(position, blocks);
+            }
+
+            // 2. Check object pool
+            var pooledChunk = _chunkPool.GetChunk(position, viewMaxYLevel);
+            if (pooledChunk.HasValue)
+            {
+                // Convert pooled chunk to ChunkData
+                var (_, meshFilter, _) = pooledChunk.Value;
+                if (meshFilter.mesh != null)
+                {
+                    return CreateChunkData(position, _chunkBlockData[position]);
+                }
+            }
+
+            // 3. Check disk
+            var savedChunk = await _persistenceManager.LoadChunkAsync(position);
+            if (savedChunk != null)
+            {
+                // Convert saved data to ChunkData and create a new NativeArray from the byte array
+                var nativeBlocks = new NativeArray<byte>(savedChunk.blocks.Length, Allocator.Persistent);
+                nativeBlocks.CopyFrom(savedChunk.blocks);
+                
+                var loadedChunk = CreateChunkData(position, nativeBlocks);
+                _chunkBlockData[position] = nativeBlocks;
+                _generatedChunks.Add(position);
+                return loadedChunk;
+            }
+
+            // 4. Only generate if we don't have it anywhere
+            return await GenerateNewChunkAsync(position);
+        }
+
+        private ChunkData CreateChunkData(int2 position, NativeArray<byte> blocks)
+        {
+            return new ChunkData
+            {
+                position = new int3(position.x, viewMaxYLevel, position.y),
+                blocks = blocks,
+                heightMap = _chunkHeightMaps.ContainsKey(position) ? 
+                    _chunkHeightMaps[position] : 
+                    new NativeArray<HeightPoint>(ChunkData.SIZE * ChunkData.SIZE, Allocator.Persistent),
+                isEdited = false
+            };
+        }
+
+        private async Task<ChunkData> GenerateNewChunkAsync(int2 position)
+        {
+            var blocks = new NativeArray<byte>(
+                ChunkData.SIZE * ChunkData.SIZE * ChunkData.HEIGHT, 
+                Allocator.Persistent);
+            var heightMap = new NativeArray<Core.HeightPoint>(
+                ChunkData.SIZE * ChunkData.SIZE, 
+                Allocator.Persistent);
+
+            var chunkPos = new int3(position.x, viewMaxYLevel, position.y);
+            
+            // Generate the chunk
+            var tcs = new TaskCompletionSource<ChunkData>();
+            
+            _worldGenerator.GenerateChunkAsync(
+                chunkPos,
+                blocks,
+                heightMap,
+                (chunk) => {
+                    tcs.SetResult(chunk);
+                }
+            );
+
+            var newChunk = await tcs.Task;
+            
+            // Save the newly generated chunk immediately
+            await _persistenceManager.SaveNewChunkAsync(position, newChunk);
+            
+            // Cache in memory
+            _chunkBlockData[position] = newChunk.blocks;
+            _generatedChunks.Add(position);
+            
+            return newChunk;
         }
     }
 } 
