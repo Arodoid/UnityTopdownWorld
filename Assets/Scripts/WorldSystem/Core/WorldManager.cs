@@ -13,7 +13,7 @@ namespace WorldSystem
         public long lastPlayed;
     }
 
-    public class WorldManager : MonoBehaviour
+    public static class WorldManager
     {
         private static string WorldsPath => 
             Path.Combine(Application.persistentDataPath, "Worlds");

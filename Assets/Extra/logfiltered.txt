@@ -1,197 +1,118 @@
-Ground check for Entity 6 at int3(4, 70, 7): isSolid=True
-CanStandAt int3(4, 70, 7): feet=False, head=False, ground=True
-Entity 7 at (-5.16, 70.00, 9.30), Velocity: (1.36, 0.00, -4.81), Grounded: True
-Ground check for Entity 7 at int3(-6, 70, 9): isSolid=True
-CanStandAt int3(-6, 70, 9): feet=False, head=False, ground=True
-Entity 8 at (4.18, 70.00, 5.68), Velocity: (4.44, 0.00, -2.30), Grounded: True
-Ground check for Entity 8 at int3(4, 70, 5): isSolid=True
-CanStandAt int3(4, 70, 5): feet=False, head=False, ground=True
-Entity 9 at (7.37, 70.00, 6.97), Velocity: (-3.97, 0.00, 3.03), Grounded: True
-Ground check for Entity 9 at int3(7, 70, 6): isSolid=True
-CanStandAt int3(7, 70, 7): feet=False, head=False, ground=True
-Tick 348
-Entity 0 at (-7.79, 70.00, 5.33), Velocity: (-4.98, 0.00, 0.43), Grounded: True
-Ground check for Entity 0 at int3(-8, 70, 5): isSolid=True
-CanStandAt int3(-9, 70, 5): feet=False, head=False, ground=True
-Entity 1 at (-7.13, 70.00, 6.51), Velocity: (-0.44, 0.00, -4.98), Grounded: True
-Ground check for Entity 1 at int3(-8, 70, 6): isSolid=True
-CanStandAt int3(-8, 70, 6): feet=False, head=False, ground=True
-Entity 2 at (-0.81, 70.00, -0.96), Velocity: (4.74, 0.00, 1.60), Grounded: True
-Ground check for Entity 2 at int3(-1, 70, -1): isSolid=True
-CanStandAt int3(-1, 70, -1): feet=False, head=False, ground=True
-Entity 3 at (-0.22, 70.00, 9.13), Velocity: (4.04, 0.00, 2.94), Grounded: True
-Ground check for Entity 3 at int3(-1, 70, 9): isSolid=True
-CanStandAt int3(-1, 70, 9): feet=False, head=False, ground=True
-Entity 4 at (-0.48, 70.00, 4.97), Velocity: (-4.53, 0.00, 2.13), Grounded: True
-Ground check for Entity 4 at int3(-1, 70, 4): isSolid=True
-CanStandAt int3(-1, 70, 5): feet=False, head=False, ground=True
-Entity 5 at (4.44, 70.00, 9.94), Velocity: (-2.15, 0.00, 4.51), Grounded: True
-Ground check for Entity 5 at int3(4, 70, 9): isSolid=True
-CanStandAt int3(4, 70, 10): feet=False, head=False, ground=True
-Entity 6 at (4.48, 70.00, 7.06), Velocity: (-4.90, 0.00, 1.01), Grounded: True
-Ground check for Entity 6 at int3(4, 70, 7): isSolid=True
-CanStandAt int3(4, 70, 7): feet=False, head=False, ground=True
-Entity 7 at (-5.16, 70.00, 9.30), Velocity: (1.36, 0.00, -4.81), Grounded: True
-Ground check for Entity 7 at int3(-6, 70, 9): isSolid=True
-CanStandAt int3(-6, 70, 9): feet=False, head=False, ground=True
-Entity 8 at (4.18, 70.00, 5.68), Velocity: (4.44, 0.00, -2.30), Grounded: True
-Ground check for Entity 8 at int3(4, 70, 5): isSolid=True
-CanStandAt int3(4, 70, 5): feet=False, head=False, ground=True
-Entity 9 at (7.37, 70.00, 6.97), Velocity: (-3.97, 0.00, 3.03), Grounded: True
-Ground check for Entity 9 at int3(7, 70, 6): isSolid=True
-CanStandAt int3(7, 70, 7): feet=False, head=False, ground=True
-Tick 349
-Entity 0 at (-7.79, 70.00, 5.33), Velocity: (-4.98, 0.00, 0.43), Grounded: True
-Ground check for Entity 0 at int3(-8, 70, 5): isSolid=True
-CanStandAt int3(-9, 70, 5): feet=False, head=False, ground=True
-Entity 1 at (-7.13, 70.00, 6.51), Velocity: (-0.44, 0.00, -4.98), Grounded: True
-Ground check for Entity 1 at int3(-8, 70, 6): isSolid=True
-CanStandAt int3(-8, 70, 6): feet=False, head=False, ground=True
-Entity 2 at (-0.81, 70.00, -0.96), Velocity: (4.74, 0.00, 1.60), Grounded: True
-Ground check for Entity 2 at int3(-1, 70, -1): isSolid=True
-CanStandAt int3(-1, 70, -1): feet=False, head=False, ground=True
-Entity 3 at (-0.22, 70.00, 9.13), Velocity: (4.04, 0.00, 2.94), Grounded: True
-Ground check for Entity 3 at int3(-1, 70, 9): isSolid=True
-CanStandAt int3(-1, 70, 9): feet=False, head=False, ground=True
-Entity 4 at (-0.48, 70.00, 4.97), Velocity: (-4.53, 0.00, 2.13), Grounded: True
-Ground check for Entity 4 at int3(-1, 70, 4): isSolid=True
-CanStandAt int3(-1, 70, 5): feet=False, head=False, ground=True
-Entity 5 at (4.44, 70.00, 9.94), Velocity: (-2.15, 0.00, 4.51), Grounded: True
-Ground check for Entity 5 at int3(4, 70, 9): isSolid=True
-CanStandAt int3(4, 70, 10): feet=False, head=False, ground=True
-Entity 6 at (4.48, 70.00, 7.06), Velocity: (-4.90, 0.00, 1.01), Grounded: True
-Ground check for Entity 6 at int3(4, 70, 7): isSolid=True
-CanStandAt int3(4, 70, 7): feet=False, head=False, ground=True
-Entity 7 at (-5.16, 70.00, 9.30), Velocity: (1.36, 0.00, -4.81), Grounded: True
-Ground check for Entity 7 at int3(-6, 70, 9): isSolid=True
-CanStandAt int3(-6, 70, 9): feet=False, head=False, ground=True
-Entity 8 at (4.18, 70.00, 5.68), Velocity: (4.44, 0.00, -2.30), Grounded: True
-Ground check for Entity 8 at int3(4, 70, 5): isSolid=True
-CanStandAt int3(4, 70, 5): feet=False, head=False, ground=True
-Entity 9 at (7.37, 70.00, 6.97), Velocity: (-3.97, 0.00, 3.03), Grounded: True
-Ground check for Entity 9 at int3(7, 70, 6): isSolid=True
-CanStandAt int3(7, 70, 7): feet=False, head=False, ground=True
-Tick 350
-Entity 0 at (-7.79, 70.00, 5.33), Velocity: (-4.98, 0.00, 0.43), Grounded: True
-Ground check for Entity 0 at int3(-8, 70, 5): isSolid=True
-CanStandAt int3(-9, 70, 5): feet=False, head=False, ground=True
-Entity 1 at (-7.13, 70.00, 6.51), Velocity: (-0.44, 0.00, -4.98), Grounded: True
-Ground check for Entity 1 at int3(-8, 70, 6): isSolid=True
-CanStandAt int3(-8, 70, 6): feet=False, head=False, ground=True
-Entity 2 at (-0.81, 70.00, -0.96), Velocity: (4.74, 0.00, 1.60), Grounded: True
-Ground check for Entity 2 at int3(-1, 70, -1): isSolid=True
-CanStandAt int3(-1, 70, -1): feet=False, head=False, ground=True
-Entity 3 at (-0.22, 70.00, 9.13), Velocity: (4.04, 0.00, 2.94), Grounded: True
-Ground check for Entity 3 at int3(-1, 70, 9): isSolid=True
-CanStandAt int3(-1, 70, 9): feet=False, head=False, ground=True
-Entity 4 at (-0.48, 70.00, 4.97), Velocity: (-4.53, 0.00, 2.13), Grounded: True
-Ground check for Entity 4 at int3(-1, 70, 4): isSolid=True
-CanStandAt int3(-1, 70, 5): feet=False, head=False, ground=True
-Entity 5 at (4.44, 70.00, 9.94), Velocity: (-2.15, 0.00, 4.51), Grounded: True
-Ground check for Entity 5 at int3(4, 70, 9): isSolid=True
-CanStandAt int3(4, 70, 10): feet=False, head=False, ground=True
-Entity 6 at (4.48, 70.00, 7.06), Velocity: (-4.90, 0.00, 1.01), Grounded: True
-Ground check for Entity 6 at int3(4, 70, 7): isSolid=True
-CanStandAt int3(4, 70, 7): feet=False, head=False, ground=True
-Entity 7 at (-5.16, 70.00, 9.30), Velocity: (1.36, 0.00, -4.81), Grounded: True
-Ground check for Entity 7 at int3(-6, 70, 9): isSolid=True
-CanStandAt int3(-6, 70, 9): feet=False, head=False, ground=True
-Entity 8 at (4.18, 70.00, 5.68), Velocity: (4.44, 0.00, -2.30), Grounded: True
-Ground check for Entity 8 at int3(4, 70, 5): isSolid=True
-CanStandAt int3(4, 70, 5): feet=False, head=False, ground=True
-Entity 9 at (7.37, 70.00, 6.97), Velocity: (-3.97, 0.00, 3.03), Grounded: True
-Ground check for Entity 9 at int3(7, 70, 6): isSolid=True
-CanStandAt int3(7, 70, 7): feet=False, head=False, ground=True
-Tick 351
-Entity 0 at (-7.79, 70.00, 5.33), Velocity: (-4.98, 0.00, 0.43), Grounded: True
-Ground check for Entity 0 at int3(-8, 70, 5): isSolid=True
-CanStandAt int3(-9, 70, 5): feet=False, head=False, ground=True
-Entity 1 at (-7.13, 70.00, 6.51), Velocity: (-0.44, 0.00, -4.98), Grounded: True
-Ground check for Entity 1 at int3(-8, 70, 6): isSolid=True
-CanStandAt int3(-8, 70, 6): feet=False, head=False, ground=True
-Entity 2 at (-0.81, 70.00, -0.96), Velocity: (4.74, 0.00, 1.60), Grounded: True
-Ground check for Entity 2 at int3(-1, 70, -1): isSolid=True
-CanStandAt int3(-1, 70, -1): feet=False, head=False, ground=True
-Entity 3 at (-0.22, 70.00, 9.13), Velocity: (4.04, 0.00, 2.94), Grounded: True
-Ground check for Entity 3 at int3(-1, 70, 9): isSolid=True
-CanStandAt int3(-1, 70, 9): feet=False, head=False, ground=True
-Entity 4 at (-0.48, 70.00, 4.97), Velocity: (-4.53, 0.00, 2.13), Grounded: True
-Ground check for Entity 4 at int3(-1, 70, 4): isSolid=True
-CanStandAt int3(-1, 70, 5): feet=False, head=False, ground=True
-Entity 5 at (4.44, 70.00, 9.94), Velocity: (-2.15, 0.00, 4.51), Grounded: True
-Ground check for Entity 5 at int3(4, 70, 9): isSolid=True
-CanStandAt int3(4, 70, 10): feet=False, head=False, ground=True
-Entity 6 at (4.48, 70.00, 7.06), Velocity: (-4.90, 0.00, 1.01), Grounded: True
-Ground check for Entity 6 at int3(4, 70, 7): isSolid=True
-CanStandAt int3(4, 70, 7): feet=False, head=False, ground=True
-Entity 7 at (-5.16, 70.00, 9.30), Velocity: (1.36, 0.00, -4.81), Grounded: True
-Ground check for Entity 7 at int3(-6, 70, 9): isSolid=True
-CanStandAt int3(-6, 70, 9): feet=False, head=False, ground=True
-Entity 8 at (4.18, 70.00, 5.68), Velocity: (4.44, 0.00, -2.30), Grounded: True
-Ground check for Entity 8 at int3(4, 70, 5): isSolid=True
-CanStandAt int3(4, 70, 5): feet=False, head=False, ground=True
-Entity 9 at (7.37, 70.00, 6.97), Velocity: (-3.97, 0.00, 3.03), Grounded: True
-Ground check for Entity 9 at int3(7, 70, 6): isSolid=True
-CanStandAt int3(7, 70, 7): feet=False, head=False, ground=True
-Tick 352
-Entity 0 at (-7.79, 70.00, 5.33), Velocity: (-4.98, 0.00, 0.43), Grounded: True
-Ground check for Entity 0 at int3(-8, 70, 5): isSolid=True
-CanStandAt int3(-9, 70, 5): feet=False, head=False, ground=True
-Entity 1 at (-7.13, 70.00, 6.51), Velocity: (-0.44, 0.00, -4.98), Grounded: True
-Ground check for Entity 1 at int3(-8, 70, 6): isSolid=True
-CanStandAt int3(-8, 70, 6): feet=False, head=False, ground=True
-Entity 2 at (-0.81, 70.00, -0.96), Velocity: (4.74, 0.00, 1.60), Grounded: True
-Ground check for Entity 2 at int3(-1, 70, -1): isSolid=True
-CanStandAt int3(-1, 70, -1): feet=False, head=False, ground=True
-Entity 3 at (-0.22, 70.00, 9.13), Velocity: (4.04, 0.00, 2.94), Grounded: True
-Ground check for Entity 3 at int3(-1, 70, 9): isSolid=True
-CanStandAt int3(-1, 70, 9): feet=False, head=False, ground=True
-Entity 4 at (-0.48, 70.00, 4.97), Velocity: (-4.53, 0.00, 2.13), Grounded: True
-Ground check for Entity 4 at int3(-1, 70, 4): isSolid=True
-CanStandAt int3(-1, 70, 5): feet=False, head=False, ground=True
-Entity 5 at (4.44, 70.00, 9.94), Velocity: (-2.15, 0.00, 4.51), Grounded: True
-Ground check for Entity 5 at int3(4, 70, 9): isSolid=True
-CanStandAt int3(4, 70, 10): feet=False, head=False, ground=True
-Entity 6 at (4.48, 70.00, 7.06), Velocity: (-4.90, 0.00, 1.01), Grounded: True
-Ground check for Entity 6 at int3(4, 70, 7): isSolid=True
-CanStandAt int3(4, 70, 7): feet=False, head=False, ground=True
-Entity 7 at (-5.16, 70.00, 9.30), Velocity: (1.36, 0.00, -4.81), Grounded: True
-Ground check for Entity 7 at int3(-6, 70, 9): isSolid=True
-CanStandAt int3(-6, 70, 9): feet=False, head=False, ground=True
-Entity 8 at (4.18, 70.00, 5.68), Velocity: (4.44, 0.00, -2.30), Grounded: True
-Ground check for Entity 8 at int3(4, 70, 5): isSolid=True
-CanStandAt int3(4, 70, 5): feet=False, head=False, ground=True
-Entity 9 at (7.37, 70.00, 6.97), Velocity: (-3.97, 0.00, 3.03), Grounded: True
-Ground check for Entity 9 at int3(7, 70, 6): isSolid=True
-CanStandAt int3(7, 70, 7): feet=False, head=False, ground=True
-Tick 353
-Entity 0 at (-7.79, 70.00, 5.33), Velocity: (-4.98, 0.00, 0.43), Grounded: True
-Ground check for Entity 0 at int3(-8, 70, 5): isSolid=True
-CanStandAt int3(-9, 70, 5): feet=False, head=False, ground=True
-Entity 1 at (-7.13, 70.00, 6.51), Velocity: (-0.44, 0.00, -4.98), Grounded: True
-Ground check for Entity 1 at int3(-8, 70, 6): isSolid=True
-CanStandAt int3(-8, 70, 6): feet=False, head=False, ground=True
-Entity 2 at (-0.81, 70.00, -0.96), Velocity: (4.74, 0.00, 1.60), Grounded: True
-Ground check for Entity 2 at int3(-1, 70, -1): isSolid=True
-CanStandAt int3(-1, 70, -1): feet=False, head=False, ground=True
-Entity 3 at (-0.22, 70.00, 9.13), Velocity: (4.04, 0.00, 2.94), Grounded: True
-Ground check for Entity 3 at int3(-1, 70, 9): isSolid=True
-CanStandAt int3(-1, 70, 9): feet=False, head=False, ground=True
-Entity 4 at (-0.48, 70.00, 4.97), Velocity: (-4.53, 0.00, 2.13), Grounded: True
-Ground check for Entity 4 at int3(-1, 70, 4): isSolid=True
-CanStandAt int3(-1, 70, 5): feet=False, head=False, ground=True
-Entity 5 at (4.44, 70.00, 9.94), Velocity: (-2.15, 0.00, 4.51), Grounded: True
-Ground check for Entity 5 at int3(4, 70, 9): isSolid=True
-CanStandAt int3(4, 70, 10): feet=False, head=False, ground=True
-Entity 6 at (4.48, 70.00, 7.06), Velocity: (-4.90, 0.00, 1.01), Grounded: True
-Ground check for Entity 6 at int3(4, 70, 7): isSolid=True
-CanStandAt int3(4, 70, 7): feet=False, head=False, ground=True
-Entity 7 at (-5.16, 70.00, 9.30), Velocity: (1.36, 0.00, -4.81), Grounded: True
-Ground check for Entity 7 at int3(-6, 70, 9): isSolid=True
-CanStandAt int3(-6, 70, 9): feet=False, head=False, ground=True
-Entity 8 at (4.18, 70.00, 5.68), Velocity: (4.44, 0.00, -2.30), Grounded: True
-Ground check for Entity 8 at int3(4, 70, 5): isSolid=True
-CanStandAt int3(4, 70, 5): feet=False, head=False, ground=True
-Entity 9 at (7.37, 70.00, 6.97), Velocity: (-3.97, 0.00, 3.03), Grounded: True
-Ground check for Entity 9 at int3(7, 70, 6): isSolid=True
-CanStandAt int3(7, 70, 7): feet=False, head=False, ground=True
+Game systems initialized successfully!
+Checking neighbor at (1, 0, 0) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (1, 0) from position y=0
+No valid ground found between y=1 and y=-5 at (1, 0)
+No valid ground at (1, 0, 0)
+Checking neighbor at (-1, 0, 0) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (-1, 0) from position y=0
+No valid ground found between y=1 and y=-5 at (-1, 0)
+No valid ground at (-1, 0, 0)
+Checking neighbor at (0, 0, 1) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (0, 1) from position y=0
+No valid ground found between y=1 and y=-5 at (0, 1)
+No valid ground at (0, 0, 1)
+Checking neighbor at (0, 0, -1) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (0, -1) from position y=0
+No valid ground found between y=1 and y=-5 at (0, -1)
+No valid ground at (0, 0, -1)
+Checking neighbor at (1, 0, 1) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (1, 1) from position y=0
+No valid ground found between y=1 and y=-5 at (1, 1)
+No valid ground at (1, 0, 1)
+Checking neighbor at (1, 0, -1) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (1, -1) from position y=0
+No valid ground found between y=1 and y=-5 at (1, -1)
+No valid ground at (1, 0, -1)
+Checking neighbor at (-1, 0, 1) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (-1, 1) from position y=0
+No valid ground found between y=1 and y=-5 at (-1, 1)
+No valid ground at (-1, 0, 1)
+Checking neighbor at (-1, 0, -1) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (-1, -1) from position y=0
+No valid ground found between y=1 and y=-5 at (-1, -1)
+No valid ground at (-1, 0, -1)
+[Entity 4] No valid path to (-4.94, 61.00, -4.12)
+Checking neighbor at (1, 0, 0) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (1, 0) from position y=0
+No valid ground found between y=1 and y=-5 at (1, 0)
+No valid ground at (1, 0, 0)
+Checking neighbor at (-1, 0, 0) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (-1, 0) from position y=0
+No valid ground found between y=1 and y=-5 at (-1, 0)
+No valid ground at (-1, 0, 0)
+Checking neighbor at (0, 0, 1) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (0, 1) from position y=0
+No valid ground found between y=1 and y=-5 at (0, 1)
+No valid ground at (0, 0, 1)
+Checking neighbor at (0, 0, -1) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (0, -1) from position y=0
+No valid ground found between y=1 and y=-5 at (0, -1)
+No valid ground at (0, 0, -1)
+Checking neighbor at (1, 0, 1) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (1, 1) from position y=0
+No valid ground found between y=1 and y=-5 at (1, 1)
+No valid ground at (1, 0, 1)
+Checking neighbor at (1, 0, -1) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (1, -1) from position y=0
+No valid ground found between y=1 and y=-5 at (1, -1)
+No valid ground at (1, 0, -1)
+Checking neighbor at (-1, 0, 1) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (-1, 1) from position y=0
+No valid ground found between y=1 and y=-5 at (-1, 1)
+No valid ground at (-1, 0, 1)
+Checking neighbor at (-1, 0, -1) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (-1, -1) from position y=0
+No valid ground found between y=1 and y=-5 at (-1, -1)
+No valid ground at (-1, 0, -1)
+[Entity 4] No valid path to (6.82, 73.00, -7.00)
+Checking neighbor at (1, 0, 0) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (1, 0) from position y=0
+No valid ground found between y=1 and y=-5 at (1, 0)
+No valid ground at (1, 0, 0)
+Checking neighbor at (-1, 0, 0) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (-1, 0) from position y=0
+No valid ground found between y=1 and y=-5 at (-1, 0)
+No valid ground at (-1, 0, 0)
+Checking neighbor at (0, 0, 1) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (0, 1) from position y=0
+No valid ground found between y=1 and y=-5 at (0, 1)
+No valid ground at (0, 0, 1)
+Checking neighbor at (0, 0, -1) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (0, -1) from position y=0
+No valid ground found between y=1 and y=-5 at (0, -1)
+No valid ground at (0, 0, -1)
+Checking neighbor at (1, 0, 1) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (1, 1) from position y=0
+No valid ground found between y=1 and y=-5 at (1, 1)
+No valid ground at (1, 0, 1)
+Checking neighbor at (1, 0, -1) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (1, -1) from position y=0
+No valid ground found between y=1 and y=-5 at (1, -1)
+No valid ground at (1, 0, -1)
+Checking neighbor at (-1, 0, 1) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (-1, 1) from position y=0
+No valid ground found between y=1 and y=-5 at (-1, 1)
+No valid ground at (-1, 0, 1)
+Checking neighbor at (-1, 0, -1) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (-1, -1) from position y=0
+No valid ground found between y=1 and y=-5 at (-1, -1)
+No valid ground at (-1, 0, -1)
+[Entity 4] No valid path to (4.84, 73.00, -3.93)
+Checking neighbor at (1, 0, 0) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (1, 0) from position y=0
+No valid ground found between y=1 and y=-5 at (1, 0)
+No valid ground at (1, 0, 0)
+Checking neighbor at (-1, 0, 0) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (-1, 0) from position y=0
+No valid ground found between y=1 and y=-5 at (-1, 0)
+No valid ground at (-1, 0, 0)
+Checking neighbor at (0, 0, 1) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (0, 1) from position y=0
+No valid ground found between y=1 and y=-5 at (0, 1)
+No valid ground at (0, 0, 1)
+Checking neighbor at (0, 0, -1) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (0, -1) from position y=0
+No valid ground found between y=1 and y=-5 at (0, -1)
+No valid ground at (0, 0, -1)
+Checking neighbor at (1, 0, 1) from position (0, 0, 0)
+Searching for ground from y=1 to y=-5 at (1, 1) from position y=0

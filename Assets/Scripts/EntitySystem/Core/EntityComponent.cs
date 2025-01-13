@@ -1,3 +1,5 @@
+using EntitySystem.Core.Interfaces;
+
 namespace EntitySystem.Core
 {
     public abstract class EntityComponent : IEntityComponent
@@ -7,9 +9,21 @@ namespace EntitySystem.Core
         public virtual void Initialize(Entity entity)
         {
             Entity = entity;
+            OnInitialize(entity);
         }
 
-        public virtual void OnTick() { }
-        public virtual void OnDestroy() { }
+        public virtual void OnTick()
+        {
+            OnTickInternal();
+        }
+
+        public virtual void OnDestroy()
+        {
+            OnDestroyInternal();
+        }
+
+        protected virtual void OnInitialize(Entity entity) { }
+        protected virtual void OnTickInternal() { }
+        protected virtual void OnDestroyInternal() { }
     }
 } 

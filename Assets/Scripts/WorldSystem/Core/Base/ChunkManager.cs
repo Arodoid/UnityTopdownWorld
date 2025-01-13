@@ -728,5 +728,30 @@ namespace WorldSystem.Base
             
             return newChunk;
         }
+
+        public bool IsInitialLoadComplete()
+        {
+            // Check if spawn chunks around origin are loaded
+            int spawnRadius = 2; // Adjust based on your needs
+            
+            for (int x = -spawnRadius; x <= spawnRadius; x++)
+            {
+                for (int z = -spawnRadius; z <= spawnRadius; z++)
+                {
+                    if (!IsChunkLoaded(new int2(x, z)))
+                    {
+                        return false;
+                    }
+                }
+            }
+            
+            return true;
+        }
+
+        private bool IsChunkLoaded(int2 chunkPos)
+        {
+            var chunk = GetChunk(chunkPos);
+            return chunk.blocks.IsCreated && chunk.blocks.Length > 0;
+        }
     }
 } 

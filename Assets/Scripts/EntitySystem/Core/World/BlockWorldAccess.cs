@@ -113,11 +113,6 @@ namespace EntitySystem.Core.World
             bool headClear = !IsBlockSolid(position + new int3(0, 1, 0));
             bool hasGround = IsBlockSolid(position + new int3(0, -1, 0));
             
-            Debug.Log($"CanStandAt {position}:" +
-                      $"\n  Feet Clear: {feetClear}" +
-                      $"\n  Head Clear: {headClear}" +
-                      $"\n  Has Ground: {hasGround}");
-            
             return feetClear && headClear && hasGround;
         }
 
@@ -142,9 +137,6 @@ namespace EntitySystem.Core.World
             return new int2(chunkX, chunkZ);
         }
 
-        public ChunkManager GetChunkManager()
-        {
-            return _chunkManager;
-        }
+        public ChunkManager GetChunkManager() => _chunkManager;
     }
 } 

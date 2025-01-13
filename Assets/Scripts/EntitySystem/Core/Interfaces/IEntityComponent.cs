@@ -1,4 +1,4 @@
-namespace EntitySystem.Core
+namespace EntitySystem.Core.Interfaces
 {
     public interface IEntityComponent
     {
