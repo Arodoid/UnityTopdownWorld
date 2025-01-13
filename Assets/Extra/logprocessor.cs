@@ -31,7 +31,6 @@ public class LogProcessor : MonoBehaviour
             // Write the filtered lines to the output file
             File.WriteAllLines(outputFilePath, filteredLines);
 
-            Debug.Log($"Log entries have been successfully filtered and saved to {outputFilePath}");
         }
         catch (Exception ex)
         {

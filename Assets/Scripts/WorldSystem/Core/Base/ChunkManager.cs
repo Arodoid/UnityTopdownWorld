@@ -558,10 +558,32 @@ namespace WorldSystem.Base
 
         public Data.ChunkData GetChunk(int2 position)
         {
-            if (chunks.TryGetValue(position, out var chunk))
+            // First check if we have the chunk data in memory
+            if (_chunkBlockData.TryGetValue(position, out var blocks))
             {
-                return chunk;
+                return CreateChunkData(position, blocks);
             }
+
+            // If not in memory but generated, try to get from pool
+            if (_generatedChunks.Contains(position))
+            {
+                var pooledChunk = _chunkPool.GetChunk(position, viewMaxYLevel);
+                if (pooledChunk.HasValue)
+                {
+                    return CreateChunkData(position, _chunkBlockData[position]);
+                }
+            }
+
+            // If we still don't have it, request generation
+            if (!_worldGenerator.IsGenerating(position) && !_chunkLoadQueue.Contains(position))
+            {
+                float priority = Vector2.Distance(
+                    new Vector2(mainCamera.transform.position.x, mainCamera.transform.position.z),
+                    new Vector2(position.x * Data.ChunkData.SIZE, position.y * Data.ChunkData.SIZE)
+                );
+                _chunkLoadQueue.Enqueue(position, priority);
+            }
+
             return default;
         }
 
