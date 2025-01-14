@@ -7,64 +7,41 @@ namespace EntitySystem.Components.Jobs
     public class JobComponent : GameComponent
     {
         private Job _currentJob;
-        private JobSystem _jobSystem;
-        private float _lastJobCheckTime;
-        private const float JOB_CHECK_INTERVAL = 1f; // Check for new jobs every second
-
-        protected override void OnInitialize(Entity entity)
-        {
-            _jobSystem = Entity.Manager.GetJobSystem();
-        }
+        private int _ticksSinceLastJob;
+        private const int MIN_TICKS_BETWEEN_JOBS = 10;
 
         protected override void OnTickInternal()
         {
-            if (_currentJob == null)
+            Debug.Log($"JobComponent Tick - Entity {Entity.Id} - Current Job: {(_currentJob != null ? "Active" : "None")}");
+
+            if (_currentJob != null)
             {
-                // Only check for new jobs periodically
-                if (Time.time >= _lastJobCheckTime + JOB_CHECK_INTERVAL)
+                var status = _currentJob.Execute(Entity);
+                if (status != JobStatus.InProgress)
                 {
-                    _lastJobCheckTime = Time.time;
-                    
-                    // Try to get a job
-                    _currentJob = _jobSystem.GetBestJobFor(Entity);
-                    
-                    // If no other jobs available, create a wander job
-                    if (_currentJob == null)
-                    {
-                        var wanderJob = new WanderJob();
-                        _jobSystem.AddPersonalJob(Entity, wanderJob);
-                        _currentJob = _jobSystem.GetBestJobFor(Entity);
-                    }
-                    
-                    if (_currentJob != null)
-                    {
-                    }
+                    _currentJob = null;
+                    _ticksSinceLastJob = 0;
                 }
                 return;
             }
 
-            // Execute current job and log status
-            var status = _currentJob.Execute(Entity);
-            
-            switch (status)
+            _ticksSinceLastJob++;
+            if (_ticksSinceLastJob < MIN_TICKS_BETWEEN_JOBS)
             {
-                case JobStatus.Completed:
-                    _jobSystem.CompleteJob(Entity, _currentJob);
-                    _currentJob = null;
-                    break;
-                    
-                case JobStatus.Failed:
-                    _jobSystem.FailJob(Entity, _currentJob);
-                    _currentJob = null;
-                    break;
-                    
-                case JobStatus.InProgress:
-                    // Log progress periodically
-                    if (Time.time >= _lastJobCheckTime + JOB_CHECK_INTERVAL)
-                    {
-                        _lastJobCheckTime = Time.time;
-                    }
-                    break;
+                return;
+            }
+
+            // Get new job (either from job system or create new wander job)
+            var jobSystem = Entity.Manager.GetJobSystem();
+            if (jobSystem != null)
+            {
+                _currentJob = jobSystem.GetBestJobFor(Entity);
+            }
+
+            if (_currentJob == null)
+            {
+                var worldAccess = Entity.Manager.GetWorldAccess();
+                _currentJob = new WanderJob(worldAccess);
             }
         }
     }

@@ -7,22 +7,20 @@ namespace EntitySystem.Core.Interfaces
     public interface IEntity
     {
         long Id { get; }
-        Vector3 Position { get; set; }
+        Vector3 Position { get; }
         EntityState State { get; }
         bool IsActive { get; }
-        EntityManager Manager { get; }
-        
-        T AddComponent<T>() where T : IEntityComponent, new();
-        T GetComponent<T>() where T : IEntityComponent;
-        bool HasComponent<T>() where T : IEntityComponent;
-        void RemoveComponent<T>() where T : IEntityComponent;
+        GameObject GameObject { get; }
         
         void Initialize(GameObject gameObject);
         void OnTick();
         void OnDestroy();
-        
         void SetState(EntityState newState);
-        void UpdatePosition(Vector3 newPosition);
+        
+        T AddComponent<T>() where T : class, IEntityComponent, new();
+        T GetComponent<T>() where T : class, IEntityComponent;
+        bool HasComponent<T>() where T : class, IEntityComponent;
+        void RemoveComponent<T>() where T : class, IEntityComponent;
         IReadOnlyList<IEntityComponent> GetComponents();
     }
 } 

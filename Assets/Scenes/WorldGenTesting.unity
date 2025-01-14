@@ -204,6 +204,7 @@ GameObject:
   m_Component:
   - component: {fileID: 350196172}
   - component: {fileID: 350196173}
+  - component: {fileID: 350196174}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -220,11 +221,12 @@ Transform:
   m_GameObject: {fileID: 350196171}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.878658, y: 17.392023, z: 6.286134}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2070139063}
+  - {fileID: 1434711533}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &350196173
@@ -241,6 +243,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   logFilePath: Assets/Extra/log.txt
   outputFilePath: Assets/Extra/logfiltered.txt
+--- !u!114 &350196174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 350196171}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4f0e5d64964b6438ce8b5bc74089e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  entityManager: {fileID: 1434711537}
+  chunkManager: {fileID: 2070139064}
+  entitySpawners:
+  - {fileID: 1434711534}
+  worldName: TestWorld
+  createNewWorld: 1
 --- !u!1 &455308476
 GameObject:
   m_ObjectHideFlags: 0
@@ -623,12 +643,104 @@ Transform:
   m_GameObject: {fileID: 1421405767}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 152, y: 6.5, z: 24}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1434711532
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1434711533}
+  - component: {fileID: 1434711537}
+  - component: {fileID: 1434711536}
+  - component: {fileID: 1434711535}
+  - component: {fileID: 1434711534}
+  m_Layer: 0
+  m_Name: EntitySystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1434711533
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1434711532}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 350196172}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1434711534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1434711532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d51fd54362649234582d2656a542e28d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawnRadius: 10
+  maxEntities: 5
+  spawnInterval: 2
+  spawnTestJobs: 1
+  jobSpawnInterval: 5
+--- !u!114 &1434711535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1434711532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d456b7f5994bc364f816f49923d37c94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1434711536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1434711532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b229615a7cf109a47a1d4ca488eb29d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tickInterval: 0.1
+--- !u!114 &1434711537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1434711532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54e7605b6e0af084c891f32a866aa75e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  initialPoolSize: 100
+  tickManager: {fileID: 1434711536}
+  jobSystem: {fileID: 1434711535}
 --- !u!1 &1468477236
 GameObject:
   m_ObjectHideFlags: 0
@@ -1058,6 +1170,7 @@ MonoBehaviour:
   viewMaxYLevel: 256
   maxCachedChunks: 2048
   worldSettings: {fileID: 11400000, guid: 88bf205218441a34191cc9a363d70b03, type: 2}
+  worldName: DefaultWorld
 --- !u!114 &2070139065
 MonoBehaviour:
   m_ObjectHideFlags: 0

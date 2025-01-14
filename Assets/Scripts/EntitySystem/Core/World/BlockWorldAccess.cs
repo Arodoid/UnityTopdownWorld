@@ -5,7 +5,6 @@ using WorldSystem.Core;
 using UnityEngine;
 using ChunkData = WorldSystem.Data.ChunkData;
 using math = Unity.Mathematics;
-using System;
 
 namespace EntitySystem.Core.World
 {
@@ -14,6 +13,7 @@ namespace EntitySystem.Core.World
         private readonly ChunkManager _chunkManager;
         private const int CHUNK_SIZE = 32;
         private const int WORLD_HEIGHT = 256;
+        private const int MAX_CHUNK_WAIT_MS = 1000; // 1 second timeout
 
         public BlockWorldAccess(ChunkManager chunkManager)
         {
@@ -24,43 +24,20 @@ namespace EntitySystem.Core.World
         {
             try 
             {
-                if (position.y < 0)
-                {
-                    return true;
-                }
-                if (position.y >= WORLD_HEIGHT)
-                {
-                    return false;
-                }
+                if (position.y < 0) return true;
+                if (position.y >= WORLD_HEIGHT) return false;
 
-                ChunkData chunk = _chunkManager.GetChunk(WorldToChunkPos(position));
-                if (ReferenceEquals(chunk, null))
-                {
-                    return false;
-                }
-                
-                if (chunk.blocks == null || chunk.blocks.Length == 0)
-                {
-                    return false;
-                }
+                var chunk = _chunkManager.GetChunk(WorldToChunkPos(position));
+                if (chunk.blocks.Length == 0) return false;
 
-                // Calculate local coordinates correctly
                 int localX = position.x >= 0 ? position.x % CHUNK_SIZE : ((position.x + 1) % CHUNK_SIZE) + (CHUNK_SIZE - 1);
                 int localZ = position.z >= 0 ? position.z % CHUNK_SIZE : ((position.z + 1) % CHUNK_SIZE) + (CHUNK_SIZE - 1);
                 
-                // Use the same index calculation as GetBlockType
                 int index = localX + (localZ * CHUNK_SIZE) + (position.y * CHUNK_SIZE * CHUNK_SIZE);
-
-                if (index < 0 || index >= chunk.blocks.Length)
-                {
-                  return false;
-                }
+                if (index < 0 || index >= chunk.blocks.Length) return false;
 
                 byte blockType = chunk.blocks[index];
-                bool isSolid = blockType != (byte)BlockType.Air && blockType != (byte)BlockType.Water;
-                
-                
-                return isSolid;
+                return blockType != (byte)BlockType.Air && blockType != (byte)BlockType.Water;
             }
             catch (System.Exception e)
             {
@@ -83,11 +60,9 @@ namespace EntitySystem.Core.World
                     return (byte)BlockType.Air;
                 }
 
-                // Calculate local coordinates correctly
                 int localX = position.x >= 0 ? position.x % CHUNK_SIZE : ((position.x + 1) % CHUNK_SIZE) + (CHUNK_SIZE - 1);
                 int localZ = position.z >= 0 ? position.z % CHUNK_SIZE : ((position.z + 1) % CHUNK_SIZE) + (CHUNK_SIZE - 1);
 
-                // The correct index calculation for a column-major layout
                 int index = localX + (localZ * CHUNK_SIZE) + (position.y * CHUNK_SIZE * CHUNK_SIZE);
 
                 if (index < 0 || index >= chunk.blocks.Length)
@@ -96,8 +71,7 @@ namespace EntitySystem.Core.World
                     return (byte)BlockType.Air;
                 }
 
-                byte blockType = chunk.blocks[index];
-                return blockType;
+                return chunk.blocks[index];
             }
             catch (System.Exception e)
             {
@@ -108,7 +82,6 @@ namespace EntitySystem.Core.World
 
         public bool CanStandAt(int3 position)
         {
-            // Debug the check
             bool feetClear = !IsBlockSolid(position);
             bool headClear = !IsBlockSolid(position + new int3(0, 1, 0));
             bool hasGround = IsBlockSolid(position + new int3(0, -1, 0));
@@ -125,12 +98,11 @@ namespace EntitySystem.Core.World
                     return y;
                 }
             }
-            return -1; // No solid block found
+            return -1;
         }
 
         private int2 WorldToChunkPos(int3 worldPos)
         {
-            // Convert world coordinates to chunk coordinates
             int chunkX = worldPos.x >= 0 ? worldPos.x >> 5 : (worldPos.x - 31) >> 5;
             int chunkZ = worldPos.z >= 0 ? worldPos.z >> 5 : (worldPos.z - 31) >> 5;
             

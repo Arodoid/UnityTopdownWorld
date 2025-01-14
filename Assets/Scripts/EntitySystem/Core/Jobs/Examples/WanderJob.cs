@@ -1,47 +1,70 @@
 using UnityEngine;
 using EntitySystem.Core.Interfaces;
 using EntitySystem.Components.Movement;
+using EntitySystem.Core.World;
+using System.Collections.Generic;
 
 namespace EntitySystem.Core.Jobs
 {
     public class WanderJob : Job
     {
-        private float _wanderRadius = 10f;
-        private bool _hasDestination = false;
+        private readonly IWorldAccess _worldAccess;
+        private const float WANDER_RADIUS = 5f;
+        private bool _pathSet = false;
 
-        public WanderJob() : base(JobPriorities.WANDER, isPersonal: true)
+        public WanderJob(IWorldAccess worldAccess) : base(JobPriorities.WANDER, false)
         {
-        }
-
-        public override bool CanExecute(IEntity entity)
-        {
-            return entity.HasComponent<MovementComponent>();
+            _worldAccess = worldAccess;
         }
 
         public override JobStatus Execute(IEntity entity)
         {
             var movement = entity.GetComponent<MovementComponent>();
+            if (movement == null) return JobStatus.Failed;
 
-            // If we haven't picked a destination yet
-            if (!_hasDestination)
+            // If we haven't set a path yet, try to find one
+            if (!_pathSet)
             {
-                // Pick random point around current position
-                var randomAngle = Random.Range(0f, 360f);
-                var randomDistance = Random.Range(0f, _wanderRadius);
-                var offset = Quaternion.Euler(0, randomAngle, 0) * Vector3.forward * randomDistance;
-                _targetPosition = entity.Position + offset;
-                
-                // Let MovementComponent handle all the validation and pathfinding
-                if (movement.SetDestination(_targetPosition))
+                // Try multiple times to find a valid path
+                for (int i = 0; i < 5; i++)
                 {
-                    _hasDestination = true;
-                    return JobStatus.InProgress;
+                    Vector2 randomDir = Random.insideUnitCircle.normalized;
+                    Vector3 currentPos = entity.GameObject.transform.position;
+                    
+                    Vector3 targetXZ = new Vector3(
+                        currentPos.x + (randomDir.x * WANDER_RADIUS),
+                        0,
+                        currentPos.z + (randomDir.y * WANDER_RADIUS)
+                    );
+
+                    int groundY = _worldAccess.GetHighestSolidBlock(
+                        Mathf.RoundToInt(targetXZ.x),
+                        Mathf.RoundToInt(targetXZ.z)
+                    );
+
+                    if (groundY >= 0)
+                    {
+                        Vector3 targetPos = new Vector3(targetXZ.x, groundY + 1, targetXZ.z);
+                        var pathFinder = new PathFinder(_worldAccess);
+                        var path = pathFinder.FindPath(entity.Position, targetPos);
+                        
+                        if (path != null && path.Count > 0)
+                        {
+                            movement.SetPath(path);
+                            _pathSet = true;
+                            break;
+                        }
+                    }
                 }
-                
-                return JobStatus.Failed;
+
+                // If we couldn't find a path after all attempts
+                if (!_pathSet)
+                {
+                    return JobStatus.Failed;
+                }
             }
 
-            // Let MovementComponent handle the actual movement
+            // Check if we've reached our destination
             if (!movement.IsMoving())
             {
                 return JobStatus.Completed;

@@ -73,8 +73,8 @@ namespace EntitySystem.Core
                 var pooledEntity = pool.Dequeue();
                 if (pooledEntity is T typedEntity)
                 {
-                    typedEntity.Position = position;
-                    typedEntity.SetState(EntityState.Active);
+                    pooledEntity.GameObject.transform.position = position;
+                    pooledEntity.SetState(EntityState.Active);
                     return typedEntity;
                 }
                 pool.Enqueue(pooledEntity);
@@ -114,7 +114,6 @@ namespace EntitySystem.Core
                 go.transform.position = position;
                 entity.Initialize(go);
                 
-                // Set entity to active state after initialization
                 entity.SetState(EntityState.Active);
                 _activeEntities.Add(entity);
                 
@@ -187,7 +186,7 @@ namespace EntitySystem.Core
         {
             float sqrRadius = radius * radius;
             return _activeEntities.Where(e => 
-                (e.Position - position).sqrMagnitude <= sqrRadius);
+                (e.GameObject.transform.position - position).sqrMagnitude <= sqrRadius);
         }
 
         public JobSystem GetJobSystem() => jobSystem;

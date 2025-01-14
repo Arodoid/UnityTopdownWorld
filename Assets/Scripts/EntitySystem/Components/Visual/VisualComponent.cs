@@ -7,7 +7,7 @@ namespace EntitySystem.Components.Visual
     public class VisualComponent : GameComponent, IPositionAwareComponent
     {
         private SpriteRenderer _spriteRenderer;
-        private float _yOffset = 0.2f;  // Higher above ground
+        private float _yOffset = 0.001f;  // Higher above ground
         
         private static readonly Color[] DEBUG_COLORS = new[] {
             Color.blue,

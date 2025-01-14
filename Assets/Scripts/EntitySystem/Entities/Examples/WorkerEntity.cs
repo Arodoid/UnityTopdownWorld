@@ -2,7 +2,6 @@ using EntitySystem.Core;
 using EntitySystem.Components.Jobs;
 using EntitySystem.Components.Movement;
 using EntitySystem.Components.Visual;
-using EntitySystem.Components.AI;
 
 namespace EntitySystem.Entities.Examples
 {
@@ -14,7 +13,7 @@ namespace EntitySystem.Entities.Examples
         {
             // Add required components
             AddComponent<MovementComponent>();
-            AddComponent<WanderBehaviorComponent>();
+            AddComponent<JobComponent>();
             AddComponent<VisualComponent>();
         }
     }

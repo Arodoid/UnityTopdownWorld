@@ -10,7 +10,7 @@ namespace EntitySystem.Core
     public abstract class Entity : IEntity
     {
         public long Id { get; private set; }
-        public Vector3 Position { get; set; }
+        public Vector3 Position => GameObject?.transform.position ?? Vector3.zero;
         public EntityState State { get; private set; }
         public bool IsActive => State == EntityState.Active;
         
@@ -162,24 +162,6 @@ namespace EntitySystem.Core
             else if (oldState == EntityState.Active)
             {
                 Manager.UnregisterFromTicks(this);
-            }
-        }
-
-        public void UpdatePosition(Vector3 newPosition)
-        {
-            if (Position == newPosition) return;
-            
-            var oldPosition = Position;
-            Position = newPosition;
-            
-            if (GameObject != null)
-            {
-                GameObject.transform.position = newPosition;
-            }
-            
-            foreach (var component in _componentsList)
-            {
-                (component as IPositionAwareComponent)?.OnPositionChanged(oldPosition, newPosition);
             }
         }
     }

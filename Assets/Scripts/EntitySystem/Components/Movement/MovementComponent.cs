@@ -1,62 +1,74 @@
 using UnityEngine;
 using System.Collections.Generic;
 using EntitySystem.Core;
-using EntitySystem.Core.World;
-using Unity.Mathematics;
 
 namespace EntitySystem.Components.Movement
 {
-    public class MovementComponent : EntityComponent
+    public class MovementComponent : GameComponent
     {
-        private float _speed = 5f;
-        private Vector3? _destination;
-        private bool _isMoving;
-        private PathFinder _pathFinder;
-        private bool _debugMode = true;
         private List<Vector3> _currentPath;
-        private int _currentWaypoint;
+        private int _currentPathIndex;
+        private bool _isMoving;
+        private float _moveSpeed = 25f;
+        private float _pathPointThreshold = 0.1f;
+        private Vector3? _currentTarget;
 
-        public override void Initialize(Entity entity)
-        {
-            base.Initialize(entity);
-            _pathFinder = new PathFinder(Entity.Manager.GetWorldAccess());
-        }
+        public bool IsMoving() => _isMoving;
 
-        public bool SetDestination(Vector3 destination)
+        public void SetPath(List<Vector3> path)
         {
-            if (!_pathFinder.IsPathPossible(Entity.Position, destination))
+            if (path == null || path.Count == 0)
             {
-                if (_debugMode) Debug.LogWarning($"[Entity {Entity.Id}] No valid path to {destination}");
-                return false;
+                StopMoving();
+                return;
             }
 
-            _currentPath = _pathFinder.FindPath(Entity.Position, destination);
-            _currentWaypoint = 0;
+            _currentPath = path;
+            _currentPathIndex = 0;
             _isMoving = true;
-            return true;
+            _currentTarget = _currentPath[0];
+            Debug.Log($"Entity {Entity.Id} starting new path with {path.Count} waypoints");
+        }
+
+        public void StopMoving()
+        {
+            _currentPath = null;
+            _currentTarget = null;
+            _isMoving = false;
         }
 
         protected override void OnTickInternal()
         {
-            if (!_isMoving || _currentPath == null) return;
+            if (!_isMoving || !_currentTarget.HasValue) return;
 
-            // Move towards current waypoint
-            Vector3 target = _currentPath[_currentWaypoint];
-            Vector3 direction = (target - Entity.Position).normalized;
-            Entity.Position += direction * Time.deltaTime * _speed;
+            Vector3 currentPos = Transform.position;
+            Vector3 targetPos = _currentTarget.Value;
+            
+            float distanceToTarget = Vector3.Distance(
+                new Vector3(currentPos.x, targetPos.y, currentPos.z),
+                targetPos);
 
-            // Check if reached waypoint
-            if (Vector3.Distance(Entity.Position, target) < 0.1f)
+            if (distanceToTarget <= _pathPointThreshold)
             {
-                _currentWaypoint++;
-                if (_currentWaypoint >= _currentPath.Count)
+                _currentPathIndex++;
+                
+                if (_currentPath != null && _currentPathIndex < _currentPath.Count)
                 {
-                    _isMoving = false;
-                    _currentPath = null;
+                    _currentTarget = _currentPath[_currentPathIndex];
+                }
+                else
+                {
+                    StopMoving();
+                    return;
                 }
             }
-        }
 
-        public bool IsMoving() => _isMoving;
+            // Calculate movement
+            Vector3 moveDirection = (targetPos - currentPos).normalized;
+            Vector3 newPosition = currentPos + (moveDirection * _moveSpeed * Time.deltaTime);
+            
+            // Only update Transform
+            Transform.position = newPosition;
+        }
     }
 }

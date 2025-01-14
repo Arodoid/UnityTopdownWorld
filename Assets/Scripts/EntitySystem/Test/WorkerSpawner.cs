@@ -10,7 +10,6 @@ using Random = UnityEngine.Random;
 public class WorkerSpawner : EntitySpawner
 {
     [Header("Test Settings")]
-    [SerializeField] private bool spawnTestJobs = true;
     [SerializeField] private float jobSpawnInterval = 5f;
     
     private float _nextJobTime;
@@ -55,11 +54,8 @@ public class WorkerSpawner : EntitySpawner
 
     private void Update()
     {
-        if (!IsInitialized || !_canSpawnJobs || !spawnTestJobs) return;
-
         if (Time.time >= _nextJobTime)
         {
-            // SpawnTestJob();
             _nextJobTime = Time.time + jobSpawnInterval;
         }
     }
@@ -85,50 +81,44 @@ public class WorkerSpawner : EntitySpawner
 
     private Vector3? GetValidSpawnPosition()
     {
+        PathFinder pathFinder = new PathFinder(_worldAccess);
+        pathFinder.EnableDebugMode(true);
+        
         for (int attempts = 0; attempts < 10; attempts++)
         {
-            Vector3 testPos = transform.position + Random.insideUnitSphere * spawnRadius;
-            testPos.y = 100; // Start high
-
-            if (_worldAccess != null)
+            // Get random XZ position within spawn radius (using whole numbers)
+            Vector2 randomCircle = Random.insideUnitCircle * spawnRadius;
+            Vector3Int testPos = new Vector3Int(
+                Mathf.RoundToInt(transform.position.x + randomCircle.x),
+                0,
+                Mathf.RoundToInt(transform.position.z + randomCircle.y)
+            );
+            
+            // Get the highest solid block at this XZ coordinate
+            int highestBlock = _worldAccess.GetHighestSolidBlock(testPos.x, testPos.z);
+            if (highestBlock < 0)
             {
-                int3 blockPos = new int3(
-                    Mathf.FloorToInt(testPos.x),
-                    Mathf.FloorToInt(testPos.y),
-                    Mathf.FloorToInt(testPos.z)
-                );
+                Debug.LogWarning($"No ground found at ({testPos.x}, {testPos.z})");
+                continue;
+            }
 
-                int groundY = _worldAccess.GetHighestSolidBlock(blockPos.x, blockPos.z);
-                if (groundY >= 0)
-                {
-                    return new Vector3(testPos.x, groundY + 1, testPos.z);
-                }
-            }
-            else
+            // Position should be exactly one block above the ground
+            Vector3Int spawnPos = new Vector3Int(testPos.x, highestBlock + 1, testPos.z);
+            
+            // Double check the position is valid
+            if (!_worldAccess.IsBlockSolid(new int3(spawnPos.x, spawnPos.y - 1, spawnPos.z)) ||  // Ground block should be solid
+                _worldAccess.IsBlockSolid(new int3(spawnPos.x, spawnPos.y, spawnPos.z)) ||       // Feet position should be clear
+                _worldAccess.IsBlockSolid(new int3(spawnPos.x, spawnPos.y + 1, spawnPos.z)))     // Head position should be clear
             {
-                testPos.y = 0;
-                return testPos;
+                Debug.LogWarning($"Invalid spawn position at {spawnPos}");
+                continue;
             }
+
+            Debug.Log($"Found valid spawn position at {spawnPos} (ground at Y={highestBlock})");
+            return spawnPos;
         }
         
+        Debug.LogWarning($"Failed to find valid spawn position after 10 attempts");
         return null;
     }
-
-    // private void SpawnTestJob()
-    // {
-    //     // Spawn multiple jobs concentrated around a point high in the air
-    //     Vector3 jobCenter = new Vector3(0, -50, 0);
-    //     float jobSpreadRadius = 10f; // Smaller radius for more concentration
-
-    //     for (int i = 0; i < 3; i++)
-    //     {
-    //         // Create random position around jobCenter
-    //         var randomOffset = Random.insideUnitSphere * jobSpreadRadius;
-    //         var jobPosition = jobCenter + randomOffset;
-            
-    //         var chopJob = new ChopTreeJob(jobPosition);
-    //         EntityManager.GetJobSystem().AddGlobalJob(chopJob);
-            
-    //     }
-    // }
 }
