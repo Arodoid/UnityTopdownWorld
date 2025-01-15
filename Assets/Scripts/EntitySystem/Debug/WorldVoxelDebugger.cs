@@ -12,12 +12,13 @@ namespace EntitySystem.Debugging
         [SerializeField] [Range(0f, 1f)] private float gizmoAlpha = 0.3f;
         [SerializeField] private GameManager gameManager;
         
-        private BlockWorldAccess _worldAccess;
+        private DirectWorldAccess _worldAccess;
         private Color _solidColor;
         private Color _airColor;
 
         private void Start()
         {
+            _worldAccess = Object.FindFirstObjectByType<GameManager>().WorldAccess;
             _solidColor = new Color(1f, 0f, 0f, gizmoAlpha);
             _airColor = new Color(0f, 1f, 0f, gizmoAlpha);
         }

@@ -25,19 +25,19 @@ MonoBehaviour:
     Lacunarity: 2
     Seed: 42
   BiomeNoiseSettings:
-    Scale: 3
+    Scale: 1
     Amplitude: 1
     Frequency: 0.01
     Octaves: 4
     Persistence: 0.5
     Lacunarity: 2
-    Seed: 42
+    Seed: 223
   BiomeFalloff: 35.5
   Biomes:
   - BiomeId: 0
     Temperature: 1
     Humidity: 1
-    Continentalness: 0.6
+    Continentalness: 0.1
     DensitySettings:
       DeepStart: 4
       CaveStart: 10

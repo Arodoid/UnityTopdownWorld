@@ -9,13 +9,21 @@ namespace EntitySystem.Core.World
 {
     public class PathFinder
     {
-        private readonly IWorldAccess _worldAccess;
+        private readonly DirectWorldAccess _worldAccess;
         private const int MAX_JUMP_HEIGHT = 1;
         private const int MAX_FALL_HEIGHT = 4;
-        private const int MAX_ITERATIONS = 200;
+        private const int MAX_ITERATIONS = 1000;
         private const int MAX_SEARCH_DISTANCE = 32;
         private bool _debugMode = false;
         private const float DIAGONAL_COST = 1.4f;
+        
+        // Debug settings
+        private const float DEBUG_PATH_DURATION = 3f;
+        private static readonly Color PATH_COLOR = new Color(0, 1, 0, 0.8f);    // Green
+        private static readonly Color ATTEMPT_COLOR = new Color(1, 0, 0, 0.3f); // Red
+        private static readonly Color SUCCESS_COLOR = new Color(0, 1, 0, 0.3f); // Green
+        private static readonly Color START_COLOR = Color.blue;
+        private static readonly Color END_COLOR = Color.yellow;
 
         private class PathNode
         {
@@ -31,7 +39,7 @@ namespace EntitySystem.Core.World
             }
         }
 
-        public PathFinder(IWorldAccess worldAccess)
+        public PathFinder(DirectWorldAccess worldAccess)
         {
             _worldAccess = worldAccess;
         }
@@ -44,37 +52,77 @@ namespace EntitySystem.Core.World
 
         public List<Vector3> FindPath(Vector3 start, Vector3 end)
         {
+            if (_debugMode)
+            {
+                // Draw start and end points
+                Debug.DrawLine(start, start + Vector3.up * 2f, START_COLOR, DEBUG_PATH_DURATION);
+                Debug.DrawLine(end, end + Vector3.up * 2f, END_COLOR, DEBUG_PATH_DURATION);
+                DebugDrawCube(start, 0.5f, START_COLOR);
+                DebugDrawCube(end, 0.5f, END_COLOR);
+            }
+
             var startPos = ValidatePosition(start);
             var endPos = ValidatePosition(end);
 
-            if (!startPos.HasValue || !endPos.HasValue) return null;
+            if (!startPos.HasValue || !endPos.HasValue)
+            {
+                return null;
+            }
+
+            // Quick check before attempting expensive pathfinding
+            if (!IsPathPossibleQuick(startPos.Value, endPos.Value))
+            {
+                if (_debugMode) Debug.Log($"Path rejected early: distance={Vector3Int.Distance(startPos.Value, endPos.Value)}, heightDiff={Mathf.Abs(endPos.Value.y - startPos.Value.y)}");
+                return null;
+            }
 
             return FindPathInternal(startPos.Value, endPos.Value);
         }
 
-        public Vector3? FindRandomAccessiblePosition(Vector3 center, float minRadius, float maxRadius, int maxAttempts = 10)
+        public List<Vector3> FindRandomAccessiblePosition(Vector3 startPos, float minRadius, float maxRadius)
         {
-            var validCenterPos = ValidatePosition(center);
-            if (!validCenterPos.HasValue) return null;
+            // Try a few different angles for better distribution
+            float[] angles = { 0, 45, 90, 135, 180, 225, 270, 315 };
+            angles = angles.OrderBy(x => Random.value).ToArray(); // Shuffle angles
 
-            for (int i = 0; i < maxAttempts; i++)
+            foreach (float angle in angles)
             {
-                // Generate random position
-                float angle = Random.Range(0f, 360f);
+                // Try different distances from min to max
                 float distance = Random.Range(minRadius, maxRadius);
-                Vector3 offset = Quaternion.Euler(0, angle, 0) * Vector3.forward * distance;
-                Vector3 targetPos = center + offset;
+                
+                // Calculate target using angle and distance
+                float radian = angle * Mathf.Deg2Rad;
+                Vector3 offset = new Vector3(
+                    Mathf.Cos(radian) * distance,
+                    0,
+                    Mathf.Sin(radian) * distance
+                );
+                
+                Vector3 targetPos = startPos + offset;
+                
+                // Find ground height at target
+                int groundY = _worldAccess.GetHighestSolidBlock(
+                    Mathf.RoundToInt(targetPos.x),
+                    Mathf.RoundToInt(targetPos.z)
+                );
 
-                var validTargetPos = ValidatePosition(targetPos);
-                if (!validTargetPos.HasValue) continue;
-
-                // Try to find a path between the positions
-                var path = FindPathInternal(validCenterPos.Value, validTargetPos.Value);
-                if (path != null && path.Count > 0)
+                if (groundY >= 0)
                 {
-                    // Return the world position (center of block)
-                    return validTargetPos.Value + new Vector3(0.5f, 0, 0.5f);
+                    targetPos.y = groundY + 1; // One block above ground
+                    
+                    // Check if we can actually get there
+                    var path = FindPath(startPos, targetPos);
+                    if (path != null && path.Count > 0)
+                    {
+                        return path;
+                    }
                 }
+            }
+
+            // If we couldn't find a path in any direction, try closer
+            if (minRadius > 2)
+            {
+                return FindRandomAccessiblePosition(startPos, 2, minRadius);
             }
 
             return null;
@@ -82,9 +130,6 @@ namespace EntitySystem.Core.World
 
         private Vector3Int? ValidatePosition(Vector3 position)
         {
-            // Debug the incoming position
-            if (_debugMode)
-                Debug.Log($"Validating position: {position}");
 
             // Round to nearest block position instead of floor
             var posInt = new Vector3Int(
@@ -96,16 +141,12 @@ namespace EntitySystem.Core.World
             // Find the ground position
             var groundPos = GetValidGroundPosition(posInt);
             
-            if (_debugMode && !groundPos.HasValue)
-                Debug.Log($"No valid ground found for position: {posInt}");
             
             return groundPos.HasValue ? Vector3Int.RoundToInt(groundPos.Value) : null;
         }
 
         private Vector3? GetValidGroundPosition(Vector3Int pos)
         {
-            if (_debugMode)
-                Debug.Log($"Finding ground at: {pos}");
 
             // Get the actual ground height
             int groundHeight = _worldAccess.GetHighestSolidBlock(pos.x, pos.z);
@@ -172,9 +213,9 @@ namespace EntitySystem.Core.World
                    !_worldAccess.IsBlockSolid(new int3(pos.x, pos.y + 1, pos.z));
         }
 
-        public void EnableDebugMode(bool enable)
+        public void EnableDebugMode(bool enabled)
         {
-            _debugMode = enable;
+            _debugMode = enabled;
         }
 
         private List<Vector3> FindPathInternal(Vector3Int start, Vector3Int end)
@@ -245,6 +286,21 @@ namespace EntitySystem.Core.World
                         neighborNode.Parent = current;
                     }
                 }
+
+                // Draw attempted paths during search
+                if (_debugMode)
+                {
+                    foreach (var node in openSet)
+                    {
+                        if (node.Parent != null)
+                        {
+                            Vector3 from = ToWorldPosition(node.Parent.Position);
+                            Vector3 to = ToWorldPosition(node.Position);
+                            Debug.DrawLine(from, to, ATTEMPT_COLOR, DEBUG_PATH_DURATION);
+                            DebugDrawCube(to, 0.2f, ATTEMPT_COLOR);
+                        }
+                    }
+                }
             }
 
             if (iterations >= MAX_ITERATIONS)
@@ -274,18 +330,16 @@ namespace EntitySystem.Core.World
         {
             var neighbors = new List<Vector3Int>();
             
-            if (Mathf.Abs(pos.x) > MAX_SEARCH_DISTANCE || Mathf.Abs(pos.z) > MAX_SEARCH_DISTANCE)
-            {
-                return neighbors;
-            }
-
-            // Include diagonal movements
+            // Check closer neighbors first
             var horizontalOffsets = new[]
             {
-                new Vector3Int(1, 0, 0),   // Right
-                new Vector3Int(-1, 0, 0),  // Left
+                // Cardinal directions first (less expensive)
                 new Vector3Int(0, 0, 1),   // Forward
                 new Vector3Int(0, 0, -1),  // Back
+                new Vector3Int(1, 0, 0),   // Right
+                new Vector3Int(-1, 0, 0),  // Left
+                
+                // Diagonals last (more expensive)
                 new Vector3Int(1, 0, 1),   // Right-Forward
                 new Vector3Int(1, 0, -1),  // Right-Back
                 new Vector3Int(-1, 0, 1),  // Left-Forward
@@ -301,19 +355,32 @@ namespace EntitySystem.Core.World
                     Mathf.Abs(neighborPos.z) > MAX_SEARCH_DISTANCE)
                     continue;
 
-                // Check for valid ground within acceptable height range
-                for (int y = pos.y + MAX_JUMP_HEIGHT; y >= pos.y - MAX_FALL_HEIGHT; y--)
+                // Start from current height and work down
+                // This prioritizes flatter paths
+                for (int y = pos.y; y >= pos.y - MAX_FALL_HEIGHT; y--)
                 {
                     var testPos = new Vector3Int(neighborPos.x, y, neighborPos.z);
                     
-                    // Check if we can stand here
-                    if (_worldAccess.CanStandAt(new int3(testPos.x, testPos.y, testPos.z)))
+                    if (_worldAccess.CanStandAt(new int3(testPos.x, testPos.y, testPos.z)) &&
+                        HasValidHeadroom(testPos))
                     {
-                        // Verify headroom
-                        if (HasValidHeadroom(testPos))
+                        neighbors.Add(testPos);
+                        break; // Found valid position, stop checking lower heights
+                    }
+                }
+
+                // Only check upward if we haven't found a valid position
+                if (!neighbors.Contains(neighborPos))
+                {
+                    for (int y = pos.y + 1; y <= pos.y + MAX_JUMP_HEIGHT; y++)
+                    {
+                        var testPos = new Vector3Int(neighborPos.x, y, neighborPos.z);
+                        
+                        if (_worldAccess.CanStandAt(new int3(testPos.x, testPos.y, testPos.z)) &&
+                            HasValidHeadroom(testPos))
                         {
                             neighbors.Add(testPos);
-                            break; // Found valid position, stop checking heights
+                            break;
                         }
                     }
                 }
@@ -392,6 +459,70 @@ namespace EntitySystem.Core.World
             
             // Apply height penalty
             return dx + dz + (dy * 2f);
+        }
+
+        private void DrawPath(List<Vector3> path)
+        {
+            if (path == null || path.Count < 2) return;
+
+            // Draw path segments
+            for (int i = 0; i < path.Count - 1; i++)
+            {
+                Vector3 from = path[i];
+                Vector3 to = path[i + 1];
+                
+                // Draw line segment
+                Debug.DrawLine(from, to, PATH_COLOR, DEBUG_PATH_DURATION);
+                
+                // Draw waypoint marker
+                DebugDrawCube(from, 0.3f, PATH_COLOR);
+            }
+            
+            // Draw final waypoint
+            DebugDrawCube(path[path.Count - 1], 0.3f, PATH_COLOR);
+        }
+
+        private Vector3 ToWorldPosition(Vector3Int pos)
+        {
+            return new Vector3(pos.x + 0.5f, pos.y + 0.5f, pos.z + 0.5f);
+        }
+
+        private void DebugDrawCube(Vector3 position, float size, Color color)
+        {
+            Vector3 halfSize = Vector3.one * size * 0.5f;
+            
+            // Bottom face
+            Debug.DrawLine(position - halfSize, position + new Vector3(size, -halfSize.y, -halfSize.z), color, DEBUG_PATH_DURATION);
+            Debug.DrawLine(position + new Vector3(halfSize.x, -halfSize.y, -halfSize.z), position + new Vector3(halfSize.x, -halfSize.y, halfSize.z), color, DEBUG_PATH_DURATION);
+            Debug.DrawLine(position + new Vector3(halfSize.x, -halfSize.y, halfSize.z), position + new Vector3(-halfSize.x, -halfSize.y, halfSize.z), color, DEBUG_PATH_DURATION);
+            Debug.DrawLine(position + new Vector3(-halfSize.x, -halfSize.y, halfSize.z), position - halfSize, color, DEBUG_PATH_DURATION);
+            
+            // Top face
+            Debug.DrawLine(position + new Vector3(-halfSize.x, halfSize.y, -halfSize.z), position + new Vector3(halfSize.x, halfSize.y, -halfSize.z), color, DEBUG_PATH_DURATION);
+            Debug.DrawLine(position + new Vector3(halfSize.x, halfSize.y, -halfSize.z), position + new Vector3(halfSize.x, halfSize.y, halfSize.z), color, DEBUG_PATH_DURATION);
+            Debug.DrawLine(position + new Vector3(halfSize.x, halfSize.y, halfSize.z), position + new Vector3(-halfSize.x, halfSize.y, halfSize.z), color, DEBUG_PATH_DURATION);
+            Debug.DrawLine(position + new Vector3(-halfSize.x, halfSize.y, halfSize.z), position + new Vector3(-halfSize.x, halfSize.y, -halfSize.z), color, DEBUG_PATH_DURATION);
+            
+            // Vertical edges
+            Debug.DrawLine(position - halfSize, position + new Vector3(-halfSize.x, halfSize.y, -halfSize.z), color, DEBUG_PATH_DURATION);
+            Debug.DrawLine(position + new Vector3(halfSize.x, -halfSize.y, -halfSize.z), position + new Vector3(halfSize.x, halfSize.y, -halfSize.z), color, DEBUG_PATH_DURATION);
+            Debug.DrawLine(position + new Vector3(halfSize.x, -halfSize.y, halfSize.z), position + new Vector3(halfSize.x, halfSize.y, halfSize.z), color, DEBUG_PATH_DURATION);
+            Debug.DrawLine(position + new Vector3(-halfSize.x, -halfSize.y, halfSize.z), position + new Vector3(-halfSize.x, halfSize.y, halfSize.z), color, DEBUG_PATH_DURATION);
+        }
+
+        // Add early exit for impossible paths
+        private bool IsPathPossibleQuick(Vector3Int start, Vector3Int end)
+        {
+            // If too far apart, don't even try
+            if (Vector3Int.Distance(start, end) > MAX_SEARCH_DISTANCE)
+                return false;
+
+            // If height difference is too extreme
+            int heightDiff = Mathf.Abs(end.y - start.y);
+            if (heightDiff > MAX_JUMP_HEIGHT + MAX_FALL_HEIGHT)
+                return false;
+
+            return true;
         }
     }
 }

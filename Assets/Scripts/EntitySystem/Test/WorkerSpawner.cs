@@ -13,7 +13,7 @@ public class WorkerSpawner : EntitySpawner
     [SerializeField] private float jobSpawnInterval = 5f;
     
     private float _nextJobTime;
-    private IWorldAccess _worldAccess;
+    private DirectWorldAccess _worldAccess;
     private bool _canSpawnJobs;
 
     protected override void OnSystemInitialized()

@@ -1,5 +1,6 @@
 using EntitySystem.Core;
 using EntitySystem.Core.Jobs;
+using EntitySystem.Core.World;
 using UnityEngine;
 
 namespace EntitySystem.Components.Jobs
@@ -10,10 +11,10 @@ namespace EntitySystem.Components.Jobs
         private int _ticksSinceLastJob;
         private const int MIN_TICKS_BETWEEN_JOBS = 10;
 
+        public Job CurrentJob => _currentJob;
+
         protected override void OnTickInternal()
         {
-            Debug.Log($"JobComponent Tick - Entity {Entity.Id} - Current Job: {(_currentJob != null ? "Active" : "None")}");
-
             if (_currentJob != null)
             {
                 var status = _currentJob.Execute(Entity);

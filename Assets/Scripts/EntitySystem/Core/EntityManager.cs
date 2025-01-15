@@ -18,7 +18,7 @@ namespace EntitySystem.Core
         
         [SerializeField] private int initialPoolSize = 100;
         [SerializeField] private TickManager tickManager;
-        private IWorldAccess _worldAccess;
+        private DirectWorldAccess _worldAccess;
         public bool IsInitialized { get; private set; }
         [SerializeField] private JobSystem jobSystem;
 
@@ -54,13 +54,13 @@ namespace EntitySystem.Core
             return _entityPools[type];
         }
 
-        public void Initialize(IWorldAccess worldAccess)
+        public void Initialize(DirectWorldAccess worldAccess)
         {
             _worldAccess = worldAccess;
             IsInitialized = true;
         }
 
-        public IWorldAccess GetWorldAccess()
+        public DirectWorldAccess GetWorldAccess()
         {
             return _worldAccess;
         }
@@ -190,5 +190,26 @@ namespace EntitySystem.Core
         }
 
         public JobSystem GetJobSystem() => jobSystem;
+
+        public Entity GetEntitiesInCell(int x, int z)
+        {
+            // Find first entity in this cell
+            foreach (var entityPair in _entities)
+            {
+                var entity = entityPair.Value as Entity;
+                if (entity == null) continue;
+                
+                var transform = entity.GameObject.transform;
+                Vector3 pos = transform.position;
+                int entityX = Mathf.RoundToInt(pos.x);
+                int entityZ = Mathf.RoundToInt(pos.z);
+                
+                if (entityX == x && entityZ == z)
+                {
+                    return entity;
+                }
+            }
+            return null;
+        }
     }
 }

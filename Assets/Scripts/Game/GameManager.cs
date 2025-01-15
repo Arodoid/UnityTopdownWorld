@@ -18,12 +18,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] private string worldName = "TestWorld";
     [SerializeField] private bool createNewWorld = true;
 
-    private BlockWorldAccess _worldAccess;
+    private DirectWorldAccess _worldAccess;
     private bool _isInitialized;
 
     public bool IsInitialized => _isInitialized;
-    public BlockWorldAccess WorldAccess => _worldAccess ?? 
-        (_worldAccess = new BlockWorldAccess(chunkManager));
+    public DirectWorldAccess WorldAccess => _worldAccess ?? 
+        (_worldAccess = new DirectWorldAccess(chunkManager));
 
     private void Start()
     {
@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviour
     {
         yield return WaitForChunkManager();
         
-        _worldAccess = new BlockWorldAccess(chunkManager);
+        _worldAccess = new DirectWorldAccess(chunkManager);
         
         if (!InitializeEntitySystem())
         {
