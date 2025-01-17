@@ -2,6 +2,7 @@ using EntitySystem.Core;
 using EntitySystem.Core.Jobs;
 using EntitySystem.Core.World;
 using UnityEngine;
+using WorldSystem;
 
 namespace EntitySystem.Components.Jobs
 {
@@ -41,8 +42,8 @@ namespace EntitySystem.Components.Jobs
 
             if (_currentJob == null)
             {
-                var worldAccess = Entity.Manager.GetWorldAccess();
-                _currentJob = new WanderJob(worldAccess);
+                var worldSystem = Entity.Manager.GetWorldSystem();
+                _currentJob = new WanderJob(worldSystem);
             }
         }
     }

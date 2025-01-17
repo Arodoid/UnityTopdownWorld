@@ -14,7 +14,7 @@ namespace WorldSystem.Generation
 
         [Tooltip("How frequently the pattern repeats")]
         public float Frequency;
-
+         
         [Tooltip("Number of noise layers (more = more detail)")]
         public int Octaves;
 

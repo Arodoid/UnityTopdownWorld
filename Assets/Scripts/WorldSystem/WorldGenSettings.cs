@@ -12,7 +12,7 @@ namespace WorldSystem.Generation
 
         [Header("Ocean Settings")]
         public float SeaLevel = 64f;
-        public float OceanThreshold = 0.45f;   // Keep for ocean biome determination
+        public float OceanThreshold = 0.45f;
 
         [Header("Global 3D Terrain Settings")]
         public NoiseSettings GlobalDensityNoise = new NoiseSettings
@@ -38,10 +38,11 @@ namespace WorldSystem.Generation
             Seed = 42         
         };
 
-        [Tooltip("Higher values make biome transitions sharper (default: 1)")]
+        [Tooltip("Higher values make biome transitions sharper")]
         [Range(0.1f, 100f)]
         public float BiomeFalloff = 1f;
 
+        [Header("Biome Definitions")]
         public BiomeSettings[] Biomes;
 
         private void OnValidate()
@@ -68,7 +69,10 @@ namespace WorldSystem.Generation
                             SurfaceBias = 0.5f,
                             DeepTransitionScale = 0.1f,
                             CaveTransitionScale = 1f,
-                            AirTransitionScale = 0.1f
+                            AirTransitionScale = 0.1f,
+                            DeepTransitionCurve = 1f,
+                            CaveTransitionCurve = 1f,
+                            AirTransitionCurve = 1f
                         },
                         PrimaryBlock = BlockType.Dirt,
                         SecondaryBlock = BlockType.Stone,

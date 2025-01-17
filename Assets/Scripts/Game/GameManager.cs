@@ -2,10 +2,12 @@ using UnityEngine;
 using System.Collections;
 using System.Threading.Tasks;
 using WorldSystem;
+using WorldSystem.Implementation;
 using EntitySystem.Core;
 using EntitySystem.Core.World;
 using EntitySystem.Core.Spawning;
 using WorldSystem.Base;
+using WorldSystem.Generation;
 
 public class GameManager : MonoBehaviour
 {
@@ -17,26 +19,54 @@ public class GameManager : MonoBehaviour
     [Header("World Settings")]
     [SerializeField] private string worldName = "TestWorld";
     [SerializeField] private bool createNewWorld = true;
+    [SerializeField] private WorldGenSettings worldGenSettings;
 
-    private DirectWorldAccess _worldAccess;
+    private IWorldSystem _worldSystem;
     private bool _isInitialized;
 
     public bool IsInitialized => _isInitialized;
-    public DirectWorldAccess WorldAccess => _worldAccess ?? 
-        (_worldAccess = new DirectWorldAccess(chunkManager));
+    public IWorldSystem WorldSystem => _worldSystem;
 
     private void Start()
     {
-        InitializeWorld();
+        if (!ValidateReferences()) return;
         
+        InitializeWorld();
         StartCoroutine(InitializeSystems());
+    }
+
+    private bool ValidateReferences()
+    {
+        if (chunkManager == null)
+        {
+            Debug.LogError("ChunkManager reference is missing!");
+            return false;
+        }
+        if (worldGenSettings == null)
+        {
+            Debug.LogError("WorldGenSettings reference is missing!");
+            return false;
+        }
+        return true;
     }
 
     private IEnumerator InitializeSystems()
     {
-        yield return WaitForChunkManager();
+        // Create world system with existing ChunkManager
+        _worldSystem = new WorldSystemImpl(worldGenSettings, chunkManager);
         
-        _worldAccess = new DirectWorldAccess(chunkManager);
+        // Load the world
+        var loadTask = _worldSystem.LoadWorld(worldName);
+        while (!loadTask.IsCompleted)
+        {
+            yield return null;
+        }
+
+        if (!loadTask.Result)
+        {
+            Debug.LogError("Failed to load world!");
+            yield break;
+        }
         
         if (!InitializeEntitySystem())
         {
@@ -51,24 +81,9 @@ public class GameManager : MonoBehaviour
         }
         
         _isInitialized = true;
-        
         EnableSpawners();
         
         Debug.Log("Game systems initialized successfully!");
-    }
-
-    private IEnumerator WaitForChunkManager()
-    {
-        if (chunkManager == null)
-        {
-            Debug.LogError("ChunkManager reference is missing!");
-            yield break;
-        }
-
-        while (!chunkManager.IsInitialLoadComplete())
-        {
-            yield return null;
-        }
     }
 
     private bool InitializeEntitySystem()
@@ -79,7 +94,7 @@ public class GameManager : MonoBehaviour
             return false;
         }
 
-        entityManager.Initialize(_worldAccess);
+        entityManager.Initialize(_worldSystem);
         return true;
     }
 

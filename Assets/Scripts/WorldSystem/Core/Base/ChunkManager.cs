@@ -15,6 +15,10 @@ namespace WorldSystem.Base
 {
     public class ChunkManager : MonoBehaviour
     {
+        public event System.Action<int2> OnChunkLoaded;
+        public event System.Action<int2> OnChunkUnloaded;
+
+        private WorldGenSettings _worldSettings;
         private WorldGenerator _worldGenerator;
         [SerializeField] private Camera mainCamera;
         [SerializeField] private Material chunkMaterial;
@@ -61,8 +65,6 @@ namespace WorldSystem.Base
         private PriorityQueue<int2> _chunkDistanceQueue = new();
         private ChunkPool _chunkPool;
 
-        [SerializeField] private WorldGenSettings worldSettings;
-
         private Dictionary<int2, Data.ChunkData> chunks = new();
 
         // Add this field to track pending jobs
@@ -92,15 +94,10 @@ namespace WorldSystem.Base
         private ChunkPersistenceManager _persistenceManager;
         [SerializeField] private string worldName = "DefaultWorld";
 
-        void Awake()
+        public void Initialize(WorldGenSettings settings)
         {
-            if (worldSettings == null)
-            {
-                Debug.LogError("World Generation Settings not assigned!");
-                return;
-            }
-
-            _worldGenerator = new WorldGenerator(worldSettings);
+            _worldSettings = settings;
+            _worldGenerator = new WorldGenerator(_worldSettings);
             _meshBuilder = new ChunkMeshBuilder();
 
             _chunkPool = new ChunkPool(chunkMaterial, transform, poolSize, maxChunks, bufferTimeSeconds);
@@ -112,6 +109,11 @@ namespace WorldSystem.Base
             _lastOrthoSize = mainCamera.orthographicSize;
 
             _persistenceManager = new ChunkPersistenceManager(worldName);
+        }
+
+        void Awake()
+        {
+            // Remove initialization from Awake - it will be done through Initialize
         }
 
         void Update()
@@ -250,6 +252,9 @@ namespace WorldSystem.Base
             _generatedYLevels[position2D].Add(viewMaxYLevel);
 
             CreateChunkObject(position2D, chunk.blocks, default);
+
+            // Invoke the OnChunkLoaded event
+            OnChunkLoaded?.Invoke(position2D);
         }
 
         void ProcessChunkQueue()
@@ -343,6 +348,8 @@ namespace WorldSystem.Base
                 if (!_visibleChunkPositions.Contains(pos))
                 {
                     _chunkPool.DeactivateChunk(pos, yLevel);
+                    // Invoke the OnChunkUnloaded event
+                    OnChunkUnloaded?.Invoke(pos);
                 }
             }
 
@@ -591,7 +598,7 @@ namespace WorldSystem.Base
         {
             if (_worldGenerator != null)
             {
-                _worldGenerator.UpdateSettings(worldSettings);
+                _worldGenerator.UpdateSettings(_worldSettings);
                 
                 // Clear existing chunks to see new changes
                 foreach (var blocks in _chunkBlockData.Values)
@@ -748,7 +755,7 @@ namespace WorldSystem.Base
             return true;
         }
 
-        private bool IsChunkLoaded(int2 chunkPos)
+        public bool IsChunkLoaded(int2 chunkPos)
         {
             var chunk = GetChunk(chunkPos);
             return chunk.blocks.IsCreated && chunk.blocks.Length > 0;

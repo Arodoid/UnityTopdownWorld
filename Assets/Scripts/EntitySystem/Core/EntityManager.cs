@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using EntitySystem.Core.Interfaces;
 using EntitySystem.Core.Types;
-using EntitySystem.Core.World;
+using WorldSystem;
 using EntitySystem.Core.Jobs;
 
 namespace EntitySystem.Core
@@ -18,7 +18,7 @@ namespace EntitySystem.Core
         
         [SerializeField] private int initialPoolSize = 100;
         [SerializeField] private TickManager tickManager;
-        private DirectWorldAccess _worldAccess;
+        private IWorldSystem _worldSystem;
         public bool IsInitialized { get; private set; }
         [SerializeField] private JobSystem jobSystem;
 
@@ -54,15 +54,15 @@ namespace EntitySystem.Core
             return _entityPools[type];
         }
 
-        public void Initialize(DirectWorldAccess worldAccess)
+        public void Initialize(IWorldSystem worldSystem)
         {
-            _worldAccess = worldAccess;
+            _worldSystem = worldSystem;
             IsInitialized = true;
         }
 
-        public DirectWorldAccess GetWorldAccess()
+        public IWorldSystem GetWorldSystem()
         {
-            return _worldAccess;
+            return _worldSystem;
         }
 
         public T CreateEntity<T>(Vector3 position) where T : IEntity

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.Mathematics;
 using Random = UnityEngine.Random;
-using EntitySystem.Core.World;
+using WorldSystem;
 
 namespace EntitySystem.Core.World
 {
     public class PathFinder
     {
-        private readonly DirectWorldAccess _worldAccess;
+        private readonly IWorldSystem _worldSystem;
         private const int MAX_JUMP_HEIGHT = 1;
         private const int MAX_FALL_HEIGHT = 4;
         private const int MAX_ITERATIONS = 1000;
@@ -39,9 +39,9 @@ namespace EntitySystem.Core.World
             }
         }
 
-        public PathFinder(DirectWorldAccess worldAccess)
+        public PathFinder(IWorldSystem worldSystem)
         {
-            _worldAccess = worldAccess;
+            _worldSystem = worldSystem;
         }
 
         public bool IsPathPossible(Vector3 start, Vector3 end)
@@ -101,7 +101,7 @@ namespace EntitySystem.Core.World
                 Vector3 targetPos = startPos + offset;
                 
                 // Find ground height at target
-                int groundY = _worldAccess.GetHighestSolidBlock(
+                int groundY = _worldSystem.GetHighestSolidBlock(
                     Mathf.RoundToInt(targetPos.x),
                     Mathf.RoundToInt(targetPos.z)
                 );
@@ -149,7 +149,7 @@ namespace EntitySystem.Core.World
         {
 
             // Get the actual ground height
-            int groundHeight = _worldAccess.GetHighestSolidBlock(pos.x, pos.z);
+            int groundHeight = _worldSystem.GetHighestSolidBlock(pos.x, pos.z);
             
             if (groundHeight < 0)
             {
@@ -162,7 +162,7 @@ namespace EntitySystem.Core.World
             var standingPos = new Vector3Int(pos.x, groundHeight + 1, pos.z);
             
             // Verify we can actually stand here
-            if (!_worldAccess.CanStandAt(new int3(standingPos.x, standingPos.y, standingPos.z)))
+            if (!_worldSystem.CanStandAt(new int3(standingPos.x, standingPos.y, standingPos.z)))
             {
                 if (_debugMode)
                     Debug.Log($"Cannot stand at: {standingPos}");
@@ -209,8 +209,8 @@ namespace EntitySystem.Core.World
 
         private bool HasValidHeadroom(Vector3Int pos)
         {
-            return !_worldAccess.IsBlockSolid(new int3(pos.x, pos.y, pos.z)) &&
-                   !_worldAccess.IsBlockSolid(new int3(pos.x, pos.y + 1, pos.z));
+            return !_worldSystem.IsBlockSolid(new int3(pos.x, pos.y, pos.z)) &&
+                   !_worldSystem.IsBlockSolid(new int3(pos.x, pos.y + 1, pos.z));
         }
 
         public void EnableDebugMode(bool enabled)
@@ -361,7 +361,7 @@ namespace EntitySystem.Core.World
                 {
                     var testPos = new Vector3Int(neighborPos.x, y, neighborPos.z);
                     
-                    if (_worldAccess.CanStandAt(new int3(testPos.x, testPos.y, testPos.z)) &&
+                    if (_worldSystem.CanStandAt(new int3(testPos.x, testPos.y, testPos.z)) &&
                         HasValidHeadroom(testPos))
                     {
                         neighbors.Add(testPos);
@@ -376,7 +376,7 @@ namespace EntitySystem.Core.World
                     {
                         var testPos = new Vector3Int(neighborPos.x, y, neighborPos.z);
                         
-                        if (_worldAccess.CanStandAt(new int3(testPos.x, testPos.y, testPos.z)) &&
+                        if (_worldSystem.CanStandAt(new int3(testPos.x, testPos.y, testPos.z)) &&
                             HasValidHeadroom(testPos))
                         {
                             neighbors.Add(testPos);
@@ -408,7 +408,7 @@ namespace EntitySystem.Core.World
                 var abovePos = new int3(pos.x, y + 1, pos.z);
                 
                 // Look for a solid block with air above it
-                if (_worldAccess.IsBlockSolid(checkPos) && !_worldAccess.IsBlockSolid(abovePos))
+                if (_worldSystem.IsBlockSolid(checkPos) && !_worldSystem.IsBlockSolid(abovePos))
                 {
                     if (_debugMode)
                     {

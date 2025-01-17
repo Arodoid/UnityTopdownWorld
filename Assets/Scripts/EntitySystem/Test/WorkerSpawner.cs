@@ -5,6 +5,7 @@ using EntitySystem.Core.World;
 using EntitySystem.Entities.Examples;
 using EntitySystem.Core.Jobs;
 using Unity.Mathematics;
+using WorldSystem;
 using Random = UnityEngine.Random;
 
 public class WorkerSpawner : EntitySpawner
@@ -13,12 +14,12 @@ public class WorkerSpawner : EntitySpawner
     [SerializeField] private float jobSpawnInterval = 5f;
     
     private float _nextJobTime;
-    private DirectWorldAccess _worldAccess;
+    private IWorldSystem _worldSystem;
     private bool _canSpawnJobs;
 
     protected override void OnSystemInitialized()
     {
-        _worldAccess = EntityManager.GetWorldAccess();
+        _worldSystem = EntityManager.GetWorldSystem();
         
         // Verify job system is available
         if (EntityManager.GetJobSystem() != null)
@@ -39,7 +40,6 @@ public class WorkerSpawner : EntitySpawner
             return;
         }
 
-        
         // Spawn initial workers
         for (int i = 0; i < maxEntities; i++)
         {
@@ -81,7 +81,7 @@ public class WorkerSpawner : EntitySpawner
 
     private Vector3? GetValidSpawnPosition()
     {
-        PathFinder pathFinder = new PathFinder(_worldAccess);
+        PathFinder pathFinder = new PathFinder(_worldSystem);
         pathFinder.EnableDebugMode(true);
         
         for (int attempts = 0; attempts < 10; attempts++)
@@ -95,7 +95,7 @@ public class WorkerSpawner : EntitySpawner
             );
             
             // Get the highest solid block at this XZ coordinate
-            int highestBlock = _worldAccess.GetHighestSolidBlock(testPos.x, testPos.z);
+            int highestBlock = _worldSystem.GetHighestSolidBlock(testPos.x, testPos.z);
             if (highestBlock < 0)
             {
                 Debug.LogWarning($"No ground found at ({testPos.x}, {testPos.z})");
@@ -106,9 +106,9 @@ public class WorkerSpawner : EntitySpawner
             Vector3Int spawnPos = new Vector3Int(testPos.x, highestBlock + 1, testPos.z);
             
             // Double check the position is valid
-            if (!_worldAccess.IsBlockSolid(new int3(spawnPos.x, spawnPos.y - 1, spawnPos.z)) ||  // Ground block should be solid
-                _worldAccess.IsBlockSolid(new int3(spawnPos.x, spawnPos.y, spawnPos.z)) ||       // Feet position should be clear
-                _worldAccess.IsBlockSolid(new int3(spawnPos.x, spawnPos.y + 1, spawnPos.z)))     // Head position should be clear
+            if (!_worldSystem.IsBlockSolid(new int3(spawnPos.x, spawnPos.y - 1, spawnPos.z)) ||  // Ground block should be solid
+                _worldSystem.IsBlockSolid(new int3(spawnPos.x, spawnPos.y, spawnPos.z)) ||       // Feet position should be clear
+                _worldSystem.IsBlockSolid(new int3(spawnPos.x, spawnPos.y + 1, spawnPos.z)))     // Head position should be clear
             {
                 Debug.LogWarning($"Invalid spawn position at {spawnPos}");
                 continue;
