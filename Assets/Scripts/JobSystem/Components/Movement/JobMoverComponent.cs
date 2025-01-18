@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using EntitySystem.Core;
 using System.Linq;
 
-
 namespace JobSystem.Components
 {
     public class JobMoverComponent : EntityComponent
