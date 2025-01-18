@@ -5,141 +5,152 @@ using System.Linq;
 using EntitySystem.Core.Interfaces;
 using EntitySystem.Core.Types;
 using WorldSystem;
-using JobSystem.Core;
+using EntitySystem.Access;
 
 namespace EntitySystem.Core
 {
-    public class EntityManager : MonoBehaviour
+    public class EntityManager : MonoBehaviour, IEntitySystem
     {
-        private readonly Dictionary<long, IEntity> _entities = new();
-        private readonly HashSet<IEntity> _activeEntities = new();
-        private readonly Dictionary<System.Type, Queue<IEntity>> _entityPools = new();
-        private long _nextEntityId;
-        
-        [SerializeField] private int initialPoolSize = 100;
+        [Header("Required Systems")]
         [SerializeField] private TickManager tickManager;
-        private IWorldSystem _worldSystem;
-        public bool IsInitialized { get; private set; }
         [SerializeField] private JobSystem.Core.JobSystem jobSystem;
+        
+        // Simplified collections
+        private readonly Dictionary<Type, HashSet<IEntity>> _entitySets = new();
+        private readonly Dictionary<long, IEntity> _entityLookup = new();
+        private readonly HashSet<IEntity> _activeEntities = new();
+        private long _nextEntityId;
+        private IWorldSystem _worldSystem;
+        
+        private readonly Dictionary<Vector2Int, HashSet<IEntity>> _gridCells = new();
+        private const float CELL_SIZE = 1f; // Assuming 1 unit grid cells
+        
+        public bool IsInitialized { get; private set; }
 
         private void Start()
         {
-            if (tickManager == null)
-                tickManager = GetComponent<TickManager>();
-                
+            ValidateRequiredSystems();
             tickManager.OnTick += HandleTick;
         }
 
-        public void PreloadEntityPool<T>(int count) where T : IEntity
+        private void ValidateRequiredSystems()
         {
-            var pool = GetOrCreatePool<T>();
-            for (int i = 0; i < count; i++)
-            {
-                var entity = CreateEntityInternal(Vector3.zero, typeof(T));
-                if (entity != null)
-                {
-                    entity.SetState(EntityState.Pooled);
-                    pool.Enqueue(entity);
-                }
-            }
+            tickManager ??= GetComponent<TickManager>();
+            jobSystem ??= GetComponent<JobSystem.Core.JobSystem>();
+            
+            if (tickManager == null)
+                Debug.LogError($"[{gameObject.name}] TickManager reference missing!");
+            if (jobSystem == null)
+                Debug.LogError($"[{gameObject.name}] JobSystem reference missing!");
         }
 
-        private Queue<IEntity> GetOrCreatePool<T>() where T : IEntity
-        {
-            var type = typeof(T);
-            if (!_entityPools.ContainsKey(type))
-            {
-                _entityPools[type] = new Queue<IEntity>();
-            }
-            return _entityPools[type];
-        }
-
-        public void Initialize(IWorldSystem worldSystem)
+        public void Initialize(IWorldSystem worldSystem, JobSystem.Core.JobSystem jobSys = null)
         {
             _worldSystem = worldSystem;
+            if (jobSys != null) jobSystem = jobSys;
+            
+            if (jobSystem == null)
+            {
+                Debug.LogWarning($"[{gameObject.name}] No JobSystem provided, attempting to find one...");
+                jobSystem = FindFirstObjectByType<JobSystem.Core.JobSystem>();
+                
+                if (jobSystem == null)
+                    Debug.LogError($"[{gameObject.name}] Failed to find JobSystem in scene!");
+            }
+            
             IsInitialized = true;
         }
 
-        public IWorldSystem GetWorldSystem()
+        public T CreateEntity<T>(Vector3 position) where T : Entity
         {
-            return _worldSystem;
-        }
-
-        public T CreateEntity<T>(Vector3 position) where T : IEntity
-        {
-            var pool = GetOrCreatePool<T>();
-            if (pool.Count > 0)
+            var entityType = typeof(T);
+            var entity = GetInactiveEntity<T>() ?? CreateNewEntity<T>(position);
+            
+            if (entity != null)
             {
-                var pooledEntity = pool.Dequeue();
-                if (pooledEntity is T typedEntity)
-                {
-                    pooledEntity.GameObject.transform.position = position;
-                    pooledEntity.SetState(EntityState.Active);
-                    return typedEntity;
-                }
-                pool.Enqueue(pooledEntity);
+                entity.GameObject.transform.position = position;
+                ActivateEntity(entity);
             }
             
-            return CreateNewEntity<T>(position);
+            return entity;
         }
 
-        private T CreateNewEntity<T>(Vector3 position) where T : IEntity
+        private T GetInactiveEntity<T>() where T : Entity
         {
-            var entity = CreateEntityInternal(position, typeof(T));
-            
-            // Ensure the created entity is of type T
-            if (entity is T typedEntity)
-            {
-                return typedEntity;
-            }
-            
-            throw new InvalidCastException(
-                $"Created entity of type {entity.GetType().Name} could not be cast to {typeof(T).Name}"
-            );
+            if (!_entitySets.TryGetValue(typeof(T), out var entities)) return null;
+            return entities.FirstOrDefault(e => e.State == EntityState.Pooled) as T;
         }
 
-        private Entity CreateEntityInternal(Vector3 position, System.Type entityType)
+        private T CreateNewEntity<T>(Vector3 position) where T : Entity
         {
             try
             {
-                var entity = (Entity)System.Activator.CreateInstance(
-                    entityType, 
-                    new object[] { _nextEntityId++, this }
-                );
+                var entity = (T)Activator.CreateInstance(typeof(T), new object[] { _nextEntityId++, this });
+                var entityType = typeof(T);
                 
-                _entities[entity.Id] = entity;
+                if (!_entitySets.TryGetValue(entityType, out var entities))
+                {
+                    entities = new HashSet<IEntity>();
+                    _entitySets[entityType] = entities;
+                }
                 
-                var go = new GameObject($"Entity_{entity.Id}");
-                go.transform.SetParent(this.transform);
+                entities.Add(entity);
+                _entityLookup[entity.Id] = entity;
+                
+                var go = new GameObject($"{entityType.Name}_{entity.Id}");
+                go.transform.SetParent(transform);
                 go.transform.position = position;
                 entity.Initialize(go);
                 
-                entity.SetState(EntityState.Active);
-                _activeEntities.Add(entity);
-                
                 return entity;
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
-                Debug.LogError($"Failed to create entity of type {entityType.Name}: {e}");
+                Debug.LogError($"Failed to create entity of type {typeof(T).Name}: {e}");
                 throw;
             }
         }
 
+        private void ActivateEntity(IEntity entity)
+        {
+            entity.SetState(EntityState.Active);
+            _activeEntities.Add(entity);
+            
+            // Add to grid
+            var cell = WorldToGrid(entity.Position);
+            if (!_gridCells.TryGetValue(cell, out var entities))
+            {
+                entities = new HashSet<IEntity>();
+                _gridCells[cell] = entities;
+            }
+            entities.Add(entity);
+        }
+
+        public void DeactivateEntity(IEntity entity)
+        {
+            _activeEntities.Remove(entity);
+            
+            // Remove from grid
+            var cell = WorldToGrid(entity.Position);
+            if (_gridCells.TryGetValue(cell, out var entities))
+            {
+                entities.Remove(entity);
+                if (entities.Count == 0)
+                    _gridCells.Remove(cell);
+            }
+            
+            entity.SetState(EntityState.Pooled);
+        }
+
         public void DestroyEntity(IEntity entity)
         {
-            if (_entities.Remove(entity.Id))
+            var entityType = entity.GetType();
+            if (_entitySets.TryGetValue(entityType, out var entities))
             {
+                entities.Remove(entity);
+                _entityLookup.Remove(entity.Id);
                 _activeEntities.Remove(entity);
-                
-                var entityType = entity.GetType();
-                if (!_entityPools.ContainsKey(entityType))
-                {
-                    _entityPools[entityType] = new Queue<IEntity>();
-                }
-                
-                entity.SetState(EntityState.Pooled);
-                _entityPools[entityType].Enqueue(entity);
+                entity.OnDestroy();
             }
         }
 
@@ -147,39 +158,27 @@ namespace EntitySystem.Core
         {
             foreach (var entity in _activeEntities)
             {
-                if (entity.IsActive)
+                if (entity.State == EntityState.Active)
                 {
+                    var oldPos = entity.Position;
                     entity.OnTick();
+                    
+                    // Update grid position if needed
+                    if (oldPos != entity.Position)
+                    {
+                        UpdateEntityGridPosition(entity, oldPos, entity.Position);
+                    }
                 }
             }
         }
 
-        public void RegisterForTicks(IEntity entity)
+        public IEnumerable<T> GetEntitiesOfType<T>() where T : IEntity
         {
-            if (entity.IsActive)
-                _activeEntities.Add(entity);
-        }
-
-        public void UnregisterFromTicks(IEntity entity)
-        {
-            _activeEntities.Remove(entity);
-        }
-
-        private void OnDestroy()
-        {
-            foreach (var entity in _entities.Values)
+            if (_entitySets.TryGetValue(typeof(T), out var entities))
             {
-                entity.OnDestroy();
+                return entities.Cast<T>();
             }
-            
-            _entities.Clear();
-            _activeEntities.Clear();
-            _entityPools.Clear();
-        }
-
-        public IEntity GetEntity(long id)
-        {
-            return _entities.TryGetValue(id, out var entity) ? entity : null;
+            return Enumerable.Empty<T>();
         }
 
         public IEnumerable<IEntity> GetEntitiesInRadius(Vector3 position, float radius)
@@ -189,27 +188,177 @@ namespace EntitySystem.Core
                 (e.GameObject.transform.position - position).sqrMagnitude <= sqrRadius);
         }
 
+        public IWorldSystem GetWorldSystem() => _worldSystem;
         public JobSystem.Core.JobSystem GetJobSystem() => jobSystem;
 
-        public Entity GetEntitiesInCell(int x, int z)
+        private void OnDestroy()
         {
-            // Find first entity in this cell
-            foreach (var entityPair in _entities)
+            foreach (var entities in _entitySets.Values)
             {
-                var entity = entityPair.Value as Entity;
-                if (entity == null) continue;
-                
-                var transform = entity.GameObject.transform;
-                Vector3 pos = transform.position;
-                int entityX = Mathf.RoundToInt(pos.x);
-                int entityZ = Mathf.RoundToInt(pos.z);
-                
-                if (entityX == x && entityZ == z)
+                foreach (var entity in entities)
                 {
-                    return entity;
+                    entity.OnDestroy();
                 }
             }
-            return null;
+            
+            _entitySets.Clear();
+            _entityLookup.Clear();
+            _activeEntities.Clear();
+        }
+
+        private void UpdateEntityGridPosition(IEntity entity, Vector3 oldPosition, Vector3 newPosition)
+        {
+            var oldCell = WorldToGrid(oldPosition);
+            var newCell = WorldToGrid(newPosition);
+            
+            if (oldCell != newCell)
+            {
+                // Remove from old cell
+                if (_gridCells.TryGetValue(oldCell, out var oldEntities))
+                {
+                    oldEntities.Remove(entity);
+                    if (oldEntities.Count == 0)
+                        _gridCells.Remove(oldCell);
+                }
+                
+                // Add to new cell
+                if (!_gridCells.TryGetValue(newCell, out var newEntities))
+                {
+                    newEntities = new HashSet<IEntity>();
+                    _gridCells[newCell] = newEntities;
+                }
+                newEntities.Add(entity);
+            }
+        }
+
+        private Vector2Int WorldToGrid(Vector3 worldPosition)
+        {
+            return new Vector2Int(
+                Mathf.RoundToInt(worldPosition.x / CELL_SIZE),
+                Mathf.RoundToInt(worldPosition.z / CELL_SIZE)
+            );
+        }
+
+        public IEnumerable<IEntity> GetEntitiesInCell(Vector2Int cellPosition)
+        {
+            return _gridCells.TryGetValue(cellPosition, out var entities) 
+                ? entities 
+                : Enumerable.Empty<IEntity>();
+        }
+
+        public void AddToActiveEntities(IEntity entity)
+        {
+            _activeEntities.Add(entity);
+        }
+        
+        public void RemoveFromActiveEntities(IEntity entity)
+        {
+            _activeEntities.Remove(entity);
+        }
+
+        // New interface implementations
+        public long CreateEntity(string entityType, Vector3 position)
+        {
+            // Convert string type to actual Type and use existing method
+            var type = Type.GetType(entityType);
+            var entity = CreateEntity<Entity>(position); // Need to modify this
+            return entity.Id;
+        }
+
+        public void DestroyEntity(long entityId)
+        {
+            if (_entityLookup.TryGetValue(entityId, out var entity))
+            {
+                DestroyEntity(entity);
+            }
+        }
+
+        public bool HasComponent(long entityId, string componentType)
+        {
+            if (_entityLookup.TryGetValue(entityId, out var entity))
+            {
+                var type = Type.GetType(componentType);
+                return entity.GetComponents().Any(c => c.GetType() == type);
+            }
+            return false;
+        }
+
+        public void SetComponentValue(long entityId, string componentType, object value)
+        {
+            if (_entityLookup.TryGetValue(entityId, out var entity))
+            {
+                var type = Type.GetType(componentType);
+                var component = entity.GetComponents().FirstOrDefault(c => c.GetType() == type);
+                if (component != null)
+                {
+                    // If the component has a Value property, set it
+                    var valueProperty = component.GetType().GetProperty("Value");
+                    if (valueProperty != null)
+                    {
+                        valueProperty.SetValue(component, value);
+                    }
+                    else
+                    {
+                        Debug.LogError($"Component {componentType} does not have a Value property");
+                    }
+                }
+            }
+        }
+
+        public T GetComponentValue<T>(long entityId, string componentType)
+        {
+            if (_entityLookup.TryGetValue(entityId, out var entity))
+            {
+                var type = Type.GetType(componentType);
+                var component = entity.GetComponents().FirstOrDefault(c => c.GetType() == type);
+                if (component != null)
+                {
+                    // If the component has a Value property, get it
+                    var valueProperty = component.GetType().GetProperty("Value");
+                    if (valueProperty != null)
+                    {
+                        return (T)valueProperty.GetValue(component);
+                    }
+                    else
+                    {
+                        Debug.LogError($"Component {componentType} does not have a Value property");
+                    }
+                }
+            }
+            return default(T);
+        }
+
+        public IReadOnlyList<long> GetEntitiesInRange(Vector3 position, float radius)
+        {
+            return GetEntitiesInRadius(position, radius)
+                .Select(e => e.Id)
+                .ToList()
+                .AsReadOnly();
+        }
+
+        public IReadOnlyList<long> GetEntitiesWithComponent(string componentType)
+        {
+            var type = Type.GetType(componentType);
+            return _activeEntities
+                .Where(e => e.GetComponents().Any(c => c.GetType() == type))
+                .Select(e => e.Id)
+                .ToList()
+                .AsReadOnly();
+        }
+
+        public Vector3 GetEntityPosition(long entityId)
+        {
+            return _entityLookup.TryGetValue(entityId, out var entity) 
+                ? entity.Position 
+                : Vector3.zero;
+        }
+
+        public void SetEntityState(long entityId, EntityState state)
+        {
+            if (_entityLookup.TryGetValue(entityId, out var entity))
+            {
+                entity.SetState(state);
+            }
         }
     }
 }

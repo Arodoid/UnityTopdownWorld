@@ -1,5 +1,5 @@
 using UnityEngine;
-using EntitySystem.Core.Interfaces;
+using EntitySystem.API;
 
 namespace JobSystem.Core
 {
@@ -11,6 +11,7 @@ namespace JobSystem.Core
         public JobStatus Status { get; private set; } = JobStatus.Pending;
 
         protected Vector3 _targetPosition;
+        private EntitySystemAPI _entitySystem;
 
         public Job(float priority, bool isPersonal = false)
         {
@@ -18,9 +19,9 @@ namespace JobSystem.Core
             IsPersonal = isPersonal;
         }
 
-        public virtual bool CanExecute(IEntity entity) => true;
+        public virtual bool CanExecute(long entityId) => true;
         
-        public virtual JobStatus Execute(IEntity entity)
+        public virtual JobStatus Execute(long entityId)
         {
             // Base implementation - override in specific jobs
             return JobStatus.Completed;
@@ -28,9 +29,9 @@ namespace JobSystem.Core
 
         public Vector3 GetTargetPosition() => _targetPosition;
 
-        public void Assign(IEntity entity)
+        public void Assign(long entityId)
         {
-            AssignedEntityId = entity.Id;
+            AssignedEntityId = entityId;
             Status = JobStatus.InProgress;
         }
 

@@ -1,10 +1,9 @@
 using UnityEngine;
 using EntitySystem.Core;
-using EntitySystem.Core.Interfaces;
 
 namespace EntitySystem.Components.Visual
 {
-    public class VisualComponent : GameComponent, IPositionAwareComponent
+    public class VisualComponent : EntityComponent
     {
         private SpriteRenderer _spriteRenderer;
         private float _yOffset = 0.001f;  // Higher above ground
@@ -59,7 +58,7 @@ namespace EntitySystem.Components.Visual
             return DEBUG_COLORS[entityId % DEBUG_COLORS.Length];
         }
 
-        public void OnPositionChanged(Vector3 oldPosition, Vector3 newPosition)
+        public override void OnPositionChanged(Vector3 oldPosition, Vector3 newPosition)
         {
             // Keep facing Y+ always
         }

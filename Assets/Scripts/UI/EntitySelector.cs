@@ -1,5 +1,6 @@
 using UnityEngine;
 using EntitySystem.Core;
+using System.Linq;
 
 public class EntitySelector : MonoBehaviour
 {
@@ -31,7 +32,8 @@ public class EntitySelector : MonoBehaviour
             Debug.Log($"Trying to select at grid position: ({gridX}, {gridZ})");
 
             // Get entities from EntityManager that are in this cell
-            Entity selectedEntity = _entityManager.GetEntitiesInCell(gridX, gridZ);
+            var entitiesInCell = _entityManager.GetEntitiesInCell(new Vector2Int(gridX, gridZ));
+            var selectedEntity = entitiesInCell.FirstOrDefault() as Entity; // Get first entity or null
             
             if (selectedEntity != null)
             {

@@ -1,12 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
 using EntitySystem.Core;
-using EntitySystem.Core.Interfaces;
 using System.Linq;
 
-namespace EntitySystem.Components.Movement
+
+namespace JobSystem.Components
 {
-    public class MovementComponent : GameComponent
+    public class JobMoverComponent : EntityComponent
     {
         private List<Vector3> _currentPath;
         private int _currentPathIndex;

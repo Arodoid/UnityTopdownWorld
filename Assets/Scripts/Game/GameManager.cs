@@ -1,11 +1,8 @@
 using UnityEngine;
 using System.Collections;
-using System.Threading.Tasks;
 using WorldSystem;
 using WorldSystem.Implementation;
 using EntitySystem.Core;
-using EntitySystem.Core.World;
-using EntitySystem.Core.Spawning;
 using WorldSystem.Base;
 using WorldSystem.Generation;
 
@@ -14,7 +11,6 @@ public class GameManager : MonoBehaviour
     [Header("System References")]
     [SerializeField] private EntityManager entityManager;
     [SerializeField] private ChunkManager chunkManager;
-    [SerializeField] private EntitySpawner[] entitySpawners;
     
     [Header("World Settings")]
     [SerializeField] private string worldName = "TestWorld";
@@ -47,6 +43,11 @@ public class GameManager : MonoBehaviour
             Debug.LogError("WorldGenSettings reference is missing!");
             return false;
         }
+        if (entityManager == null)
+        {
+            Debug.LogError("EntityManager reference is missing!");
+            return false;
+        }
         return true;
     }
 
@@ -68,64 +69,11 @@ public class GameManager : MonoBehaviour
             yield break;
         }
         
-        if (!InitializeEntitySystem())
-        {
-            Debug.LogError("Failed to initialize entity system!");
-            yield break;
-        }
-        
-        if (!InitializeSpawners())
-        {
-            Debug.LogError("Failed to initialize spawners!");
-            yield break;
-        }
+        // Initialize entity system
+        entityManager.Initialize(_worldSystem);
         
         _isInitialized = true;
-        EnableSpawners();
-        
         Debug.Log("Game systems initialized successfully!");
-    }
-
-    private bool InitializeEntitySystem()
-    {
-        if (entityManager == null)
-        {
-            Debug.LogError("EntityManager reference is missing!");
-            return false;
-        }
-
-        entityManager.Initialize(_worldSystem);
-        return true;
-    }
-
-    private bool InitializeSpawners()
-    {
-        if (entitySpawners == null || entitySpawners.Length == 0)
-        {
-            Debug.LogWarning("No entity spawners assigned!");
-            return false;
-        }
-
-        foreach (var spawner in entitySpawners)
-        {
-            if (spawner != null)
-            {
-                spawner.gameObject.SetActive(false);
-                spawner.Initialize(entityManager);
-            }
-        }
-        return true;
-    }
-
-    private void EnableSpawners()
-    {
-        foreach (var spawner in entitySpawners)
-        {
-            if (spawner != null)
-            {
-                spawner.gameObject.SetActive(true);
-            }
-        }
     }
 
     private void InitializeWorld()

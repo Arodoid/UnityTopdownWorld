@@ -17,128 +17,80 @@ namespace EntitySystem.Core
         public GameObject GameObject { get; private set; }
         public EntityManager Manager { get; private set; }
 
-        private readonly Dictionary<Type, IEntityComponent> _components;
-        private readonly List<IEntityComponent> _componentsList;
-        private bool _isInitialized;
+        private readonly Dictionary<Type, IEntityComponent> _components = new();
+        private Vector3 _lastPosition;
 
-        public Entity(long id, EntityManager manager)
+        protected Entity(long id, EntityManager manager)
         {
             Id = id;
             Manager = manager;
             State = EntityState.Inactive;
-            _components = new Dictionary<Type, IEntityComponent>();
-            _componentsList = new List<IEntityComponent>();
-        }
-
-        // Explicit interface implementations without redundant constraints
-        T IEntity.AddComponent<T>()
-        {
-            Type componentType = typeof(T);
-            
-            if (_components.ContainsKey(componentType))
-            {
-                Debug.LogWarning($"Component of type {componentType.Name} already exists on entity {Id}");
-                return (T)_components[componentType];
-            }
-
-            var component = new T();
-            _components[componentType] = (IEntityComponent)component;
-            _componentsList.Add((IEntityComponent)component);
-            
-            if (_isInitialized)
-            {
-                ((IEntityComponent)component).Initialize(this);
-            }
-
-            return component;
-        }
-
-        T IEntity.GetComponent<T>()
-        {
-            return _components.TryGetValue(typeof(T), out var component) ? 
-                (T)component : default;
-        }
-
-        bool IEntity.HasComponent<T>()
-        {
-            return _components.ContainsKey(typeof(T));
-        }
-
-        void IEntity.RemoveComponent<T>()
-        {
-            Type componentType = typeof(T);
-            if (_components.TryGetValue(componentType, out var component))
-            {
-                component.OnDestroy();
-                _components.Remove(componentType);
-                _componentsList.Remove(component);
-            }
-        }
-
-        IReadOnlyList<EntitySystem.Core.Interfaces.IEntityComponent> IEntity.GetComponents()
-        {
-            return _componentsList.Select(c => (EntitySystem.Core.Interfaces.IEntityComponent)c).ToList().AsReadOnly();
-        }
-
-        // Public methods with stronger constraints
-        public T AddComponent<T>() where T : class, EntitySystem.Core.Interfaces.IEntityComponent, new()
-        {
-            return ((IEntity)this).AddComponent<T>();
-        }
-
-        public T GetComponent<T>() where T : class, EntitySystem.Core.Interfaces.IEntityComponent
-        {
-            return ((IEntity)this).GetComponent<T>();
-        }
-
-        public bool HasComponent<T>() where T : class, EntitySystem.Core.Interfaces.IEntityComponent
-        {
-            return ((IEntity)this).HasComponent<T>();
-        }
-
-        public void RemoveComponent<T>() where T : class, EntitySystem.Core.Interfaces.IEntityComponent
-        {
-            ((IEntity)this).RemoveComponent<T>();
-        }
-
-        public IReadOnlyList<EntitySystem.Core.Interfaces.IEntityComponent> GetComponents()
-        {
-            return _componentsList.Select(c => (EntitySystem.Core.Interfaces.IEntityComponent)c).ToList().AsReadOnly();
         }
 
         public virtual void Initialize(GameObject gameObject)
         {
             GameObject = gameObject;
-            _isInitialized = true;
+            _lastPosition = gameObject.transform.position;
             SetupComponents();
         }
 
-        protected abstract void SetupComponents();
+        public T AddComponent<T>() where T : class, IEntityComponent, new()
+        {
+            var type = typeof(T);
+            if (_components.TryGetValue(type, out var existing))
+                return (T)existing;
+
+            var component = new T();
+            _components[type] = component;
+            
+            if (GameObject != null)
+                component.Initialize(this);
+
+            return component;
+        }
+
+        public T GetComponent<T>() where T : class, IEntityComponent
+            => _components.TryGetValue(typeof(T), out var component) ? (T)component : null;
+
+        public bool HasComponent<T>() where T : class, IEntityComponent
+            => _components.ContainsKey(typeof(T));
+
+        public void RemoveComponent<T>() where T : class, IEntityComponent
+        {
+            if (_components.Remove(typeof(T), out var component))
+                component.OnDestroy();
+        }
+
+        public IReadOnlyList<IEntityComponent> GetComponents() 
+            => _components.Values.ToList();
 
         public virtual void OnTick()
         {
             if (!IsActive) return;
 
-            foreach (var component in _componentsList)
+            // Check position changes
+            var currentPos = GameObject.transform.position;
+            if (currentPos != _lastPosition)
             {
-                component.OnTick();
+                foreach (var component in _components.Values)
+                    component.OnPositionChanged(_lastPosition, currentPos);
+                _lastPosition = currentPos;
             }
+
+            // Update components
+            foreach (var component in _components.Values)
+                component.OnTick();
         }
 
         public virtual void OnDestroy()
         {
-            foreach (var component in _componentsList)
-            {
+            foreach (var component in _components.Values)
                 component.OnDestroy();
-            }
             
             if (GameObject != null)
-            {
                 UnityEngine.Object.Destroy(GameObject);
-            }
             
             _components.Clear();
-            _componentsList.Clear();
         }
 
         public void SetState(EntityState newState)
@@ -148,21 +100,15 @@ namespace EntitySystem.Core
             var oldState = State;
             State = newState;
             
-            
-            foreach (var component in _componentsList)
-            {
-                (component as IStateAwareComponent)?.OnStateChanged(oldState, newState);
-            }
+            foreach (var component in _components.Values)
+                component.OnStateChanged(oldState, newState);
 
-            // Update active entities list if needed
             if (newState == EntityState.Active)
-            {
-                Manager.RegisterForTicks(this);
-            }
+                Manager.AddToActiveEntities(this);
             else if (oldState == EntityState.Active)
-            {
-                Manager.UnregisterFromTicks(this);
-            }
+                Manager.RemoveFromActiveEntities(this);
         }
+
+        protected abstract void SetupComponents();
     }
 }

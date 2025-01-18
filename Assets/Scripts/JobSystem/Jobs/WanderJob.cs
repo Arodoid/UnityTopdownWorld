@@ -1,45 +1,50 @@
 using UnityEngine;
-using EntitySystem.Core.Interfaces;
-using EntitySystem.Components.Movement;
+using EntitySystem.API;
 using WorldSystem;
-using EntitySystem.Core.World;
+using Utilities.Navigation;
 
 namespace JobSystem.Core
 {
     public class WanderJob : Job
     {
         private readonly IWorldSystem _worldSystem;
+        private readonly EntitySystemAPI _entitySystem;
         private const float MIN_WANDER_RADIUS = 8f;
         private const float MAX_WANDER_RADIUS = 20f;
         private bool _pathSet = false;
 
-        public WanderJob(IWorldSystem worldSystem) : base(JobPriorities.IDLE, false)
+        public WanderJob(IWorldSystem worldSystem, EntitySystemAPI entitySystem) 
+            : base(JobPriorities.IDLE, false)
         {
             _worldSystem = worldSystem;
+            _entitySystem = entitySystem;
         }
 
-        public override JobStatus Execute(IEntity entity)
+        public override JobStatus Execute(long entityId)
         {
-            var movement = entity.GetComponent<MovementComponent>();
-            if (movement == null) return JobStatus.Failed;
+            var entity = _entitySystem.GetEntity(entityId);
+            if (!entity.HasComponent("JobMoverComponent")) 
+                return JobStatus.Failed;
 
             if (!_pathSet)
             {
+                var position = entity.Position;
                 var pathFinder = new PathFinder(_worldSystem);
                 var randomPath = pathFinder.FindRandomAccessiblePosition(
-                    entity.Position,
+                    position,
                     MIN_WANDER_RADIUS,
                     MAX_WANDER_RADIUS
                 );
 
                 if (randomPath != null)
                 {
-                    movement.SetPath(randomPath);
+                    entity.SetComponentValue("JobMoverComponent", randomPath);
                     _pathSet = true;
                 }
             }
         
-            return movement.IsMoving() ? JobStatus.InProgress : JobStatus.Completed;
+            var isMoving = entity.GetComponentValue<bool>("JobMoverComponent");
+            return isMoving ? JobStatus.InProgress : JobStatus.Completed;
         }
     }
 }

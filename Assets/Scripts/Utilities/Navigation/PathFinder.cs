@@ -5,7 +5,7 @@ using Unity.Mathematics;
 using Random = UnityEngine.Random;
 using WorldSystem;
 
-namespace EntitySystem.Core.World
+namespace Utilities.Navigation
 {
     public class PathFinder
     {

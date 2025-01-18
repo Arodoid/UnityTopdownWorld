@@ -1,6 +1,6 @@
 using EntitySystem.Core;
 using JobSystem.Core;
-using EntitySystem.Components.Movement;
+using JobSystem.Components;
 using EntitySystem.Components.Visual;
 
 namespace EntitySystem.Entities.Examples
@@ -11,9 +11,8 @@ namespace EntitySystem.Entities.Examples
 
         protected override void SetupComponents()
         {
-            // Add required components
-            AddComponent<MovementComponent>();
             AddComponent<JobComponent>();
+            AddComponent<JobMoverComponent>();
             AddComponent<VisualComponent>();
         }
     }

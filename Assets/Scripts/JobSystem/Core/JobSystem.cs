@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
-using EntitySystem.Core.Interfaces;
+using EntitySystem.Access;
 
 namespace JobSystem.Core
 {
@@ -26,7 +26,7 @@ namespace JobSystem.Core
             _globalJobs.Sort((a, b) => b.Priority.CompareTo(a.Priority)); // Higher priority first
         }
 
-        public void AddPersonalJob(IEntity entity, Job job)
+        public void AddPersonalJob(long entityId, Job job)
         {
             if (!job.IsPersonal)
             {
@@ -34,28 +34,27 @@ namespace JobSystem.Core
                 return;
             }
 
-            if (!_personalJobs.ContainsKey(entity.Id))
+            if (!_personalJobs.ContainsKey(entityId))
             {
-                _personalJobs[entity.Id] = new List<Job>();
+                _personalJobs[entityId] = new List<Job>();
             }
             
-            _personalJobs[entity.Id].Add(job);
-            _personalJobs[entity.Id].Sort((a, b) => b.Priority.CompareTo(a.Priority));
+            _personalJobs[entityId].Add(job);
+            _personalJobs[entityId].Sort((a, b) => b.Priority.CompareTo(a.Priority));
         }
 
-        public Job GetBestJobFor(IEntity entity)
+        public Job GetBestJobFor(long entityId)
         {
             // Check if entity already has an active job
-            if (_activeJobs.TryGetValue(entity.Id, out Job activeJob))
+            if (_activeJobs.TryGetValue(entityId, out Job activeJob))
             {
                 return activeJob;
             }
 
-
             Job bestJob = null;
 
             // Check personal jobs first
-            if (_personalJobs.TryGetValue(entity.Id, out var personalQueue) && 
+            if (_personalJobs.TryGetValue(entityId, out var personalQueue) && 
                 personalQueue.Count > 0)
             {
                 bestJob = personalQueue[0];
@@ -67,34 +66,28 @@ namespace JobSystem.Core
                 // Get highest priority job the entity can execute
                 foreach (var job in _globalJobs)
                 {
-                    if (job.CanExecute(entity))
+                    if (job.CanExecute(entityId))
                     {
                         bestJob = job;
                         break;
-                    }
-                    else
-                    {
                     }
                 }
             }
 
             if (bestJob != null)
             {
-                AssignJob(entity, bestJob);
-            }
-            else
-            {
+                AssignJob(entityId, bestJob);
             }
 
             return bestJob;
         }
 
-        private void AssignJob(IEntity entity, Job job)
+        private void AssignJob(long entityId, Job job)
         {
             // Remove from appropriate queue
             if (job.IsPersonal)
             {
-                _personalJobs[entity.Id].Remove(job);
+                _personalJobs[entityId].Remove(job);
             }
             else
             {
@@ -102,25 +95,25 @@ namespace JobSystem.Core
             }
 
             // Add to active jobs
-            job.Assign(entity);
-            _activeJobs[entity.Id] = job;
+            job.Assign(entityId);
+            _activeJobs[entityId] = job;
         }
 
-        public void CompleteJob(IEntity entity, Job job)
+        public void CompleteJob(long entityId, Job job)
         {
-            if (_activeJobs.TryGetValue(entity.Id, out var activeJob) && activeJob == job)
+            if (_activeJobs.TryGetValue(entityId, out var activeJob) && activeJob == job)
             {
                 job.Complete();
-                _activeJobs.Remove(entity.Id);
+                _activeJobs.Remove(entityId);
             }
         }
 
-        public void FailJob(IEntity entity, Job job)
+        public void FailJob(long entityId, Job job)
         {
-            if (_activeJobs.TryGetValue(entity.Id, out var activeJob) && activeJob == job)
+            if (_activeJobs.TryGetValue(entityId, out var activeJob) && activeJob == job)
             {
                 job.Fail();
-                _activeJobs.Remove(entity.Id);
+                _activeJobs.Remove(entityId);
             }
         }
     }
