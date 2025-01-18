@@ -1,4 +1,4 @@
-namespace EntitySystem.Core.Jobs
+namespace JobSystem.Core
 {
     public static class JobPriorities
     {

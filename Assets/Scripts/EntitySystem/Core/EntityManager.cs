@@ -5,7 +5,7 @@ using System.Linq;
 using EntitySystem.Core.Interfaces;
 using EntitySystem.Core.Types;
 using WorldSystem;
-using EntitySystem.Core.Jobs;
+using JobSystem.Core;
 
 namespace EntitySystem.Core
 {
@@ -20,7 +20,7 @@ namespace EntitySystem.Core
         [SerializeField] private TickManager tickManager;
         private IWorldSystem _worldSystem;
         public bool IsInitialized { get; private set; }
-        [SerializeField] private JobSystem jobSystem;
+        [SerializeField] private JobSystem.Core.JobSystem jobSystem;
 
         private void Start()
         {
@@ -189,7 +189,7 @@ namespace EntitySystem.Core
                 (e.GameObject.transform.position - position).sqrMagnitude <= sqrRadius);
         }
 
-        public JobSystem GetJobSystem() => jobSystem;
+        public JobSystem.Core.JobSystem GetJobSystem() => jobSystem;
 
         public Entity GetEntitiesInCell(int x, int z)
         {

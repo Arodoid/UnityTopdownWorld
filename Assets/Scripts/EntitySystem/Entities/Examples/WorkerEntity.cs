@@ -1,5 +1,5 @@
 using EntitySystem.Core;
-using EntitySystem.Components.Jobs;
+using JobSystem.Core;
 using EntitySystem.Components.Movement;
 using EntitySystem.Components.Visual;
 

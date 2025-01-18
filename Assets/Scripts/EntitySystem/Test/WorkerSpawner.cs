@@ -3,7 +3,7 @@ using EntitySystem.Core;
 using EntitySystem.Core.Spawning;
 using EntitySystem.Core.World;
 using EntitySystem.Entities.Examples;
-using EntitySystem.Core.Jobs;
+using JobSystem.Core;
 using Unity.Mathematics;
 using WorldSystem;
 using Random = UnityEngine.Random;

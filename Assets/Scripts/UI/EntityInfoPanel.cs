@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 using EntitySystem.Core;
-using EntitySystem.Components.Jobs;
+using JobSystem.Core;
 
 public class EntityInfoPanel : MonoBehaviour
 {

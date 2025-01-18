@@ -1,10 +1,6 @@
 using EntitySystem.Core;
-using EntitySystem.Core.Jobs;
-using EntitySystem.Core.World;
-using UnityEngine;
-using WorldSystem;
 
-namespace EntitySystem.Components.Jobs
+namespace JobSystem.Core
 {
     public class JobComponent : GameComponent
     {

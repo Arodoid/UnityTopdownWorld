@@ -2,10 +2,9 @@ using UnityEngine;
 using EntitySystem.Core.Interfaces;
 using EntitySystem.Components.Movement;
 using WorldSystem;
-using Unity.Mathematics;
 using EntitySystem.Core.World;
 
-namespace EntitySystem.Core.Jobs
+namespace JobSystem.Core
 {
     public class WanderJob : Job
     {

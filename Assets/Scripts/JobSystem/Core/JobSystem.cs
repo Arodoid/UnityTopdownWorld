@@ -1,9 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
 using EntitySystem.Core.Interfaces;
 
-namespace EntitySystem.Core.Jobs
+namespace JobSystem.Core
 {
     public class JobSystem : MonoBehaviour
     {

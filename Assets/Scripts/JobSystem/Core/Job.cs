@@ -1,7 +1,7 @@
 using UnityEngine;
 using EntitySystem.Core.Interfaces;
 
-namespace EntitySystem.Core.Jobs
+namespace JobSystem.Core
 {
     public class Job
     {
