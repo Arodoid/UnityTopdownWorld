@@ -1,6 +1,8 @@
 using UnityEngine;
 using UISystem.API;
+using UISystem.Core.Tools;
 using UISystem.Core.Interactions;
+using UISystem.Core.UI;
 using WorldSystem.API;
 
 namespace UISystem.Core
@@ -9,11 +11,11 @@ namespace UISystem.Core
     {
         [SerializeField] private InputHandler inputHandler;
         [SerializeField] private Camera mainCamera;
+        [SerializeField] private ToolManager toolManager;
+        [SerializeField] private ToolbarUI toolbarUI;
         
         private UISystemAPI _uiSystemAPI;
         private WorldCoordinateMapper _coordinateMapper;
-        private BlockHighlighter _blockHighlighter;
-        private IToolManager _toolManager; // We'll implement this later
 
         public UISystemAPI UISystemAPI => _uiSystemAPI;
 
@@ -21,45 +23,33 @@ namespace UISystem.Core
         {
             // Create dependencies
             _coordinateMapper = new WorldCoordinateMapper(mainCamera, worldAPI);
-            _toolManager = new DefaultToolManager(); // Temporary simple implementation
+            
+            // Initialize tool manager
+            if (toolManager == null)
+            {
+                toolManager = gameObject.AddComponent<ToolManager>();
+            }
+            toolManager.Initialize(worldAPI, _coordinateMapper);
             
             // Initialize UI System API
-            _uiSystemAPI = new UISystemAPI(inputHandler, _toolManager);
+            _uiSystemAPI = new UISystemAPI(inputHandler, toolManager);
 
-            // Setup block highlighter
-            _blockHighlighter = gameObject.AddComponent<BlockHighlighter>();
-            _blockHighlighter.Initialize(_coordinateMapper, worldAPI);
-
-            // Subscribe to input events
-            _uiSystemAPI.OnPointerMoved += HandlePointerMoved;
-        }
-
-        private void HandlePointerMoved(Vector2 position)
-        {
-            if (_blockHighlighter != null)
+            // Initialize toolbar UI
+            if (toolbarUI == null)
             {
-                _blockHighlighter.UpdateHighlight(position);
+                toolbarUI = gameObject.AddComponent<ToolbarUI>();
             }
+            toolbarUI.Initialize(_uiSystemAPI);
+
+            Debug.Log("UISystemManager initialized successfully");
         }
 
         private void OnDestroy()
         {
             if (_uiSystemAPI != null)
             {
-                _uiSystemAPI.OnPointerMoved -= HandlePointerMoved;
+                // Clean up if needed
             }
         }
-    }
-
-    // Temporary simple implementation of IToolManager
-    public class DefaultToolManager : IToolManager
-    {
-        private string _activeToolId;
-        
-        public void SetActiveTool(string toolId) => _activeToolId = toolId;
-        public string GetActiveToolId() => _activeToolId;
-        public bool IsToolActive(string toolId) => _activeToolId == toolId;
-        public void RegisterTool(IUITool tool) { }
-        public void UnregisterTool(string toolId) { }
     }
 } 

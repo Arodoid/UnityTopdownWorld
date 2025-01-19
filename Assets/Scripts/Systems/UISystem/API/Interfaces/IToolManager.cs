@@ -7,5 +7,6 @@ namespace UISystem.API
         bool IsToolActive(string toolId);
         void RegisterTool(IUITool tool);
         void UnregisterTool(string toolId);
+        IUITool GetTool(string toolId);
     }
 } 

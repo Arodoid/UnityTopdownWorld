@@ -19,6 +19,15 @@ namespace UISystem.Core
         {
             if (_uiSystem == null) return;
 
+            // Get the current mouse position
+            Vector2 mousePosition = Input.mousePosition;
+
+            // Check if mouse is within the game window
+            if (!IsMouseInGameWindow(mousePosition))
+            {
+                return;
+            }
+
             Vector2 currentPointerPosition = Input.mousePosition;
 
             // Handle pointer movement
@@ -37,7 +46,7 @@ namespace UISystem.Core
                 }
             }
 
-            // Handle pointer down/up
+            // Handle left mouse button (0)
             if (Input.GetMouseButtonDown(0))
             {
                 HandlePointerDown(currentPointerPosition);
@@ -46,8 +55,24 @@ namespace UISystem.Core
             {
                 HandlePointerUp(currentPointerPosition);
             }
+            
+            // Handle right mouse button (1)
+            if (Input.GetMouseButtonDown(1))
+            {
+                HandlePointerDown(currentPointerPosition);
+            }
+            else if (Input.GetMouseButtonUp(1))
+            {
+                HandlePointerUp(currentPointerPosition);
+            }
 
             _lastPointerPosition = currentPointerPosition;
+        }
+
+        private bool IsMouseInGameWindow(Vector2 mousePosition)
+        {
+            return mousePosition.x >= 0 && mousePosition.x < Screen.width &&
+                   mousePosition.y >= 0 && mousePosition.y < Screen.height;
         }
 
         public bool IsPointerOverUI()

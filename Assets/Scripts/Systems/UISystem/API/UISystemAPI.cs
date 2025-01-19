@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using UISystem.Core;
 
 namespace UISystem.API
 {
@@ -24,10 +25,10 @@ namespace UISystem.API
             _interactionHandler = interactionHandler;
             _toolManager = toolManager;
 
-            // If the interaction handler is a MonoBehaviour, initialize it
+            // Initialize the input handler
             if (_interactionHandler is MonoBehaviour handler)
             {
-                var inputHandler = handler as Core.InputHandler;
+                var inputHandler = handler as InputHandler;
                 inputHandler?.Initialize(this);
             }
         }
@@ -56,21 +57,42 @@ namespace UISystem.API
 
         void IInputHandler.HandleInput(Vector2 position, InputType inputType)
         {
-            switch (inputType)
+            // Get the active tool
+            string activeToolId = _toolManager.GetActiveToolId();
+            if (string.IsNullOrEmpty(activeToolId)) return;
+
+            // Route input to the active tool
+            if (_toolManager.IsToolActive(activeToolId))
             {
-                case InputType.Move:
-                    OnPointerMoved?.Invoke(position);
-                    break;
-                case InputType.Down:
-                    OnPointerDown?.Invoke(position);
-                    break;
-                case InputType.Up:
-                    OnPointerUp?.Invoke(position);
-                    break;
-                case InputType.Drag:
-                    OnPointerDragged?.Invoke(position);
-                    break;
+                var activeTool = _toolManager.GetTool(activeToolId);
+                if (activeTool != null)
+                {
+                    switch (inputType)
+                    {
+                        case InputType.Move:
+                            OnPointerMoved?.Invoke(position);
+                            activeTool.OnPointerMoved(position);
+                            break;
+                        case InputType.Down:
+                            OnPointerDown?.Invoke(position);
+                            activeTool.OnPointerDown(position);
+                            break;
+                        case InputType.Up:
+                            OnPointerUp?.Invoke(position);
+                            activeTool.OnPointerUp(position);
+                            break;
+                        case InputType.Drag:
+                            OnPointerDragged?.Invoke(position);
+                            activeTool.OnPointerDragged(position);
+                            break;
+                    }
+                }
             }
+        }
+
+        public IUITool GetTool(string toolId)
+        {
+            return _toolManager.GetTool(toolId);
         }
     }
 

@@ -11,41 +11,58 @@ namespace UISystem.Core.Interactions
         [SerializeField] private Material highlightMaterial;
         [SerializeField] private Color validHighlightColor = Color.green;
         [SerializeField] private Color invalidHighlightColor = Color.red;
-        [SerializeField] private float highlightScale = 1.02f;
+        [SerializeField] private float heightOffset = 0.001f; // Tiny offset to prevent z-fighting
 
         private WorldCoordinateMapper _coordinateMapper;
         private WorldSystemAPI _worldAPI;
-        private GameObject _highlightCube;
+        private GameObject _highlightPlane;
         private MeshRenderer _highlightRenderer;
         private int3? _currentHighlightedPosition;
         
+        // Only need vertices for the top face
         private static readonly Vector3[] VERTICES = new Vector3[]
         {
-            new Vector3(0, 0, 0),
+            new Vector3(0, 0, 0), // Changed Y from 1 to 0
             new Vector3(1, 0, 0),
-            new Vector3(1, 1, 0),
-            new Vector3(0, 1, 0),
-            new Vector3(0, 0, 1),
             new Vector3(1, 0, 1),
-            new Vector3(1, 1, 1),
-            new Vector3(0, 1, 1)
+            new Vector3(0, 0, 1)
         };
 
         private static readonly int[] TRIANGLES = new int[]
         {
-            // Front
-            0, 2, 1, 0, 3, 2,
-            // Right
-            1, 2, 6, 1, 6, 5,
-            // Back
-            5, 6, 7, 5, 7, 4,
-            // Left
-            4, 7, 3, 4, 3, 0,
-            // Top
-            3, 7, 6, 3, 6, 2,
-            // Bottom
-            4, 0, 1, 4, 1, 5
+            // Top face only
+            0, 2, 1,
+            0, 3, 2
         };
+
+        private static readonly Vector2[] UVS = new Vector2[]
+        {
+            new Vector2(0, 0),
+            new Vector2(1, 0),
+            new Vector2(1, 1),
+            new Vector2(0, 1)
+        };
+
+        private void Awake()
+        {
+            if (highlightMaterial == null)
+            {
+                // Create URP transparent material
+                highlightMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"))
+                {
+                    color = new Color(validHighlightColor.r, validHighlightColor.g, validHighlightColor.b, 0.3f)
+                };
+                
+                // Setup material for transparency in URP
+                highlightMaterial.SetFloat("_Surface", 1); // 0 = opaque, 1 = transparent
+                highlightMaterial.SetFloat("_Blend", 0);   // 0 = alpha blend
+                highlightMaterial.SetFloat("_Metallic", 0.0f);
+                highlightMaterial.SetFloat("_Smoothness", 0.5f);
+                highlightMaterial.EnableKeyword("_ALPHAPREMULTIPLY_ON");
+                highlightMaterial.renderQueue = 3000;
+                highlightMaterial.SetShaderPassEnabled("ShadowCaster", false);
+            }
+        }
 
         public void Initialize(WorldCoordinateMapper coordinateMapper, WorldSystemAPI worldAPI)
         {
@@ -56,21 +73,22 @@ namespace UISystem.Core.Interactions
 
         private void CreateHighlightMesh()
         {
-            _highlightCube = new GameObject("BlockHighlight");
-            _highlightCube.transform.SetParent(transform);
+            _highlightPlane = new GameObject("BlockHighlight");
+            _highlightPlane.transform.SetParent(transform);
 
             var mesh = new Mesh();
             mesh.vertices = VERTICES;
             mesh.triangles = TRIANGLES;
+            mesh.uv = UVS;
             mesh.RecalculateNormals();
 
-            var meshFilter = _highlightCube.AddComponent<MeshFilter>();
+            var meshFilter = _highlightPlane.AddComponent<MeshFilter>();
             meshFilter.mesh = mesh;
 
-            _highlightRenderer = _highlightCube.AddComponent<MeshRenderer>();
+            _highlightRenderer = _highlightPlane.AddComponent<MeshRenderer>();
             _highlightRenderer.material = highlightMaterial;
             
-            _highlightCube.SetActive(false);
+            _highlightPlane.SetActive(false);
         }
 
         public void UpdateHighlight(Vector2 mousePosition)
@@ -79,7 +97,6 @@ namespace UISystem.Core.Interactions
             
             if (_coordinateMapper.TryGetHoveredBlockPosition(mousePosition, out int3 blockPos))
             {
-                // Only highlight if block is at or below current view level
                 if (blockPos.y <= maxYLevel)
                 {
                     ShowHighlight(blockPos);
@@ -92,23 +109,24 @@ namespace UISystem.Core.Interactions
             _currentHighlightedPosition = null;
         }
 
+        public void ShowHighlight()
+        {
+            if (!_highlightPlane.activeSelf)
+                _highlightPlane.SetActive(true);
+        }
+
         private void ShowHighlight(int3 position)
         {
-            if (!_highlightCube.activeSelf)
-                _highlightCube.SetActive(true);
-
-            // Position the highlight cube
-            Vector3 highlightPos = new Vector3(position.x, position.y, position.z);
-            _highlightCube.transform.position = highlightPos;
-            
-            // Scale slightly larger than the block
-            _highlightCube.transform.localScale = Vector3.one * highlightScale;
+            ShowHighlight();
+            // Position the highlight plane
+            Vector3 highlightPos = new Vector3(position.x, position.y + heightOffset, position.z);
+            _highlightPlane.transform.position = highlightPos;
         }
 
         public void HideHighlight()
         {
-            if (_highlightCube.activeSelf)
-                _highlightCube.SetActive(false);
+            if (_highlightPlane.activeSelf)
+                _highlightPlane.SetActive(false);
             _currentHighlightedPosition = null;
         }
 
@@ -116,8 +134,8 @@ namespace UISystem.Core.Interactions
 
         private void OnDestroy()
         {
-            if (_highlightCube != null)
-                Destroy(_highlightCube);
+            if (_highlightPlane != null)
+                Destroy(_highlightPlane);
         }
     }
 }

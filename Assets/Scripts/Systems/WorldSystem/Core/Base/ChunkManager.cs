@@ -93,6 +93,8 @@ namespace WorldSystem.Base
         private ChunkPersistenceManager _persistenceManager;
         [SerializeField] private string worldName = "DefaultWorld";
 
+        private HashSet<int2> _dirtyChunks = new HashSet<int2>();
+
         public void Initialize(WorldGenSettings settings)
         {
             _worldSettings = settings;
@@ -108,11 +110,6 @@ namespace WorldSystem.Base
             _lastOrthoSize = mainCamera.orthographicSize;
 
             _persistenceManager = new ChunkPersistenceManager(worldName);
-        }
-
-        void Awake()
-        {
-            // Remove initialization from Awake - it will be done through Initialize
         }
 
         void Update()
@@ -143,6 +140,21 @@ namespace WorldSystem.Base
 
             ProcessChunkQueue();
             _meshBuilder.Update();
+            
+            // Process any dirty chunks
+            foreach (var dirtyChunk in _dirtyChunks)
+            {
+                if (_chunkBlockData.TryGetValue(dirtyChunk, out var blocks))
+                {
+                    var chunk = _chunkPool.GetChunk(dirtyChunk, viewMaxYLevel);
+                    if (chunk.HasValue)
+                    {
+                        _meshBuilder.QueueMeshBuild(dirtyChunk, blocks, 
+                            chunk.Value.meshFilter, chunk.Value.shadowFilter);
+                    }
+                }
+            }
+            _dirtyChunks.Clear();
         }
 
         void UpdateVisibleChunks()
@@ -371,41 +383,6 @@ namespace WorldSystem.Base
             CleanupExcessChunks();
         }
 
-        void OnDestroy()
-        {
-            foreach (var job in _pendingJobs.Values)
-            {
-                job.handle.Complete();
-                if (job.blocks.IsCreated) job.blocks.Dispose();
-                if (job.heightMap.IsCreated) job.heightMap.Dispose();
-            }
-            _pendingJobs.Clear();
-            
-            foreach (var heightMap in _chunkHeightMaps.Values)
-            {
-                if (heightMap.IsCreated)
-                    heightMap.Dispose();
-            }
-            _chunkHeightMaps.Clear();
-            
-            _worldGenerator.Dispose();
-            _meshBuilder.Dispose();
-            _chunkPool.Cleanup();
-
-            foreach (var blocks in _chunkBlockData.Values)
-            {
-                if (blocks.IsCreated)
-                    blocks.Dispose();
-            }
-            _chunkBlockData.Clear();
-        }
-
-        private void UpdateShaderOrthoSize()
-        {
-            Camera cam = GetComponent<Camera>();
-            Shader.SetGlobalFloat("_OrthoSize", cam.orthographicSize);
-        }
-
         private void HandleYLevelChange()
         {
             // First, deactivate all chunks at the old Y-level
@@ -500,57 +477,6 @@ namespace WorldSystem.Base
             chunkMaterial.SetFloat("_ColorVariationScale", 1f);
         }
 
-        private async void RequestChunkGeneration(int2 position)
-        {
-            if (!_generatedChunks.Contains(position))
-            {
-                var blocks = new NativeArray<byte>(ChunkData.SIZE * ChunkData.SIZE * ChunkData.HEIGHT, 
-                    Allocator.TempJob);
-                var heightMap = new NativeArray<Core.HeightPoint>(ChunkData.SIZE * ChunkData.SIZE, 
-                    Allocator.TempJob);
-                    
-                // Check for existing modifications first
-                if (_persistenceManager.HasModifications(position))
-                {
-                    var chunkData = await _persistenceManager.LoadChunkAsync(position);
-                    if (chunkData != null)
-                    {
-                        // Generate base terrain
-                        var chunkPos = new int3(position.x, viewMaxYLevel, position.y);
-                        _worldGenerator.GenerateChunkAsync(
-                            chunkPos,
-                            blocks,
-                            heightMap,
-                            (chunk) => {
-                                // Apply modifications after generation
-                                _persistenceManager.ApplyModifications(position, blocks);
-                                OnChunkGenerated(chunk);
-                                blocks.Dispose();
-                                heightMap.Dispose();
-                            }
-                        );
-                    }
-                }
-                else
-                {
-                    // Generate fresh chunk
-                    var chunkPos = new int3(position.x, viewMaxYLevel, position.y);
-                    _worldGenerator.GenerateChunkAsync(
-                        chunkPos,
-                        blocks,
-                        heightMap,
-                        (chunk) => {
-                            OnChunkGenerated(chunk);
-                            blocks.Dispose();
-                            heightMap.Dispose();
-                        }
-                    );
-                }
-                
-                _generatedChunks.Add(position);
-            }
-        }
-
         public Data.ChunkData GetChunk(int2 position)
         {
             // First check if we have the chunk data in memory
@@ -608,26 +534,11 @@ namespace WorldSystem.Base
         {
             _persistenceManager.MarkBlockModified(chunkPos, blockIndex, newBlockType);
             
-            // Trigger mesh update
             if (_chunkBlockData.TryGetValue(chunkPos, out var blocks))
             {
                 blocks[blockIndex] = newBlockType;
-                // Queue mesh rebuild
-                if (_meshBuilder != null && !_meshBuilder.IsBuildingMesh(chunkPos))
-                {
-                    var chunk = _chunkPool.GetChunk(chunkPos, viewMaxYLevel);
-                    if (chunk.HasValue)
-                    {
-                        _meshBuilder.QueueMeshBuild(chunkPos, blocks, 
-                            chunk.Value.meshFilter, chunk.Value.shadowFilter);
-                    }
-                }
+                _dirtyChunks.Add(chunkPos); // Mark chunk as dirty instead of immediate rebuild
             }
-        }
-
-        void OnApplicationQuit()
-        {
-            _persistenceManager.SaveAll();
         }
 
         private async Task<ChunkData> GetOrGenerateChunk(int2 position)
@@ -741,34 +652,6 @@ namespace WorldSystem.Base
             return chunk.blocks.IsCreated && chunk.blocks.Length > 0;
         }
 
-        public int GetHighestSolidBlock(int2 position)
-        {
-            var chunk = GetChunk(new int2(
-                Mathf.FloorToInt(position.x / ChunkData.SIZE),
-                Mathf.FloorToInt(position.y / ChunkData.SIZE)
-            ));
-
-            if (chunk.blocks.IsCreated)
-            {
-                // Get local position within chunk
-                int localX = position.x % ChunkData.SIZE;
-                int localZ = position.y % ChunkData.SIZE;
-                if (localX < 0) localX += ChunkData.SIZE;
-                if (localZ < 0) localZ += ChunkData.SIZE;
-
-                // Search from top to bottom for first solid block
-                for (int y = ChunkData.HEIGHT - 1; y >= 0; y--)
-                {
-                    int index = (y * ChunkData.SIZE * ChunkData.SIZE) + (localZ * ChunkData.SIZE) + localX;
-                    if (chunk.blocks[index] != 0) // 0 is assumed to be air
-                    {
-                        return y;
-                    }
-                }
-            }
-            return -1;
-        }
-
         public bool IsBlockSolid(int3 position)
         {
             var chunk = GetChunk(new int2(
@@ -800,9 +683,10 @@ namespace WorldSystem.Base
 
         private int2 GetChunkPosition(int3 position)
         {
+            // Use FloorToInt instead of regular division to handle negative coordinates correctly
             return new int2(
-                Mathf.FloorToInt(position.x / ChunkData.SIZE),
-                Mathf.FloorToInt(position.z / ChunkData.SIZE)
+                Mathf.FloorToInt((float)position.x / ChunkData.SIZE),
+                Mathf.FloorToInt((float)position.z / ChunkData.SIZE)
             );
         }
 
@@ -842,9 +726,6 @@ namespace WorldSystem.Base
             return false;
         }
 
-        private Dictionary<int2, ChunkData> _activeChunks = new();
-        private LRUCache<int2, NativeArray<byte>> _blockDataCache;
-
         public class LRUCache<TKey, TValue>
         {
             private readonly int _capacity;
@@ -855,43 +736,6 @@ namespace WorldSystem.Base
             {
                 public TKey Key;
                 public TValue Value;
-            }
-
-            public LRUCache(int capacity)
-            {
-                _capacity = capacity;
-                _cache = new Dictionary<TKey, LinkedListNode<CacheItem>>();
-                _lruList = new LinkedList<CacheItem>();
-            }
-
-            public bool TryGet(TKey key, out TValue value)
-            {
-                if (_cache.TryGetValue(key, out var node))
-                {
-                    // Move to front (most recently used)
-                    _lruList.Remove(node);
-                    _lruList.AddFirst(node);
-                    value = node.Value.Value;
-                    return true;
-                }
-                value = default;
-                return false;
-            }
-
-            public void Add(TKey key, TValue value)
-            {
-                if (_cache.Count >= _capacity)
-                {
-                    // Remove least recently used
-                    var last = _lruList.Last;
-                    _cache.Remove(last.Value.Key);
-                    _lruList.RemoveLast();
-                }
-
-                var cacheItem = new CacheItem { Key = key, Value = value };
-                var node = new LinkedListNode<CacheItem>(cacheItem);
-                _lruList.AddFirst(node);
-                _cache.Add(key, node);
             }
         }
     }
