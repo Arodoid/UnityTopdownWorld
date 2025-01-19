@@ -7,7 +7,7 @@ namespace UISystem.Core
     {
         private Vector2 _lastPointerPosition;
         private bool _isPointerDown;
-        private float _dragThreshold = 3f;
+        private float _dragThreshold = 1f;
         private UISystemAPI _uiSystem;
 
         public void Initialize(UISystemAPI uiSystem)
@@ -19,50 +19,34 @@ namespace UISystem.Core
         {
             if (_uiSystem == null) return;
 
-            // Get the current mouse position
-            Vector2 mousePosition = Input.mousePosition;
+            Vector2 currentPointerPosition = Input.mousePosition;
 
             // Check if mouse is within the game window
-            if (!IsMouseInGameWindow(mousePosition))
+            if (!IsMouseInGameWindow(currentPointerPosition))
             {
                 return;
             }
 
-            Vector2 currentPointerPosition = Input.mousePosition;
-
-            // Handle pointer movement
-            if (currentPointerPosition != _lastPointerPosition)
-            {
-                HandlePointerMoved(currentPointerPosition);
-                
-                // Handle dragging if pointer is down
-                if (_isPointerDown)
-                {
-                    float dragDistance = Vector2.Distance(_lastPointerPosition, currentPointerPosition);
-                    if (dragDistance > _dragThreshold)
-                    {
-                        HandlePointerDragged(currentPointerPosition);
-                    }
-                }
-            }
-
-            // Handle left mouse button (0)
-            if (Input.GetMouseButtonDown(0))
-            {
-                HandlePointerDown(currentPointerPosition);
-            }
-            else if (Input.GetMouseButtonUp(0))
-            {
-                HandlePointerUp(currentPointerPosition);
-            }
+            // Always handle pointer movement, even if position hasn't changed
+            HandlePointerMoved(currentPointerPosition);
             
-            // Handle right mouse button (1)
-            if (Input.GetMouseButtonDown(1))
+            // Handle dragging if any mouse button is held down
+            if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
+            {
+                _isPointerDown = true;
+                HandlePointerDragged(currentPointerPosition);
+            }
+
+            // Handle mouse button down events
+            if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
             {
                 HandlePointerDown(currentPointerPosition);
             }
-            else if (Input.GetMouseButtonUp(1))
+
+            // Handle mouse button up events
+            if (Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1))
             {
+                _isPointerDown = false;
                 HandlePointerUp(currentPointerPosition);
             }
 
@@ -87,13 +71,11 @@ namespace UISystem.Core
 
         public void HandlePointerDown(Vector2 position)
         {
-            _isPointerDown = true;
             (_uiSystem as IInputHandler)?.HandleInput(position, InputType.Down);
         }
 
         public void HandlePointerUp(Vector2 position)
         {
-            _isPointerDown = false;
             (_uiSystem as IInputHandler)?.HandleInput(position, InputType.Up);
         }
 

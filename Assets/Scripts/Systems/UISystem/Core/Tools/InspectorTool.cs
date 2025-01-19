@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.Mathematics;
 using UISystem.API;
 using UISystem.Core.Interactions;
+using UISystem.Core.Selection;
 using WorldSystem.API;
 using WorldSystem.Data;
 using System.Threading.Tasks;
@@ -10,10 +11,8 @@ namespace UISystem.Core.Tools
 {
     public class InspectorTool : IUITool
     {
-        private readonly BlockHighlighter _blockHighlighter;
         private readonly WorldSystemAPI _worldAPI;
-        private readonly WorldCoordinateMapper _coordinateMapper;
-        private int3? _lastInspectedPosition;
+        private readonly SingleBlockSelector _blockSelector;
         private BlockType? _lastInspectedBlockType;
         
         public string ToolId => "InspectorTool";
@@ -21,52 +20,49 @@ namespace UISystem.Core.Tools
         public InspectorTool(WorldSystemAPI worldAPI, WorldCoordinateMapper coordinateMapper, BlockHighlighter blockHighlighter)
         {
             _worldAPI = worldAPI;
-            _coordinateMapper = coordinateMapper;
-            _blockHighlighter = blockHighlighter;
+            _blockSelector = new SingleBlockSelector(coordinateMapper, blockHighlighter);
+            _blockSelector.OnSelectionChanged += HandleSelectionChanged;
+        }
+
+        private async void HandleSelectionChanged(SingleBlockSelectionResult selection)
+        {
+            if (selection.IsValid)
+            {
+                _lastInspectedBlockType = await _worldAPI.GetBlockType(selection.Position);
+            }
+            else
+            {
+                _lastInspectedBlockType = null;
+            }
         }
 
         public void OnToolActivated()
         {
             Debug.Log("Inspector tool activated");
-            _blockHighlighter.ShowHighlight();
+            _blockSelector.ShowSelection();
         }
 
         public void OnToolDeactivated()
         {
-            _blockHighlighter.HideHighlight();
-            _lastInspectedPosition = null;
+            _blockSelector.HideSelection();
             _lastInspectedBlockType = null;
         }
 
-        public async void OnPointerMoved(Vector2 position)
+        public void OnPointerMoved(Vector2 position)
         {
-            _blockHighlighter.UpdateHighlight(position);
-            await UpdateInspection();
+            _blockSelector.UpdateSelection(position);
         }
 
         public void OnPointerDown(Vector2 position) { }
         public void OnPointerUp(Vector2 position) { }
         public void OnPointerDragged(Vector2 position) { }
 
-        private async Task UpdateInspection()
-        {
-            if (_blockHighlighter.GetHighlightedPosition() is int3 blockPos)
-            {
-                _lastInspectedPosition = blockPos;
-                _lastInspectedBlockType = await _worldAPI.GetBlockType(blockPos);
-            }
-            else
-            {
-                _lastInspectedPosition = null;
-                _lastInspectedBlockType = null;
-            }
-        }
-
         public string GetInspectionInfo()
         {
-            if (_lastInspectedPosition.HasValue && _lastInspectedBlockType.HasValue)
+            var selection = _blockSelector.GetCurrentSelection();
+            if (selection?.IsValid == true && _lastInspectedBlockType.HasValue)
             {
-                var pos = _lastInspectedPosition.Value;
+                var pos = selection.Position;
                 return $"Position: ({pos.x}, {pos.y}, {pos.z})\n" +
                        $"Block Type: {_lastInspectedBlockType.Value}\n" +
                        $"Height Level: {pos.y}";

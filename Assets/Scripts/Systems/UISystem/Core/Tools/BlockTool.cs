@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.Mathematics;
 using UISystem.API;
 using UISystem.Core.Interactions;
+using UISystem.Core.Selection;
 using WorldSystem.API;
 using WorldSystem.Data;
 using System.Threading.Tasks;
@@ -11,9 +12,8 @@ namespace UISystem.Core.Tools
     public class BlockTool : IUITool
     {
         private BlockType _blockTypeToPlace = BlockType.Stone;
-        private readonly BlockHighlighter _blockHighlighter;
         private readonly WorldSystemAPI _worldAPI;
-        private readonly WorldCoordinateMapper _coordinateMapper;
+        private readonly SingleBlockSelector _blockSelector;
         private int _brushSize = 1; // Default 1x1
         
         public string ToolId => "BlockTool";
@@ -21,29 +21,18 @@ namespace UISystem.Core.Tools
         public BlockTool(WorldSystemAPI worldAPI, WorldCoordinateMapper coordinateMapper, BlockHighlighter blockHighlighter)
         {
             _worldAPI = worldAPI;
-            _coordinateMapper = coordinateMapper;
-            _blockHighlighter = blockHighlighter;
-        }
-
-        public void SetBlockType(BlockType blockType)
-        {
-            _blockTypeToPlace = blockType;
-        }
-
-        public void SetBrushSize(int size)
-        {
-            _brushSize = Mathf.Clamp(size, 1, 5); // Limit brush size between 1 and 5
+            _blockSelector = new SingleBlockSelector(coordinateMapper, blockHighlighter);
         }
 
         public void OnToolActivated()
         {
             Debug.Log("Block tool activated");
-            _blockHighlighter.ShowHighlight();
+            _blockSelector.ShowSelection();
         }
 
         public void OnToolDeactivated()
         {
-            _blockHighlighter.HideHighlight();
+            _blockSelector.HideSelection();
         }
 
         public async void OnPointerDown(Vector2 position)
@@ -59,8 +48,10 @@ namespace UISystem.Core.Tools
 
         private async Task HandleBlockAction(Vector2 position)
         {
-            if (_blockHighlighter.GetHighlightedPosition() is int3 centerPos)
+            var selection = _blockSelector.GetCurrentSelection();
+            if (selection?.IsValid == true)
             {
+                int3 centerPos = selection.Position;
                 int offset = (_brushSize - 1) / 2;
                 
                 // Apply action to all blocks within brush size
@@ -98,7 +89,17 @@ namespace UISystem.Core.Tools
 
         public void OnPointerMoved(Vector2 position)
         {
-            _blockHighlighter.UpdateHighlight(position);
+            _blockSelector.UpdateSelection(position);
+        }
+
+        public void SetBlockType(BlockType blockType)
+        {
+            _blockTypeToPlace = blockType;
+        }
+
+        public void SetBrushSize(int size)
+        {
+            _brushSize = Mathf.Clamp(size, 1, 5); // Limit brush size between 1 and 5
         }
     }
 } 
