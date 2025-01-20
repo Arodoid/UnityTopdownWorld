@@ -20,6 +20,7 @@ namespace EntitySystem.Core
         private uint _currentVersion;
         private TickSystem _tickSystem;
         private PathfindingUtility _pathfinding;
+        private WorldSystemAPI _worldAPI;
 
         public PathfindingUtility Pathfinding => _pathfinding;
 
@@ -45,6 +46,7 @@ namespace EntitySystem.Core
         public void Initialize(WorldSystemAPI worldAPI)
         {
             _pathfinding = new PathfindingUtility(worldAPI);
+            _worldAPI = worldAPI;
         }
 
         private void CreateEntityContainers()
@@ -60,15 +62,16 @@ namespace EntitySystem.Core
             }
         }
 
-        public EntityHandle CreateEntity(string entityId, int3 position)
+        public EntityHandle CreateEntity(string entityId, int3 blockPosition)
         {
-            // Convert block position to world position (center of block)
-            var worldPosition = new int3(
-                position.x,
-                position.y,
-                position.z
-            );
-                        
+            Debug.Log($"Creating entity at block position {blockPosition}");
+            
+            // Find the first air block above this position
+            while (_worldAPI.IsBlockSolid(blockPosition))
+            {
+                blockPosition.y += 1;
+            }
+            
             // Get next available ID
             int id = GetNextEntityId();
             _currentVersion++;
@@ -79,28 +82,26 @@ namespace EntitySystem.Core
             
             // Create and initialize entity component with correct type
             var entity = entityObject.AddComponent<Entity>();
-            
-            // Determine entity type based on template
             EntityType entityType = DetermineEntityType(entityId);
-            entity.Initialize(id, _currentVersion, entityType, worldPosition);
             
-            // Position the GameObject at block center
+            // Pass 'this' as the EntityManager
+            entity.Initialize(id, _currentVersion, entityType, this);
+            
+            // Convert block position to world position (centered in block)
             entityObject.transform.position = new Vector3(
-                worldPosition.x + 0.5f,  // Center of block
-                worldPosition.y,
-                worldPosition.z + 0.5f   // Center of block
+                blockPosition.x + 0.5f,  // Center in block X
+                blockPosition.y,         // Bottom of block Y
+                blockPosition.z + 0.5f   // Center in block Z
             );
             
             // Add visual component by default
             entity.AddComponent<EntityVisualComponent>();
 
-            // Apply template if it exists
             if (_registry.TryGetTemplate(entityId, out var setup))
             {
                 setup(entity);
             }
             
-            // Store entity
             _entities[id] = entity;
             
             return new EntityHandle(id, _currentVersion);
@@ -119,27 +120,24 @@ namespace EntitySystem.Core
 
         public async Task<EntityHandle> CreateEntity(EntityType type, int3 position)
         {
-            
-            // Simulate async initialization if needed
             await Task.Yield();
             
-            // Get next available ID
             int entityId = GetNextEntityId();
             _currentVersion++;
 
-            // Create entity GameObject
             var entityObject = new GameObject($"{type}_{entityId}");
             entityObject.transform.SetParent(_entityContainers[type]);
             
-            // Create and initialize entity component
             var entity = entityObject.AddComponent<Entity>();
-            entity.Initialize(entityId, _currentVersion, type, position);
+            // Pass 'this' as the EntityManager
+            entity.Initialize(entityId, _currentVersion, type, this);
             
-            // Store entity
+            // Set position directly on transform
+            entityObject.transform.position = new Vector3(position.x, position.y, position.z);
+            
             _entities[entityId] = entity;
             
-            var handle = new EntityHandle(entityId, _currentVersion);
-            return handle;
+            return new EntityHandle(entityId, _currentVersion);
         }
 
         public bool DestroyEntity(EntityHandle handle)
@@ -160,7 +158,8 @@ namespace EntitySystem.Core
             position = default;
             if (TryGetEntity(handle, out Entity entity))
             {
-                position = entity.Position;
+                Vector3 worldPos = entity.transform.position;
+                position = new int3((int)worldPos.x, (int)worldPos.y, (int)worldPos.z);
                 return true;
             }
             return false;
@@ -170,7 +169,7 @@ namespace EntitySystem.Core
         {
             if (TryGetEntity(handle, out Entity entity))
             {
-                entity.Position = position;
+                entity.transform.position = new Vector3(position.x, position.y, position.z);
                 return true;
             }
             return false;
@@ -224,6 +223,28 @@ namespace EntitySystem.Core
         public IEnumerable<string> GetAvailableTemplates()
         {
             return _registry.GetAvailableTemplates();
+        }
+
+        public IEnumerable<EntityHandle> GetEntitiesInRadius(Vector3 position, float radius)
+        {
+            float sqrRadius = radius * radius;
+            foreach (var entity in _entities.Values)
+            {
+                float sqrDistance = (entity.transform.position - position).sqrMagnitude;
+                if (sqrDistance <= sqrRadius)
+                {
+                    yield return new EntityHandle(entity.Id, entity.Version);
+                }
+            }
+        }
+
+        public Vector3? GetEntityPosition(EntityHandle handle)
+        {
+            if (TryGetEntity(handle, out Entity entity))
+            {
+                return entity.transform.position;
+            }
+            return null;
         }
     }
 }

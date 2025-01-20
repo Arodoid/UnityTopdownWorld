@@ -7,7 +7,7 @@ namespace EntitySystem.Core.Components
         [Header("Visual Settings")]
         [SerializeField] private Color _color = Color.white;
         [SerializeField] private float _radius = 0.4f;
-        [SerializeField] private float _heightOffset = 0.01f;
+        [SerializeField] private float _heightOffset = -0.5f;
 
         private MeshFilter _meshFilter;
         private MeshRenderer _meshRenderer;
@@ -23,7 +23,7 @@ namespace EntitySystem.Core.Components
             // Create a child GameObject for the visual
             var visualObject = new GameObject("Visual");
             visualObject.transform.SetParent(transform);
-            visualObject.transform.localPosition = new Vector3(0, _heightOffset, 0);
+            visualObject.transform.localPosition = new Vector3(0, _heightOffset, 0); // Center in block below
             
             // Add components to the child object
             _meshFilter = visualObject.AddComponent<MeshFilter>();
@@ -36,39 +36,51 @@ namespace EntitySystem.Core.Components
             };
             _meshRenderer.material = _material;
 
-            // Create circle mesh
-            var mesh = CreateCircleMesh();
+            // Create box mesh
+            var mesh = CreateBoxMesh();
             _meshFilter.mesh = mesh;
         }
 
-        private Mesh CreateCircleMesh()
+        private Mesh CreateBoxMesh()
         {
             var mesh = new Mesh();
-            int segments = 16;
-            var vertices = new Vector3[segments + 1];
-            var triangles = new int[segments * 3];
+            float size = _radius * 2; // Use diameter for box size
 
-            // Center vertex
-            vertices[0] = Vector3.zero;
-
-            // Create circle vertices
-            for (int i = 0; i < segments; i++)
+            // Define vertices centered around local origin
+            Vector3[] vertices = new Vector3[]
             {
-                float angle = i * Mathf.PI * 2f / segments;
-                vertices[i + 1] = new Vector3(
-                    Mathf.Cos(angle) * _radius,
-                    0,
-                    Mathf.Sin(angle) * _radius
-                );
-            }
+                new Vector3(-size/2, -size/2, -size/2),
+                new Vector3(size/2, -size/2, -size/2),
+                new Vector3(size/2, size/2, -size/2),
+                new Vector3(-size/2, size/2, -size/2),
+                new Vector3(-size/2, -size/2, size/2),
+                new Vector3(size/2, -size/2, size/2),
+                new Vector3(size/2, size/2, size/2),
+                new Vector3(-size/2, size/2, size/2)
+            };
 
-            // Create triangles (reversed winding order)
-            for (int i = 0; i < segments; i++)
+            // Fixed triangle indices to face outward
+            int[] triangles = new int[]
             {
-                triangles[i * 3] = 0;
-                triangles[i * 3 + 1] = i + 2 > segments ? 1 : i + 2;
-                triangles[i * 3 + 2] = i + 1;
-            }
+                // Front face
+                4, 5, 6,
+                4, 6, 7,
+                // Back face
+                1, 0, 2,
+                0, 3, 2,
+                // Left face
+                0, 4, 7,
+                0, 7, 3,
+                // Right face
+                5, 1, 2,
+                5, 2, 6,
+                // Top face
+                3, 7, 6,
+                3, 6, 2,
+                // Bottom face
+                0, 1, 5,
+                0, 5, 4
+            };
 
             mesh.vertices = vertices;
             mesh.triangles = triangles;

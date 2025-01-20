@@ -1,105 +1,111 @@
 using UnityEngine;
 using Unity.Mathematics;
 using EntitySystem.Core.Utilities;
-using System.Collections;
+using Random = UnityEngine.Random;
 
 namespace EntitySystem.Core.Components
 {
     public class IdleMovementComponent : EntityComponent, ITickable
     {
-        [SerializeField] public float _idleMovementRange = 5f;
-        [SerializeField] public int _minIdleTicks = 3;  // Changed to ticks instead of time
-        [SerializeField] public int _maxIdleTicks = 10; // Changed to ticks instead of time
+        [SerializeField] public float _idleMovementRange = 15f;
         [SerializeField] public float _entityHeight = 1f;
+        [SerializeField] private float _minIdleTime = 2f;
+        [SerializeField] private float _maxIdleTime = 5f;
 
         private MovementComponent _movement;
         private PathfindingUtility _pathfinding;
         private float _idleTimer;
-        private EntityManager _entityManager;
-
-        [SerializeField] private float _pathfindingCooldown = 0.5f;  // Minimum time between pathfinding attempts
-        private float _pathfindingTimer;
-        private bool _isPathfinding;
+        private bool _isWaitingForPath;
 
         protected override void OnInitialize(EntityManager entityManager)
         {
-            _entityManager = entityManager;
             _movement = Entity.GetComponent<MovementComponent>();
             if (_movement == null)
             {
                 _movement = Entity.AddComponent<MovementComponent>();
             }
             
-            _pathfinding = _entityManager.Pathfinding;
+            _pathfinding = entityManager.Pathfinding;
+            _movement.OnDestinationReached += OnDestinationReached;
             ResetIdleTimer();
             
-            // Ensure initial position is centered on block
-            AdjustPosition();
+            // Add debug log to verify the actual range value
+            Debug.Log($"Initialized IdleMovementComponent with range: {_idleMovementRange}");
         }
 
-        private void AdjustPosition()
+        private void OnDestinationReached()
         {
-            var currentPos = Entity.Position;
-            Entity.Position = new int3(
-                currentPos.x,
-                currentPos.y,
-                currentPos.z
-            );
-            transform.position = new Vector3(
-                currentPos.x + 0.5f,
-                currentPos.y,
-                currentPos.z + 0.5f
-            );
+            // Only reset timer and clear waiting flag when movement is actually complete
+            if (_movement.IsMoving)
+                return;
+        
+            ResetIdleTimer();
+            _isWaitingForPath = false;
         }
 
         public void OnTick()
         {
-            
-            if (_movement.IsMoving) return;
-
-            _idleTimer -= 1;  // Decrease by 1 tick instead of deltaTime
-            _pathfindingTimer -= 1;
-            
-            
-            if (_idleTimer <= 0 && _pathfindingTimer <= 0 && !_isPathfinding)
+            // Double-check both flags to ensure we don't start new movement too early
+            if (_movement.IsMoving || _isWaitingForPath)
             {
-                StartCoroutine(TryRandomMovementAsync());
+                return;
+            }
+
+            _idleTimer -= 0.1f;
+            
+            if (_idleTimer <= 0)
+            {
+                TryRandomMovement();
             }
         }
 
-        private IEnumerator TryRandomMovementAsync()
+        private void TryRandomMovement()
         {
-            _isPathfinding = true;
-            _pathfindingTimer = _pathfindingCooldown;
-
-            // Do the expensive random position check in a coroutine
-            if (_pathfinding.TryGetRandomNearbyPosition(Entity.Position, _idleMovementRange, _entityHeight, out int3 targetPos))
+            Vector3 currentPos = transform.position;
+            
+            // Convert world position to block position correctly
+            var blockPos = new int3(
+                Mathf.FloorToInt(currentPos.x), // Floor instead of truncate
+                Mathf.FloorToInt(currentPos.y),
+                Mathf.FloorToInt(currentPos.z)
+            );
+            
+            Debug.Log($"Converting world pos {currentPos} to block pos {blockPos}");
+            
+            var path = _pathfinding.FindRandomPath(
+                blockPos,
+                _idleMovementRange,
+                _entityHeight
+            );
+            
+            if (path.Count > 0)
             {
-                // Split pathfinding into chunks
-                yield return StartCoroutine(_pathfinding.FindPathAsync(
-                    Entity.Position, 
-                    targetPos, 
-                    _entityHeight,
-                    (path) => {
-                        if (path != null && path.Count > 0)
-                        {
-                            _movement.MoveTo(path);
-                        }
-                        _isPathfinding = false;
-                        ResetIdleTimer();
-                    }
-                ));
+                Vector3 endPos = path[path.Count - 1];
+                float actualDistance = Vector3.Distance(currentPos, endPos);
+                Debug.Log($"Found path with distance {actualDistance} (target range: {_idleMovementRange}, path points: {path.Count})");
+                
+                _isWaitingForPath = true;
+                _movement.MoveAlongPath(path);
             }
             else
             {
-                _isPathfinding = false;
+                Debug.Log($"Failed to find valid path for idle movement (range: {_idleMovementRange})");
                 ResetIdleTimer();
             }
         }
 
         private void ResetIdleTimer()
         {
-            _idleTimer = UnityEngine.Random.Range(_minIdleTicks, _maxIdleTicks + 1);
+            _idleTimer = Random.Range(_minIdleTime, _maxIdleTime);
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            if (_movement != null)
+            {
+                _movement.OnDestinationReached -= OnDestinationReached;
+            }
         }
     }
-} 
+}

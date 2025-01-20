@@ -37,8 +37,15 @@ namespace UISystem.Core.Tools
         {
             if (string.IsNullOrEmpty(_selectedEntityId)) return;
 
-            if (_coordinateMapper.TryGetHoveredBlockPosition(screenPosition, out int3 worldPosition))
+            if (_coordinateMapper.TryGetHoveredBlockPosition(screenPosition, out int3 blockPosition))
             {
+                // Convert block position to world position (centered in block)
+                var worldPosition = new int3(
+                    blockPosition.x,
+                    blockPosition.y,
+                    blockPosition.z
+                );
+                
                 var handle = _entityAPI.CreateEntity(_selectedEntityId, worldPosition);
             }
         }

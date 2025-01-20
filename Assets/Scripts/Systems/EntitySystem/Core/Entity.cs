@@ -11,27 +11,17 @@ namespace EntitySystem.Core
         public int Id { get; private set; }
         public uint Version { get; private set; }
         public EntityType Type { get; private set; }
+        public EntityManager EntityManager { get; private set; }
         
-        private int3 _position;
-        public int3 Position
-        {
-            get => _position;
-            set
-            {
-                _position = value;
-                transform.position = new Vector3(value.x, value.y, value.z);
-            }
-        }
-
         private Dictionary<System.Type, IEntityComponent> _components = new();
         private TickSystem _tickSystem;
 
-        public void Initialize(int id, uint version, EntityType type, int3 position)
+        public void Initialize(int id, uint version, EntityType type, EntityManager entityManager)
         {
             Id = id;
             Version = version;
             Type = type;
-            Position = position;
+            EntityManager = entityManager;
             
             _tickSystem = FindAnyObjectByType<TickSystem>();
             if (_tickSystem == null)

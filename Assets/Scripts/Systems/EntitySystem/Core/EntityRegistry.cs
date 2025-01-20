@@ -27,7 +27,7 @@ namespace EntitySystem.Core
                 // Add movement components
                 var movement = entity.AddComponent<MovementComponent>();
                 var idle = entity.AddComponent<IdleMovementComponent>();
-                idle._idleMovementRange = 5f;  // Dogs wander in small area
+                idle._idleMovementRange = 10f;  // Dogs wander in small area
                 idle._entityHeight = 1f;  // Dog height
             });
 
@@ -37,6 +37,8 @@ namespace EntitySystem.Core
                 
                 var visual = entity.GetComponent<EntityVisualComponent>();
                 visual.SetColor(new Color(0.2f, 0.6f, 1f));  // Blue for colonists
+                var inventory = entity.AddComponent<InventoryComponent>();
+                entity.AddComponent<ItemPickupComponent>(); // Add pickup capability
             });
 
             RegisterEntity("Deer", (entity) => {
@@ -60,6 +62,22 @@ namespace EntitySystem.Core
                 
                 var visual = entity.GetComponent<EntityVisualComponent>();
                 visual.SetColor(new Color(0.4f, 0.3f, 0.2f));  // Darker brown for wood
+            });
+
+            RegisterEntity("WoodItem", (entity) => {
+                var item = entity.AddComponent<ItemComponent>();
+                item.ItemId = "Wood";
+                item.SpaceRequired = 2;  // Wood takes 2 spaces
+                var visual = entity.GetComponent<EntityVisualComponent>();
+                visual.SetColor(new Color(0.6f, 0.4f, 0.2f));
+            });
+
+            RegisterEntity("StoneItem", (entity) => {
+                var item = entity.AddComponent<ItemComponent>();
+                item.ItemId = "Stone";
+                item.SpaceRequired = 3;  // Stone takes 3 spaces
+                var visual = entity.GetComponent<EntityVisualComponent>();
+                visual.SetColor(new Color(0.7f, 0.7f, 0.7f));
             });
         }
 
