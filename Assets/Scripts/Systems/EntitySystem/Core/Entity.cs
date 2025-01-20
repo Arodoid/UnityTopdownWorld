@@ -24,6 +24,7 @@ namespace EntitySystem.Core
         }
 
         private Dictionary<System.Type, IEntityComponent> _components = new();
+        private TickSystem _tickSystem;
 
         public void Initialize(int id, uint version, EntityType type, int3 position)
         {
@@ -31,7 +32,15 @@ namespace EntitySystem.Core
             Version = version;
             Type = type;
             Position = position;
-            InitializeComponents();        }
+            
+            _tickSystem = FindAnyObjectByType<TickSystem>();
+            if (_tickSystem == null)
+            {
+                Debug.LogError("No TickSystem found during Entity initialization!");
+            }
+            
+            InitializeComponents();
+        }
 
         private void InitializeComponents()
         {
@@ -63,9 +72,27 @@ namespace EntitySystem.Core
             if (HasComponent<T>()) return GetComponent<T>();
 
             var component = gameObject.AddComponent<T>();
+            
+            if (component is ITickable tickable && _tickSystem != null)
+            {
+                _tickSystem.Register(tickable);
+            }
+            
             _components[typeof(T)] = component;
-            component.Initialize(this);
+            (component as IEntityComponent)?.Initialize(this);
             return component;
+        }
+
+        public void OnDestroy()
+        {
+            var tickables = GetComponents<ITickable>();
+            foreach (var tickable in tickables)
+            {
+                if (_tickSystem != null)
+                {
+                    _tickSystem.Unregister(tickable);
+                }
+            }
         }
     }
 }

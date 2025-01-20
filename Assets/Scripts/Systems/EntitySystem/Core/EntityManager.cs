@@ -27,6 +27,7 @@ namespace EntitySystem.Core
         {
             Debug.Log("EntityManager Awake");
             
+            // Get or create registry
             _registry = GetComponentInChildren<EntityRegistry>();
             if (_registry == null)
             {
@@ -35,8 +36,8 @@ namespace EntitySystem.Core
                 _registry = registryObj.AddComponent<EntityRegistry>();
             }
             
-            Debug.Log("Creating TickSystem");
-            _tickSystem = gameObject.AddComponent<TickSystem>();
+            // Only get existing TickSystem, don't create a new one
+            _tickSystem = FindAnyObjectByType<TickSystem>();
             
             CreateEntityContainers();
         }
@@ -44,7 +45,6 @@ namespace EntitySystem.Core
         public void Initialize(WorldSystemAPI worldAPI)
         {
             _pathfinding = new PathfindingUtility(worldAPI);
-            Debug.Log("EntityManager initialized with WorldSystemAPI");
         }
 
         private void CreateEntityContainers()
@@ -119,7 +119,6 @@ namespace EntitySystem.Core
 
         public async Task<EntityHandle> CreateEntity(EntityType type, int3 position)
         {
-            Debug.Log($"Creating entity of type {type} at position {position}");
             
             // Simulate async initialization if needed
             await Task.Yield();
@@ -140,7 +139,6 @@ namespace EntitySystem.Core
             _entities[entityId] = entity;
             
             var handle = new EntityHandle(entityId, _currentVersion);
-            Debug.Log($"Created entity with handle: {handle.Id}, {handle.Version}");
             return handle;
         }
 
@@ -148,7 +146,6 @@ namespace EntitySystem.Core
         {
             if (TryGetEntity(handle, out Entity entity))
             {
-                Debug.Log($"Destroying entity {handle.Id}");
                 _entities.Remove(handle.Id);
                 _recycledIds.Add(handle.Id);
                 Destroy(entity.gameObject);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using WorldSystem.API;
 using System;
 using UnityEngine;
+using System.Collections;
 
 namespace EntitySystem.Core.Utilities
 {
@@ -12,6 +13,8 @@ namespace EntitySystem.Core.Utilities
         private readonly PriorityQueue<PathNode> _openSet;
         private readonly HashSet<int3> _closedSet;
         private readonly Dictionary<int3, PathNode> _allNodes;
+        private Dictionary<int3, bool> _positionValidityCache = new();
+        private const int MAX_CACHE_SIZE = 1000;
         
         // Directions for pathfinding (including diagonals)
         private static readonly int3[] DIRECTIONS = new int3[]
@@ -158,10 +161,43 @@ namespace EntitySystem.Core.Utilities
 
         private bool IsValidPosition(int3 pos, float entityHeight)
         {
+            // Check cache first
+            if (_positionValidityCache.TryGetValue(pos, out bool isValid))
+            {
+                return isValid;
+            }
+
             // First check if we can stand at the base position
             if (!_worldAPI.CanStandAt(pos))
             {
-                return false;
+                // Check if we can jump up one block
+                var oneUp = pos + new int3(0, 1, 0);
+                if (math.abs(oneUp.y - pos.y) > 1)  // Can only jump up 1 block
+                {
+                    return CacheResult(pos, false);
+                }
+                if (!_worldAPI.CanStandAt(oneUp))
+                {
+                    return CacheResult(pos, false);
+                }
+                pos = oneUp;  // Use the higher position
+            }
+
+            // Check for falls (don't allow falls more than 3 blocks)
+            var oneDown = pos + new int3(0, -1, 0);
+            if (_worldAPI.CanStandAt(oneDown))
+            {
+                int fallDistance = 1;
+                var checkPos = oneDown;
+                while (_worldAPI.CanStandAt(checkPos + new int3(0, -1, 0)))
+                {
+                    fallDistance++;
+                    if (fallDistance > 3)  // Max fall distance
+                    {
+                        return CacheResult(pos, false);
+                    }
+                    checkPos += new int3(0, -1, 0);
+                }
             }
 
             // Then check height clearance (all positions above base must be non-solid)
@@ -170,11 +206,22 @@ namespace EntitySystem.Core.Utilities
                 var checkPos = pos + new int3(0, y, 0);
                 if (_worldAPI.IsBlockSolid(checkPos))
                 {
-                    return false;
+                    return CacheResult(pos, false);
                 }
             }
 
-            return true;
+            return CacheResult(pos, true);
+        }
+
+        private bool CacheResult(int3 pos, bool result)
+        {
+            // Cache result
+            if (_positionValidityCache.Count >= MAX_CACHE_SIZE)
+            {
+                _positionValidityCache.Clear();  // Simple cache clearing strategy
+            }
+            _positionValidityCache[pos] = result;
+            return result;
         }
 
         private float EstimateDistance(int3 a, int3 b)
@@ -198,13 +245,75 @@ namespace EntitySystem.Core.Utilities
             return path;
         }
 
-        public List<int3> FindRandomPath(int3 start, float maxDistance, float entityHeight)
+        public IEnumerator FindPathAsync(int3 start, int3 end, float entityHeight, System.Action<List<int3>> onComplete)
         {
-            if (TryGetRandomNearbyPosition(start, maxDistance, entityHeight, out int3 end))
+            const int NODES_PER_FRAME = 100;  // Process this many nodes before yielding
+            int nodesProcessed = 0;
+            
+            // Reset collections
+            _openSet.Clear();
+            _closedSet.Clear();
+            _allNodes.Clear();
+
+            var startNode = new PathNode(start, null, 0, EstimateDistance(start, end));
+            _openSet.Enqueue(startNode);
+            _allNodes[start] = startNode;
+
+            while (_openSet.Count > 0)
             {
-                return FindPath(start, end, entityHeight);
+                var current = _openSet.Dequeue();
+
+                if (current.Position.Equals(end))
+                {
+                    onComplete(ReconstructPath(current));
+                    yield break;
+                }
+
+                _closedSet.Add(current.Position);
+
+                foreach (var dir in DIRECTIONS)
+                {
+                    var neighborPos = current.Position + dir;
+                    
+                    // Skip if already evaluated
+                    if (_closedSet.Contains(neighborPos)) continue;
+
+                    // Check if position is valid for entity
+                    if (!IsValidPosition(neighborPos, entityHeight)) continue;
+
+                    // Calculate new cost
+                    float moveCost = dir.y != 0 ? 1.4f : math.length(new float2(dir.x, dir.z));
+                    float newCost = current.GCost + moveCost;
+
+                    // Get or create neighbor node
+                    if (!_allNodes.TryGetValue(neighborPos, out PathNode neighbor))
+                    {
+                        neighbor = new PathNode(
+                            neighborPos,
+                            current,
+                            newCost,
+                            EstimateDistance(neighborPos, end)
+                        );
+                        _allNodes[neighborPos] = neighbor;
+                        _openSet.Enqueue(neighbor);
+                    }
+                    else if (newCost < neighbor.GCost)
+                    {
+                        neighbor.Parent = current;
+                        neighbor.GCost = newCost;
+                        _openSet.UpdatePriority(neighbor);
+                    }
+                }
+                nodesProcessed++;
+                
+                if (nodesProcessed >= NODES_PER_FRAME)
+                {
+                    nodesProcessed = 0;
+                    yield return null;  // Let other things process
+                }
             }
-            return new List<int3>();
+
+            onComplete(new List<int3>());  // No path found
         }
 
         private class PathNode : IComparable<PathNode>
@@ -312,4 +421,4 @@ namespace EntitySystem.Core.Utilities
             }
         }
     }
-} 
+}
