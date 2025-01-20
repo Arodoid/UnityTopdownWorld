@@ -1,153 +1,96 @@
-JobComponent Tick - Entity 1 - Current Job: Active
-WanderJob Execute - Entity 1 - Ticks: 9 - Walking: False
-JobComponent Tick - Entity 2 - Current Job: Active
-WanderJob Execute - Entity 2 - Ticks: 9 - Walking: False
-JobComponent Tick - Entity 3 - Current Job: Active
-WanderJob Execute - Entity 3 - Ticks: 9 - Walking: False
-JobComponent Tick - Entity 4 - Current Job: Active
-WanderJob Execute - Entity 4 - Ticks: 9 - Walking: False
-JobComponent Tick - Entity 0 - Current Job: Active
-WanderJob Execute - Entity 0 - Ticks: 10 - Walking: False
-JobComponent Tick - Entity 1 - Current Job: Active
-WanderJob Execute - Entity 1 - Ticks: 10 - Walking: False
-JobComponent Tick - Entity 2 - Current Job: Active
-WanderJob Execute - Entity 2 - Ticks: 10 - Walking: False
-JobComponent Tick - Entity 3 - Current Job: Active
-WanderJob Execute - Entity 3 - Ticks: 10 - Walking: False
-JobComponent Tick - Entity 4 - Current Job: Active
-WanderJob Execute - Entity 4 - Ticks: 10 - Walking: False
-JobComponent Tick - Entity 0 - Current Job: Active
-WanderJob Execute - Entity 0 - Ticks: 11 - Walking: False
-JobComponent Tick - Entity 1 - Current Job: Active
-WanderJob Execute - Entity 1 - Ticks: 11 - Walking: False
-JobComponent Tick - Entity 2 - Current Job: Active
-WanderJob Execute - Entity 2 - Ticks: 11 - Walking: False
-JobComponent Tick - Entity 3 - Current Job: Active
-WanderJob Execute - Entity 3 - Ticks: 11 - Walking: False
-JobComponent Tick - Entity 4 - Current Job: Active
-WanderJob Execute - Entity 4 - Ticks: 11 - Walking: False
-JobComponent Tick - Entity 0 - Current Job: Active
-WanderJob Execute - Entity 0 - Ticks: 12 - Walking: False
-JobComponent Tick - Entity 1 - Current Job: Active
-WanderJob Execute - Entity 1 - Ticks: 12 - Walking: False
-JobComponent Tick - Entity 2 - Current Job: Active
-WanderJob Execute - Entity 2 - Ticks: 12 - Walking: False
-JobComponent Tick - Entity 3 - Current Job: Active
-WanderJob Execute - Entity 3 - Ticks: 12 - Walking: False
-JobComponent Tick - Entity 4 - Current Job: Active
-WanderJob Execute - Entity 4 - Ticks: 12 - Walking: False
-JobComponent Tick - Entity 0 - Current Job: Active
-WanderJob Execute - Entity 0 - Ticks: 13 - Walking: False
-JobComponent Tick - Entity 1 - Current Job: Active
-WanderJob Execute - Entity 1 - Ticks: 13 - Walking: False
-JobComponent Tick - Entity 2 - Current Job: Active
-WanderJob Execute - Entity 2 - Ticks: 13 - Walking: False
-JobComponent Tick - Entity 3 - Current Job: Active
-WanderJob Execute - Entity 3 - Ticks: 13 - Walking: False
-JobComponent Tick - Entity 4 - Current Job: Active
-WanderJob Execute - Entity 4 - Ticks: 13 - Walking: False
-JobComponent Tick - Entity 0 - Current Job: Active
-WanderJob Execute - Entity 0 - Ticks: 14 - Walking: False
-JobComponent Tick - Entity 1 - Current Job: Active
-WanderJob Execute - Entity 1 - Ticks: 14 - Walking: False
-JobComponent Tick - Entity 2 - Current Job: Active
-WanderJob Execute - Entity 2 - Ticks: 14 - Walking: False
-JobComponent Tick - Entity 3 - Current Job: Active
-WanderJob Execute - Entity 3 - Ticks: 14 - Walking: False
-JobComponent Tick - Entity 4 - Current Job: Active
-WanderJob Execute - Entity 4 - Ticks: 14 - Walking: False
-JobComponent Tick - Entity 0 - Current Job: Active
-WanderJob Execute - Entity 0 - Ticks: 15 - Walking: False
-Entity 0 starting walk cycle
-JobComponent Tick - Entity 1 - Current Job: Active
-WanderJob Execute - Entity 1 - Ticks: 15 - Walking: False
-Entity 1 starting walk cycle
-JobComponent Tick - Entity 2 - Current Job: Active
-WanderJob Execute - Entity 2 - Ticks: 15 - Walking: False
-Entity 2 starting walk cycle
-JobComponent Tick - Entity 3 - Current Job: Active
-WanderJob Execute - Entity 3 - Ticks: 15 - Walking: False
-Entity 3 starting walk cycle
-JobComponent Tick - Entity 4 - Current Job: Active
-WanderJob Execute - Entity 4 - Ticks: 15 - Walking: False
-Entity 4 starting walk cycle
-JobComponent Tick - Entity 0 - Current Job: Active
-WanderJob Execute - Entity 0 - Ticks: 1 - Walking: True
-Entity 0 needs new path
-Trying target position: (4.93, 76.00, 0.80)
-Trying target position: (-0.19, 77.00, 5.00)
-Trying target position: (-0.38, 77.00, 4.99)
-Trying target position: (4.49, 76.00, -2.19)
-Trying target position: (3.34, 76.00, 3.72)
-JobComponent Tick - Entity 1 - Current Job: Active
-WanderJob Execute - Entity 1 - Ticks: 1 - Walking: True
-Entity 1 needs new path
-Trying target position: (1.86, 76.00, 4.64)
-Trying target position: (4.39, 76.00, 2.39)
-Trying target position: (-0.40, 76.00, -4.98)
-Trying target position: (-4.80, 77.00, -1.42)
-Trying target position: (-2.67, 72.00, -4.23)
-JobComponent Tick - Entity 2 - Current Job: Active
-WanderJob Execute - Entity 2 - Ticks: 1 - Walking: True
-Entity 2 needs new path
-Trying target position: (1.29, 76.00, -4.83)
-Trying target position: (-4.24, 77.00, 2.65)
-Trying target position: (-0.21, 76.00, -5.00)
-Trying target position: (2.60, 76.00, 4.27)
-Trying target position: (1.51, 76.00, -4.77)
-JobComponent Tick - Entity 3 - Current Job: Active
-WanderJob Execute - Entity 3 - Ticks: 1 - Walking: True
-Entity 3 needs new path
-Trying target position: (-0.44, 76.00, -4.98)
-Trying target position: (1.62, 76.00, 4.73)
-Trying target position: (2.73, 76.00, 4.19)
-Trying target position: (-4.72, 74.00, -1.66)
-Trying target position: (-4.48, 74.00, -2.23)
-JobComponent Tick - Entity 4 - Current Job: Active
-WanderJob Execute - Entity 4 - Ticks: 1 - Walking: True
-Entity 4 needs new path
-Trying target position: (0.25, 77.00, 4.99)
-Trying target position: (-4.99, 78.00, -0.24)
-Trying target position: (-1.81, 61.00, -4.66)
-Trying target position: (-2.16, 61.00, -4.51)
-Trying target position: (1.73, 76.00, -4.69)
-JobComponent Tick - Entity 0 - Current Job: Active
-WanderJob Execute - Entity 0 - Ticks: 2 - Walking: True
-Entity 0 needs new path
-Trying target position: (-4.90, 78.00, 0.99)
-Trying target position: (-1.27, 76.00, -4.84)
-Trying target position: (-4.64, 74.00, -1.87)
-Trying target position: (-4.12, 74.00, -2.84)
-Trying target position: (-2.32, 66.00, -4.43)
-JobComponent Tick - Entity 1 - Current Job: Active
-WanderJob Execute - Entity 1 - Ticks: 2 - Walking: True
-Entity 1 needs new path
-Trying target position: (-4.53, 77.00, 2.11)
-Trying target position: (4.59, 76.00, 1.98)
-Trying target position: (-3.93, 74.00, -3.09)
-Trying target position: (-4.24, 77.00, 2.64)
-Trying target position: (4.85, 76.00, 1.20)
-JobComponent Tick - Entity 2 - Current Job: Active
-WanderJob Execute - Entity 2 - Ticks: 2 - Walking: True
-Entity 2 needs new path
-Trying target position: (1.91, 76.00, -4.62)
-Trying target position: (-4.60, 74.00, -1.96)
-Trying target position: (4.98, 76.00, 0.44)
-Trying target position: (-4.95, 77.00, -0.68)
-Trying target position: (-3.36, 77.00, 3.70)
-JobComponent Tick - Entity 3 - Current Job: Active
-WanderJob Execute - Entity 3 - Ticks: 2 - Walking: True
-Entity 3 needs new path
-Trying target position: (2.95, 76.00, -4.04)
-Trying target position: (-4.71, 77.00, 1.68)
-Trying target position: (3.86, 76.00, 3.17)
-Trying target position: (-4.14, 74.00, -2.80)
-Trying target position: (-0.14, 76.00, -5.00)
-JobComponent Tick - Entity 4 - Current Job: Active
-WanderJob Execute - Entity 4 - Ticks: 2 - Walking: True
-Entity 4 needs new path
-Trying target position: (-4.97, 78.00, 0.53)
-Trying target position: (-4.45, 74.00, -2.28)
-Trying target position: (-1.26, 76.00, -4.84)
-Trying target position: (-4.93, 78.00, 0.84)
-Trying target position: (-3.78, 77.00, 3.27)
+ZoneCreationTool: Tool activated
+ZoneCreationTool: OnPointerUp
+BoxSelectionResult: Created with start=int3(0, 0, 0), end=int3(0, 0, 0)
+BoxSelectionResult: Invalid - start equals end
+BoxSelectionResult: IsValid=False
+ZoneCreationTool: OnPointerDown
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(17, 65, 10)
+BoxSelectionResult: Invalid - start equals end
+BoxSelectionResult: IsValid=False
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(17, 65, 10)
+BoxSelectionResult: Invalid - start equals end
+BoxSelectionResult: IsValid=False
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(18, 65, 10)
+BoxSelectionResult: IsValid=True
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(18, 65, 10)
+BoxSelectionResult: IsValid=True
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(18, 65, 11)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(18, 65, 11)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(19, 65, 11)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(19, 65, 11)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(20, 65, 12)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(20, 65, 12)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(21, 65, 13)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(21, 65, 13)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(22, 65, 14)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(22, 65, 14)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(23, 65, 15)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(23, 65, 15)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(24, 65, 16)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(24, 65, 16)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(25, 65, 17)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(25, 65, 17)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(26, 65, 18)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(26, 65, 18)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(27, 65, 19)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(27, 65, 19)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(28, 65, 20)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(28, 65, 20)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(29, 65, 21)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(29, 65, 21)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(31, 65, 22)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(31, 65, 22)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(32, 65, 22)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(32, 65, 22)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(32, 65, 23)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(32, 65, 23)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(34, 66, 24)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(34, 66, 24)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(35, 66, 25)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(35, 66, 25)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(36, 66, 26)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(36, 66, 26)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(37, 66, 27)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(37, 66, 27)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(38, 66, 27)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(38, 66, 27)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(39, 66, 28)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(39, 66, 28)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(40, 66, 29)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(40, 66, 29)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(41, 67, 29)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(41, 67, 29)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(41, 67, 30)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(41, 67, 30)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(42, 67, 31)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(42, 67, 31)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(43, 67, 31)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(43, 67, 31)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(44, 67, 32)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(44, 67, 32)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(45, 67, 33)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(45, 67, 33)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(46, 67, 33)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(46, 67, 33)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(47, 67, 34)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(47, 67, 34)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(48, 67, 34)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(48, 67, 34)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(48, 67, 35)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(48, 67, 35)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(47, 67, 35)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(47, 67, 35)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(46, 67, 34)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(46, 67, 34)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(44, 67, 33)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(44, 67, 33)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(43, 67, 32)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(43, 67, 32)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(44, 67, 31)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(44, 67, 31)
+BoxSelectionResult: Created with start=int3(17, 65, 10), end=int3(44, 67, 31)
+BoxSelectionResult: IsValid=True
+ZoneCreationTool: HandleSelectionFinished called
+UISystem.Core.Tools.ZoneCreationTool:HandleSelectionFinished ()
+ZoneCreationTool: Selection was invalid
+UISystem.Core.Tools.ZoneCreationTool:HandleSelectionFinished ()

@@ -189,7 +189,7 @@ Material:
     - _WaveSpeed: 0.4
     - _WaveStrength: 0.2
     - _WorkflowMode: 1
-    - _WorldSeed: 76545
+    - _WorldSeed: 12
     - _ZWrite: 1
     m_Colors:
     - _AtmosphereColor: {r: 0.2688679, g: 0.634434, b: 1, a: 1}

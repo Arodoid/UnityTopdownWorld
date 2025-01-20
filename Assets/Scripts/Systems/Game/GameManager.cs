@@ -4,6 +4,10 @@ using WorldSystem;
 using WorldSystem.Base;
 using WorldSystem.API;
 using UISystem.Core;
+using ZoneSystem.API;
+using ZoneSystem.Core;
+using EntitySystem.API;
+using EntitySystem.Core;
 using System.Threading.Tasks;
 
 namespace Game
@@ -13,6 +17,8 @@ namespace Game
         [Header("System References")]
         [SerializeField] private ChunkManager chunkManager;
         [SerializeField] private UISystemManager uiSystemManager;
+        [SerializeField] private ZoneManager zoneManager;
+        [SerializeField] private EntityManager entityManager;
         
         [Header("World Settings")]
         [SerializeField] private string worldName;
@@ -20,10 +26,14 @@ namespace Game
         [SerializeField] private bool createNewWorld;
 
         private WorldSystemAPI _worldAPI;
+        private ZoneSystemAPI _zoneAPI;
+        private EntitySystemAPI _entityAPI;
         private bool _isInitialized;
 
         public bool IsInitialized => _isInitialized;
         public WorldSystemAPI WorldAPI => _worldAPI;
+        public ZoneSystemAPI ZoneAPI => _zoneAPI;
+        public EntitySystemAPI EntityAPI => _entityAPI;
 
         private void Start()
         {
@@ -49,8 +59,23 @@ namespace Game
                 yield break;
             }
 
+            // Initialize Zone System
+            if (zoneManager == null)
+            {
+                zoneManager = gameObject.AddComponent<ZoneManager>();
+            }
+            _zoneAPI = new ZoneSystemAPI(zoneManager);
+
+            // Initialize Entity System
+            if (entityManager == null)
+            {
+                entityManager = gameObject.AddComponent<EntityManager>();
+            }
+            entityManager.Initialize(_worldAPI);
+            _entityAPI = new EntitySystemAPI(entityManager);
+
             // Initialize UI System
-            uiSystemManager.Initialize(_worldAPI);
+            uiSystemManager.Initialize(_worldAPI, _zoneAPI, _entityAPI);
             
             _isInitialized = true;
             Debug.Log("Game systems initialized successfully!");

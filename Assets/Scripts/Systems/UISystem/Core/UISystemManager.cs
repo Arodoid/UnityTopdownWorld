@@ -4,6 +4,8 @@ using UISystem.Core.Tools;
 using UISystem.Core.Interactions;
 using UISystem.Core.UI;
 using WorldSystem.API;
+using ZoneSystem.API;
+using EntitySystem.API;
 
 namespace UISystem.Core
 {
@@ -16,11 +18,18 @@ namespace UISystem.Core
         
         private UISystemAPI _uiSystemAPI;
         private WorldCoordinateMapper _coordinateMapper;
+        private WorldSystemAPI _worldAPI;
+        private ZoneSystemAPI _zoneAPI;
+        private EntitySystemAPI _entityAPI;
 
         public UISystemAPI UISystemAPI => _uiSystemAPI;
 
-        public void Initialize(WorldSystemAPI worldAPI)
+        public void Initialize(WorldSystemAPI worldAPI, ZoneSystemAPI zoneAPI, EntitySystemAPI entityAPI)
         {
+            _worldAPI = worldAPI;
+            _zoneAPI = zoneAPI;
+            _entityAPI = entityAPI;
+            
             // Create dependencies
             _coordinateMapper = new WorldCoordinateMapper(mainCamera, worldAPI);
             
@@ -29,7 +38,7 @@ namespace UISystem.Core
             {
                 toolManager = gameObject.AddComponent<ToolManager>();
             }
-            toolManager.Initialize(worldAPI, _coordinateMapper);
+            toolManager.Initialize(worldAPI, zoneAPI, _coordinateMapper, entityAPI);
             
             // Initialize UI System API
             _uiSystemAPI = new UISystemAPI(inputHandler, toolManager);
@@ -41,7 +50,7 @@ namespace UISystem.Core
             }
             toolbarUI.Initialize(_uiSystemAPI);
 
-            Debug.Log("UISystemManager initialized successfully");
+            Debug.Log("UISystemManager initialized with all system APIs");
         }
 
         private void OnDestroy()

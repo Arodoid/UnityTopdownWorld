@@ -4,6 +4,8 @@ using UISystem.API;
 using UISystem.Core.Tools;
 using UISystem.Core.Interactions;
 using WorldSystem.API;
+using ZoneSystem.API;
+using EntitySystem.API;
 
 namespace UISystem.Core
 {
@@ -12,12 +14,16 @@ namespace UISystem.Core
         private readonly Dictionary<string, IUITool> _tools = new Dictionary<string, IUITool>();
         private string _activeToolId;
         private WorldSystemAPI _worldAPI;
+        private ZoneSystemAPI _zoneAPI;
+        private EntitySystemAPI _entityAPI;
         private WorldCoordinateMapper _coordinateMapper;
         private BlockHighlighter _blockHighlighter;
 
-        public void Initialize(WorldSystemAPI worldAPI, WorldCoordinateMapper coordinateMapper)
+        public void Initialize(WorldSystemAPI worldAPI, ZoneSystemAPI zoneAPI, WorldCoordinateMapper coordinateMapper, EntitySystemAPI entityAPI)
         {
             _worldAPI = worldAPI;
+            _zoneAPI = zoneAPI;
+            _entityAPI = entityAPI;
             _coordinateMapper = coordinateMapper;
             
             // Create block highlighter
@@ -38,6 +44,17 @@ namespace UISystem.Core
             
             var boxTool = new BoxSelectionTool(_worldAPI, _coordinateMapper, gameObject);
             RegisterTool(boxTool);
+
+            // Zone tools
+            var zoneCreationTool = new ZoneCreationTool(_zoneAPI, _coordinateMapper, gameObject);
+            RegisterTool(zoneCreationTool);
+            
+            var zoneRemovalTool = new ZoneRemovalTool(_zoneAPI, _coordinateMapper, gameObject);
+            RegisterTool(zoneRemovalTool);
+
+            // Entity spawn tool
+            var entitySpawnTool = new EntitySpawnTool(_entityAPI, _coordinateMapper);
+            RegisterTool(entitySpawnTool);
         }
 
         public void RegisterTool(IUITool tool)

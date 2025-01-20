@@ -6,8 +6,6 @@ namespace UISystem.Core
     public class InputHandler : MonoBehaviour, IUIInteractionHandler
     {
         private Vector2 _lastPointerPosition;
-        private bool _isPointerDown;
-        private float _dragThreshold = 1f;
         private UISystemAPI _uiSystem;
 
         public void Initialize(UISystemAPI uiSystem)
@@ -27,13 +25,12 @@ namespace UISystem.Core
                 return;
             }
 
-            // Always handle pointer movement, even if position hasn't changed
+            // Always handle pointer movement
             HandlePointerMoved(currentPointerPosition);
             
             // Handle dragging if any mouse button is held down
             if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
             {
-                _isPointerDown = true;
                 HandlePointerDragged(currentPointerPosition);
             }
 
@@ -46,7 +43,6 @@ namespace UISystem.Core
             // Handle mouse button up events
             if (Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1))
             {
-                _isPointerDown = false;
                 HandlePointerUp(currentPointerPosition);
             }
 

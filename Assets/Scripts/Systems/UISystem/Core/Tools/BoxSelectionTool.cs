@@ -22,7 +22,9 @@ namespace UISystem.Core.Tools
         {
             _worldAPI = worldAPI;
             _coordinateMapper = coordinateMapper;
-            _boxVisualizer = toolsParent.AddComponent<BoxVisualizer>();
+            var visualizerObject = new GameObject("BoxSelectionVisualizer");
+            visualizerObject.transform.SetParent(toolsParent.transform);
+            _boxVisualizer = visualizerObject.AddComponent<BoxVisualizer>();
         }
 
         public void OnToolActivated()
