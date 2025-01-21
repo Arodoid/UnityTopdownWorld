@@ -12,13 +12,15 @@ namespace EntitySystem.Core
 {
     public class EntityManager : MonoBehaviour, IEntityManager
     {
-        private EntityRegistry _registry;
+        [SerializeField] private JobSystemComponent jobSystem;
+        [SerializeField] private TickSystem tickSystem;
+        
+        private EntityRegistry _entityRegistry;
         private Dictionary<int, Entity> _entities = new();
         private Dictionary<EntityType, Transform> _entityContainers = new();
         private HashSet<int> _recycledIds = new();
-        private int _nextEntityId;
-        private uint _currentVersion;
-        private TickSystem _tickSystem;
+        private int _nextEntityId = 1;
+        private uint _nextVersion = 1;
         private PathfindingUtility _pathfinding;
         private WorldSystemAPI _worldAPI;
 
@@ -28,17 +30,8 @@ namespace EntitySystem.Core
         {
             Debug.Log("EntityManager Awake");
             
-            // Get or create registry
-            _registry = GetComponentInChildren<EntityRegistry>();
-            if (_registry == null)
-            {
-                var registryObj = new GameObject("EntityRegistry");
-                registryObj.transform.SetParent(transform);
-                _registry = registryObj.AddComponent<EntityRegistry>();
-            }
-            
-            // Only get existing TickSystem, don't create a new one
-            _tickSystem = FindAnyObjectByType<TickSystem>();
+            _entityRegistry = new EntityRegistry();
+            _entityRegistry.SetSystems(jobSystem, tickSystem);
             
             CreateEntityContainers();
         }
@@ -62,60 +55,36 @@ namespace EntitySystem.Core
             }
         }
 
-        public EntityHandle CreateEntity(string entityId, int3 blockPosition)
+        public EntityHandle CreateEntity(string templateName, int3 position)
         {
-            Debug.Log($"Creating entity at block position {blockPosition}");
+            Debug.Log($"Creating entity at block position {position}");
             
-            // Find the first air block above this position
-            while (_worldAPI.IsBlockSolid(blockPosition))
+            if (!_entityRegistry.TryGetTemplate(templateName, out var template))
             {
-                blockPosition.y += 1;
+                Debug.LogError($"No template found for '{templateName}'");
+                return EntityHandle.Invalid;
             }
             
-            // Get next available ID
-            int id = GetNextEntityId();
-            _currentVersion++;
-
-            // Create entity GameObject
-            var entityObject = new GameObject($"{entityId}_{id}");
-            entityObject.transform.SetParent(transform);
+            // Create the game object
+            int entityId = GetNextEntityId();
+            uint version = _nextVersion++;
             
-            // Create and initialize entity component with correct type
+            var entityObject = new GameObject($"{templateName}_{entityId}");
+            entityObject.transform.SetParent(_entityContainers[template.Type]);
+            
+            // Add and initialize the Entity component
             var entity = entityObject.AddComponent<Entity>();
-            EntityType entityType = DetermineEntityType(entityId);
+            entity.Initialize(entityId, version, template.Type, this);
             
-            // Pass 'this' as the EntityManager
-            entity.Initialize(id, _currentVersion, entityType, this);
+            // Set position
+            entityObject.transform.position = new Vector3(position.x + 0.5f, position.y, position.z + 0.5f);
             
-            // Convert block position to world position (centered in block)
-            entityObject.transform.position = new Vector3(
-                blockPosition.x + 0.5f,  // Center in block X
-                blockPosition.y,         // Bottom of block Y
-                blockPosition.z + 0.5f   // Center in block Z
-            );
+            // Apply the template setup
+            template.Setup(entity);
             
-            // Add visual component by default
-            entity.AddComponent<EntityVisualComponent>();
-
-            if (_registry.TryGetTemplate(entityId, out var setup))
-            {
-                setup(entity);
-            }
+            _entities[entityId] = entity;
             
-            _entities[id] = entity;
-            
-            return new EntityHandle(id, _currentVersion);
-        }
-
-        private EntityType DetermineEntityType(string entityId)
-        {
-            // You could make this more sophisticated, but for now:
-            return entityId switch
-            {
-                "Dog" or "Colonist" => EntityType.Living,
-                "WoodenChair" => EntityType.Furniture,
-                _ => EntityType.Item  // Default case
-            };
+            return new EntityHandle(entityId, version);
         }
 
         public async Task<EntityHandle> CreateEntity(EntityType type, int3 position)
@@ -123,21 +92,21 @@ namespace EntitySystem.Core
             await Task.Yield();
             
             int entityId = GetNextEntityId();
-            _currentVersion++;
+            uint version = _nextVersion++;
 
             var entityObject = new GameObject($"{type}_{entityId}");
             entityObject.transform.SetParent(_entityContainers[type]);
             
             var entity = entityObject.AddComponent<Entity>();
             // Pass 'this' as the EntityManager
-            entity.Initialize(entityId, _currentVersion, type, this);
+            entity.Initialize(entityId, version, type, this);
             
             // Set position directly on transform
             entityObject.transform.position = new Vector3(position.x, position.y, position.z);
             
             _entities[entityId] = entity;
             
-            return new EntityHandle(entityId, _currentVersion);
+            return new EntityHandle(entityId, version);
         }
 
         public bool DestroyEntity(EntityHandle handle)
@@ -222,7 +191,7 @@ namespace EntitySystem.Core
 
         public IEnumerable<string> GetAvailableTemplates()
         {
-            return _registry.GetAvailableTemplates();
+            return _entityRegistry.GetAvailableTemplates();
         }
 
         public IEnumerable<EntityHandle> GetEntitiesInRadius(Vector3 position, float radius)

@@ -91,8 +91,6 @@ namespace EntitySystem.Core.Utilities
                     }
                 }
             }
-
-            Debug.Log($"Found {neighbors.Count} valid neighbors for position {pos}");
             return neighbors;
         }
 
@@ -171,9 +169,7 @@ namespace EntitySystem.Core.Utilities
         }
 
         public bool TryGetRandomNearbyPosition(int3 start, float maxDistance, float entityHeight, out int3 position)
-        {
-            Debug.Log($"TryGetRandomNearbyPosition called with maxDistance: {maxDistance}");
-            
+        {            
             for (int attempts = 0; attempts < 30; attempts++)
             {
                 float angle = Random.Range(0f, 2f * Mathf.PI);
@@ -184,9 +180,7 @@ namespace EntitySystem.Core.Utilities
                 
                 int x = start.x + (int)xOffset;
                 int z = start.z + (int)zOffset;
-                
-                Debug.Log($"Attempt {attempts}: Trying position at distance {distance} (x:{x}, z:{z})");
-                
+                                
                 // Search in a larger vertical range
                 int verticalRange = math.max(MAX_CLIMB, MAX_DROP);
                 for (int y = -verticalRange; y <= verticalRange; y++)

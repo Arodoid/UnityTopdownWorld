@@ -12,14 +12,16 @@ namespace EntitySystem.Core.Jobs
         private Entity _worker;
         private MovementComponent _movement;
         private ItemPickupComponent _pickup;
+        private InventoryComponent _inventory;
         
         private enum State
         {
             MovingToItem,
-            PickingUp,
+            AttemptingPickup,
             MovingToDrop,
-            Dropping,
-            Complete
+            AttemptingDrop,
+            Complete,
+            Failed
         }
         
         private State _currentState;
@@ -33,7 +35,8 @@ namespace EntitySystem.Core.Jobs
         public bool CanAssignTo(Entity worker)
         {
             return worker.HasComponent<MovementComponent>() && 
-                   worker.HasComponent<ItemPickupComponent>();
+                   worker.HasComponent<ItemPickupComponent>() &&
+                   worker.HasComponent<InventoryComponent>();
         }
 
         public void Start(Entity worker)
@@ -41,27 +44,43 @@ namespace EntitySystem.Core.Jobs
             _worker = worker;
             _movement = worker.GetComponent<MovementComponent>();
             _pickup = worker.GetComponent<ItemPickupComponent>();
-            
-            // Start moving to item
+            _inventory = worker.GetComponent<InventoryComponent>();
+
+            // Verify item still exists and get its position
             var itemPos = worker.EntityManager.GetEntityPosition(_itemToPickup);
-            if (itemPos.HasValue)
+            if (!itemPos.HasValue)
             {
-                if (_movement.MoveTo(new int3(
-                    Mathf.FloorToInt(itemPos.Value.x),
-                    Mathf.FloorToInt(itemPos.Value.y),
-                    Mathf.FloorToInt(itemPos.Value.z))))
-                {
-                    _currentState = State.MovingToItem;
-                }
-                else
-                {
-                    _currentState = State.Complete;
-                }
+                Debug.Log("Haul job failed: Item no longer exists");
+                _currentState = State.Failed;
+                return;
+            }
+
+            // Start moving to item
+            if (_movement.MoveTo(new int3(
+                Mathf.FloorToInt(itemPos.Value.x),
+                Mathf.FloorToInt(itemPos.Value.y),
+                Mathf.FloorToInt(itemPos.Value.z))))
+            {
+                _currentState = State.MovingToItem;
+                _movement.OnDestinationReached += OnReachedItem;
             }
             else
             {
-                _currentState = State.Complete;
+                Debug.Log("Haul job failed: Cannot path to item");
+                _currentState = State.Failed;
             }
+        }
+
+        private void OnReachedItem()
+        {
+            _movement.OnDestinationReached -= OnReachedItem;
+            _currentState = State.AttemptingPickup;
+        }
+
+        private void OnReachedDropLocation()
+        {
+            _movement.OnDestinationReached -= OnReachedDropLocation;
+            _currentState = State.AttemptingDrop;
         }
 
         public bool Update()
@@ -69,35 +88,50 @@ namespace EntitySystem.Core.Jobs
             switch (_currentState)
             {
                 case State.MovingToItem:
-                    if (!_movement.IsMoving)
-                    {
-                        _pickup.SetTargetItem(_itemToPickup);
-                        _currentState = State.PickingUp;
-                    }
+                    // Wait for OnReachedItem callback
                     break;
 
-                case State.PickingUp:
-                    if (!_pickup.HasTargetItem)
+                case State.AttemptingPickup:
+                    if (_pickup.TryPickupItem(_itemToPickup))
                     {
+                        // Successfully picked up, now move to drop location
                         if (_movement.MoveTo(_dropLocation))
                         {
                             _currentState = State.MovingToDrop;
+                            _movement.OnDestinationReached += OnReachedDropLocation;
                         }
                         else
                         {
-                            _currentState = State.Complete;
+                            Debug.Log("Haul job failed: Cannot path to drop location");
+                            _currentState = State.Failed;
                         }
+                    }
+                    else
+                    {
+                        Debug.Log("Haul job failed: Could not pick up item");
+                        _currentState = State.Failed;
                     }
                     break;
 
                 case State.MovingToDrop:
-                    if (!_movement.IsMoving)
+                    // Wait for OnReachedDropLocation callback
+                    break;
+
+                case State.AttemptingDrop:
+                    // Try to drop the first item (should be the one we picked up)
+                    if (_inventory.TryDropItem(0))
                     {
-                        // Drop item logic here
+                        Debug.Log("Haul job completed successfully");
                         _currentState = State.Complete;
+                    }
+                    else
+                    {
+                        Debug.Log("Haul job failed: Could not drop item");
+                        _currentState = State.Failed;
                     }
                     break;
 
+                case State.Failed:
                 case State.Complete:
                     return true;
             }
@@ -107,8 +141,12 @@ namespace EntitySystem.Core.Jobs
 
         public void Cancel()
         {
-            _movement?.Stop();
-            _pickup?.ClearTargetItem();
+            // Clean up event subscriptions
+            _movement.OnDestinationReached -= OnReachedItem;
+            _movement.OnDestinationReached -= OnReachedDropLocation;
+            
+            // Stop moving
+            _movement.Stop();
         }
     }
-} 
+}

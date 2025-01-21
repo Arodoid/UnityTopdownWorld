@@ -1,99 +1,133 @@
 using UnityEngine;
+using System;
 using System.Collections.Generic;
+using EntitySystem.Data;
 using EntitySystem.Core.Components;
 
 namespace EntitySystem.Core
 {
-    public class EntityRegistry : MonoBehaviour
+    [System.Serializable]
+    public class EntityRegistry
     {
-        private Dictionary<string, System.Action<Entity>> _entityTemplates = new();
-
-        private void Awake()
+        private class EntityTemplate
         {
-            RegisterDefaultEntities();
+            public string Name;
+            public EntityType Type;
+            public Action<Entity> Setup;
         }
 
-        private void RegisterDefaultEntities()
+        private readonly Dictionary<string, EntityTemplate> _templates = new();
+        private JobSystemComponent _jobSystem;
+        private TickSystem _tickSystem;
+
+        public EntityRegistry()
         {
-            
+            RegisterDefaultTemplates();
+        }
+
+        public void SetSystems(JobSystemComponent jobSystem, TickSystem tickSystem)
+        {
+            _jobSystem = jobSystem;
+            _tickSystem = tickSystem;
+            RegisterDefaultTemplates(); // Re-register with systems
+        }
+
+        private void RegisterDefaultTemplates()
+        {
             // Living entities
-            RegisterEntity("Dog", (entity) => {
-                var health = entity.AddComponent<HealthComponent>();
-                health._maxHealth = 100f;
+            RegisterTemplate("Colonist", EntityType.Living, entity => {
+                // Add all components first
+                entity.AddComponent<HealthComponent>();
+                entity.AddComponent<MovementComponent>();
+                entity.AddComponent<InventoryComponent>();
+                entity.AddComponent<ItemPickupComponent>();
+                entity.AddComponent<EntityVisualComponent>();
+                var job = entity.AddComponent<JobComponent>();
                 
-                var visual = entity.GetComponent<EntityVisualComponent>();
-                visual.SetColor(new Color(0.6f, 0.4f, 0.2f));  // Brown color
-                
-                // Add movement components
-                var movement = entity.AddComponent<MovementComponent>();
-                var idle = entity.AddComponent<IdleMovementComponent>();
-                idle._idleMovementRange = 10f;  // Dogs wander in small area
-                idle._entityHeight = 1f;  // Dog height
+                // Then configure them
+                entity.GetComponent<HealthComponent>()._maxHealth = 150f;
+                entity.GetComponent<EntityVisualComponent>().SetColor(new Color(0.2f, 0.6f, 1f));
+                job.Initialize(_jobSystem, _tickSystem);
             });
 
-            RegisterEntity("Colonist", (entity) => {
-                var health = entity.AddComponent<HealthComponent>();
-                health._maxHealth = 150f;  // Colonists are tougher than dogs
+            RegisterTemplate("Dog", EntityType.Living, entity => {
+                // Add components first
+                entity.AddComponent<HealthComponent>();
+                entity.AddComponent<MovementComponent>();
+                entity.AddComponent<IdleMovementComponent>();
+                entity.AddComponent<EntityVisualComponent>();
                 
-                var visual = entity.GetComponent<EntityVisualComponent>();
-                visual.SetColor(new Color(0.2f, 0.6f, 1f));  // Blue for colonists
-                var inventory = entity.AddComponent<InventoryComponent>();
-                entity.AddComponent<ItemPickupComponent>(); // Add pickup capability
+                // Then configure them
+                entity.GetComponent<HealthComponent>()._maxHealth = 100f;
+                entity.GetComponent<IdleMovementComponent>()._idleMovementRange = 10f;
+                entity.GetComponent<IdleMovementComponent>()._entityHeight = 1f;
+                entity.GetComponent<EntityVisualComponent>().SetColor(new Color(0.6f, 0.4f, 0.2f));
             });
 
-            RegisterEntity("Deer", (entity) => {
-                var health = entity.AddComponent<HealthComponent>();
-                health._maxHealth = 80f;
+            // Items
+            RegisterTemplate("WoodItem", EntityType.Item, entity => {
+                entity.AddComponent<ItemComponent>();
+                entity.AddComponent<EntityVisualComponent>();
                 
-                var visual = entity.GetComponent<EntityVisualComponent>();
-                visual.SetColor(new Color(0.8f, 0.7f, 0.6f));
-                
-                // Add movement components with different settings
-                var movement = entity.AddComponent<MovementComponent>();
-                var idle = entity.AddComponent<IdleMovementComponent>();
-                idle._idleMovementRange = 10f;  // Deer wander in larger area
-                idle._entityHeight = 1.8f;  // Deer height
-            });
-
-            // Furniture entities
-            RegisterEntity("WoodenChair", (entity) => {
-                var health = entity.AddComponent<HealthComponent>();
-                health._maxHealth = 50f;
-                
-                var visual = entity.GetComponent<EntityVisualComponent>();
-                visual.SetColor(new Color(0.4f, 0.3f, 0.2f));  // Darker brown for wood
-            });
-
-            RegisterEntity("WoodItem", (entity) => {
-                var item = entity.AddComponent<ItemComponent>();
+                var item = entity.GetComponent<ItemComponent>();
                 item.ItemId = "Wood";
-                item.SpaceRequired = 2;  // Wood takes 2 spaces
-                var visual = entity.GetComponent<EntityVisualComponent>();
-                visual.SetColor(new Color(0.6f, 0.4f, 0.2f));
+                item.SpaceRequired = 2;
+                
+                entity.GetComponent<EntityVisualComponent>().SetColor(new Color(0.6f, 0.4f, 0.2f));
             });
 
-            RegisterEntity("StoneItem", (entity) => {
-                var item = entity.AddComponent<ItemComponent>();
+            RegisterTemplate("StoneItem", EntityType.Item, entity => {
+                entity.AddComponent<ItemComponent>();
+                entity.AddComponent<EntityVisualComponent>();
+                
+                var item = entity.GetComponent<ItemComponent>();
                 item.ItemId = "Stone";
-                item.SpaceRequired = 3;  // Stone takes 3 spaces
-                var visual = entity.GetComponent<EntityVisualComponent>();
-                visual.SetColor(new Color(0.7f, 0.7f, 0.7f));
+                item.SpaceRequired = 3;
+                
+                entity.GetComponent<EntityVisualComponent>().SetColor(new Color(0.7f, 0.7f, 0.7f));
+            });
+
+            // Furniture
+            RegisterTemplate("WoodenChair", EntityType.Furniture, entity => {
+                entity.AddComponent<HealthComponent>();
+                entity.AddComponent<EntityVisualComponent>();
+                
+                entity.GetComponent<HealthComponent>()._maxHealth = 50f;
+                entity.GetComponent<EntityVisualComponent>().SetColor(new Color(0.4f, 0.3f, 0.2f));
             });
         }
 
-        public void RegisterEntity(string id, System.Action<Entity> setup)
+        public void RegisterTemplate(string name, EntityType type, Action<Entity> setup)
         {
-            _entityTemplates[id] = setup;
+            if (_templates.ContainsKey(name))
+            {
+                Debug.LogError($"Template '{name}' is already registered!");
+                return;
+            }
+
+            _templates[name] = new EntityTemplate 
+            { 
+                Name = name, 
+                Type = type, 
+                Setup = setup 
+            };
         }
 
-        public bool TryGetTemplate(string id, out System.Action<Entity> setup)
+        public bool TryGetTemplate(string name, out (EntityType Type, Action<Entity> Setup) template)
         {
-            return _entityTemplates.TryGetValue(id, out setup);
+            if (_templates.TryGetValue(name, out var entityTemplate))
+            {
+                template = (entityTemplate.Type, entityTemplate.Setup);
+                return true;
+            }
+            
+            template = default;
+            return false;
         }
 
         public IEnumerable<string> GetAvailableTemplates()
         {
-            return _entityTemplates.Keys;
+            return _templates.Keys;
         }
     }
 } 

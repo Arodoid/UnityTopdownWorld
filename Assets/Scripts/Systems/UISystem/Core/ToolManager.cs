@@ -55,12 +55,15 @@ namespace UISystem.Core
             // Entity spawn tool
             var entitySpawnTool = new EntitySpawnTool(_entityAPI, _coordinateMapper);
             RegisterTool(entitySpawnTool);
+
+            // Mining tool
+            var miningTool = new MiningTool(_worldAPI, _entityAPI, _coordinateMapper, gameObject);
+            RegisterTool(miningTool);
         }
 
         public void RegisterTool(IUITool tool)
         {
             _tools[tool.ToolId] = tool;
-            Debug.Log($"Registered tool: {tool.ToolId}");
         }
 
         public void UnregisterTool(string toolId)

@@ -19,6 +19,7 @@ namespace Game
         [SerializeField] private UISystemManager uiSystemManager;
         [SerializeField] private ZoneManager zoneManager;
         [SerializeField] private EntityManager entityManager;
+        [SerializeField] private JobSystemComponent jobSystem;
         
         [Header("World Settings")]
         [SerializeField] private string worldName;
@@ -72,7 +73,7 @@ namespace Game
                 entityManager = gameObject.AddComponent<EntityManager>();
             }
             entityManager.Initialize(_worldAPI);
-            _entityAPI = new EntitySystemAPI(entityManager);
+            _entityAPI = new EntitySystemAPI(entityManager, jobSystem);
 
             // Initialize UI System
             uiSystemManager.Initialize(_worldAPI, _zoneAPI, _entityAPI);

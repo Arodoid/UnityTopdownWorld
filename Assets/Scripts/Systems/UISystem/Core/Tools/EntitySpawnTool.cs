@@ -42,7 +42,7 @@ namespace UISystem.Core.Tools
                 // Convert block position to world position (centered in block)
                 var worldPosition = new int3(
                     blockPosition.x,
-                    blockPosition.y,
+                    blockPosition.y + 1, // Add 1 to spawn on top of the block
                     blockPosition.z
                 );
                 

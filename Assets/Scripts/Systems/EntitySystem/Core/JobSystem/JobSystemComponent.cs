@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace EntitySystem.Core
 {
@@ -13,29 +14,57 @@ namespace EntitySystem.Core
             _globalJobs.Enqueue(job);
         }
 
-        public IJob TryGetGlobalJob(Entity worker)
+        public IJob TryGetJob(Entity worker)
         {
+            // Create a temporary list to hold jobs we need to skip
+            var skippedJobs = new List<IJob>();
+
             while (_globalJobs.Count > 0)
             {
-                var job = _globalJobs.Peek();
+                var job = _globalJobs.Dequeue();
+
+                // Check if job can be assigned to this worker
                 if (job.CanAssignTo(worker))
                 {
-                    _globalJobs.Dequeue();
+                    // Add to active jobs
                     _activeJobs.Add(job);
+                    
+                    // Put skipped jobs back in queue
+                    foreach (var skippedJob in skippedJobs)
+                    {
+                        _globalJobs.Enqueue(skippedJob);
+                    }
+                    
                     return job;
                 }
                 else
                 {
-                    // If the first job can't be assigned, remove it and try the next
-                    _globalJobs.Dequeue();
+                    // Save this job for later
+                    skippedJobs.Add(job);
                 }
             }
+
+            // No suitable job found, put skipped jobs back
+            foreach (var skippedJob in skippedJobs)
+            {
+                _globalJobs.Enqueue(skippedJob);
+            }
+
             return null;
         }
 
         public void OnJobComplete(IJob job)
         {
             _activeJobs.Remove(job);
+        }
+
+        public void CancelJob(IJob job)
+        {
+            if (_activeJobs.Contains(job))
+            {
+                job.Cancel();
+                _activeJobs.Remove(job);
+            }
         }
     }
 } 

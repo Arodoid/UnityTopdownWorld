@@ -49,6 +49,9 @@ namespace UISystem.Core.UI
             // Entity Spawn Tool Button
             DrawToolButton("EntitySpawnTool", "Spawn Entity");
 
+            // Mining Tool Button
+            DrawToolButton("MiningTool", "Mining Tool");
+
             GUI.backgroundColor = Color.white;
             
             // Show tool-specific controls

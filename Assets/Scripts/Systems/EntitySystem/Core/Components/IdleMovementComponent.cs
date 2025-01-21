@@ -29,8 +29,6 @@ namespace EntitySystem.Core.Components
             _movement.OnDestinationReached += OnDestinationReached;
             ResetIdleTimer();
             
-            // Add debug log to verify the actual range value
-            Debug.Log($"Initialized IdleMovementComponent with range: {_idleMovementRange}");
         }
 
         private void OnDestinationReached()
@@ -69,9 +67,7 @@ namespace EntitySystem.Core.Components
                 Mathf.FloorToInt(currentPos.y),
                 Mathf.FloorToInt(currentPos.z)
             );
-            
-            Debug.Log($"Converting world pos {currentPos} to block pos {blockPos}");
-            
+                        
             var path = _pathfinding.FindRandomPath(
                 blockPos,
                 _idleMovementRange,
@@ -81,15 +77,12 @@ namespace EntitySystem.Core.Components
             if (path.Count > 0)
             {
                 Vector3 endPos = path[path.Count - 1];
-                float actualDistance = Vector3.Distance(currentPos, endPos);
-                Debug.Log($"Found path with distance {actualDistance} (target range: {_idleMovementRange}, path points: {path.Count})");
-                
+                float actualDistance = Vector3.Distance(currentPos, endPos);                
                 _isWaitingForPath = true;
                 _movement.MoveAlongPath(path);
             }
             else
             {
-                Debug.Log($"Failed to find valid path for idle movement (range: {_idleMovementRange})");
                 ResetIdleTimer();
             }
         }

@@ -20,7 +20,6 @@ namespace UISystem.Core.Tools
 
         public ZoneCreationTool(ZoneSystemAPI zoneAPI, WorldCoordinateMapper coordinateMapper, GameObject toolsParent)
         {
-            Debug.Log("ZoneCreationTool: Constructor called");
             _zoneAPI = zoneAPI;
             var visualizerObject = new GameObject("ZoneCreationVisualizer");
             visualizerObject.transform.SetParent(toolsParent.transform);
@@ -28,7 +27,6 @@ namespace UISystem.Core.Tools
             _boxSelector = new BoxSelector(coordinateMapper, boxVisualizer);
             _boxSelector.OnSelectionFinished += HandleSelectionFinished;
             _currentZoneType = _zoneAPI.GetAvailableZoneTypes().First();
-            Debug.Log($"ZoneCreationTool: Initialized with zone type {_currentZoneType}");
         }
 
         public void OnToolActivated()
@@ -43,13 +41,11 @@ namespace UISystem.Core.Tools
 
         public void OnPointerDown(Vector2 position)
         {
-            Debug.Log("ZoneCreationTool: OnPointerDown");
             _boxSelector.StartSelection(position);
         }
 
         public void OnPointerUp(Vector2 position)
         {
-            Debug.Log("ZoneCreationTool: OnPointerUp");
             _boxSelector.FinishSelection(position);
         }
 

@@ -7,8 +7,9 @@ namespace EntitySystem.Core.Components
     {
         private Queue<IJob> _personalJobs = new();
         private IJob _currentJob;
-        private bool _isExecutingJob;
         private IdleMovementComponent _idleMovement;
+        private JobSystemComponent _jobSystem;
+        private TickSystem _tickSystem;
 
         protected override void OnInitialize(EntityManager entityManager)
         {
@@ -25,6 +26,19 @@ namespace EntitySystem.Core.Components
         public bool HasJob => _currentJob != null;
         public bool IsIdle => !HasJob && _personalJobs.Count == 0;
 
+        public void Initialize(JobSystemComponent jobSystem, TickSystem tickSystem)
+        {
+            _jobSystem = jobSystem;
+            _tickSystem = tickSystem;
+            
+            if (_jobSystem == null)
+                Debug.LogError($"JobComponent: JobSystemComponent is null for entity {Entity.GetInstanceID()}");
+            if (_tickSystem == null)
+                Debug.LogError($"JobComponent: TickSystem is null for entity {Entity.GetInstanceID()}");
+            else
+                _tickSystem.Register(this);
+        }
+
         public void AddPersonalJob(IJob job)
         {
             _personalJobs.Enqueue(job);
@@ -37,47 +51,49 @@ namespace EntitySystem.Core.Components
 
         public void OnTick()
         {
-            if (_isExecutingJob)
-            {
-                if (_currentJob.Update())
-                {
-                    // Job is complete
-                    _currentJob = null;
-                    _isExecutingJob = false;
-                }
-                return;
-            }
+            if (_jobSystem == null) return;
 
+            // If we don't have a job, try to get one
             if (_currentJob == null)
             {
-                // Try to get a personal job first
+                // First check personal jobs
                 if (_personalJobs.Count > 0)
                 {
                     _currentJob = _personalJobs.Dequeue();
+                    _currentJob.Start(Entity);
                 }
-                // If no personal jobs, try to get a global job
-                else if (Entity.EntityManager.TryGetComponent(out JobSystemComponent jobSystem))
+                // Then check global jobs
+                else
                 {
-                    _currentJob = jobSystem.TryGetGlobalJob(Entity);
-                }
-                
-                // If we still don't have a job, enable idle movement
-                if (_currentJob == null && _idleMovement != null)
-                {
-                    _idleMovement.enabled = true;
+                    _currentJob = _jobSystem.TryGetJob(Entity);
+                    if (_currentJob != null)
+                    {
+                        Debug.Log($"Entity {Entity.GetInstanceID()} starting job {_currentJob.GetType().Name}");
+                        _currentJob.Start(Entity);
+                    }
+                    else if (_idleMovement != null)
+                    {
+                        // Enable idle movement when no job is available
+                        _idleMovement.enabled = true;
+                    }
                 }
             }
-
-            if (_currentJob != null && !_isExecutingJob)
+            // If we have a job, update it
+            else
             {
-                // Disable idle movement when starting a job
-                if (_idleMovement != null)
+                bool isComplete = _currentJob.Update();
+                if (isComplete)
                 {
-                    _idleMovement.enabled = false;
+                    Debug.Log($"Entity {Entity.GetInstanceID()} completed job {_currentJob.GetType().Name}");
+                    _jobSystem.OnJobComplete(_currentJob);
+                    _currentJob = null;
+                    
+                    // Re-enable idle movement when job is complete
+                    if (_idleMovement != null)
+                    {
+                        _idleMovement.enabled = true;
+                    }
                 }
-                
-                _isExecutingJob = true;
-                _currentJob.Start(Entity);
             }
         }
 
@@ -85,11 +101,10 @@ namespace EntitySystem.Core.Components
         {
             if (_currentJob != null)
             {
-                _currentJob.Cancel();
+                _jobSystem.CancelJob(_currentJob);
                 _currentJob = null;
-                _isExecutingJob = false;
                 
-                // Enable idle movement when job is cancelled
+                // Re-enable idle movement when job is cancelled
                 if (_idleMovement != null)
                 {
                     _idleMovement.enabled = true;
@@ -100,6 +115,12 @@ namespace EntitySystem.Core.Components
         protected override void OnDestroy()
         {
             base.OnDestroy();
+            
+            if (_tickSystem != null)
+            {
+                _tickSystem.Unregister(this);
+            }
+            
             CancelCurrentJob();
         }
     }
