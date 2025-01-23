@@ -91,6 +91,20 @@ namespace WorldSystem.Generation
         public BlockType TopBlock;          // Block when exposed to air (like grass)
         public BlockType UnderwaterBlock;   // Block when underwater and exposed
         public float UnderwaterThreshold;   // How deep before switching to underwater block
+
+        [Header("Vegetation")]
+        public float TreeDensity;      // Chance of tree per surface block (0-1)
+        public float TreeMinHeight;    // Minimum tree height
+        public float TreeMaxHeight;    // Maximum tree height
+        public bool AllowsTrees;       // Whether this biome can have trees
+
+        [Header("Rock Features")]
+        public float RockDensity;        // Chance of rock per surface block (0-1)
+        public float RockMinSize;        // Minimum rock radius
+        public float RockMaxSize;        // Maximum rock radius
+        public float RockSpikiness;      // How jagged/rough the rocks are (0-1)
+        public float RockGroundDepth;    // How deep rocks embed into ground
+        public bool AllowsRocks;         // Whether this biome can have rocks
     }
 
     public struct ClimateParameters

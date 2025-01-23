@@ -12,7 +12,7 @@ namespace EntitySystem.Core
 {
     public class EntityManager : MonoBehaviour, IEntityManager
     {
-        [SerializeField] private Vector3 _debugCubePosition = new Vector3(0f, 65f, 0f);
+        [SerializeField] private int3 _debugCubePosition = new int3(0, 65, 0);
 
         private JobSystemComponent _jobSystem;
         private TickSystem _tickSystem;
@@ -67,9 +67,9 @@ namespace EntitySystem.Core
             }
         }
 
-        public EntityHandle CreateEntity(string templateName, int3 position)
+        public EntityHandle CreateEntity(string templateName, int3 blockPosition)
         {
-            Debug.Log($"Creating entity at block position {position}");
+            Debug.Log($"Creating entity at block position {blockPosition}");
             
             if (!_entityRegistry.TryGetTemplate(templateName, out var template))
             {
@@ -82,19 +82,15 @@ namespace EntitySystem.Core
             
             var entityObject = new GameObject($"{templateName}_{entityId}");
             entityObject.transform.SetParent(_entityContainers[template.Type]);
-            
-            // Position is the block position - entity lives in the center of that block
-            entityObject.transform.position = new Vector3(
-                position.x + 0.5f,
-                position.y,           // Changed: Y is whole number
-                position.z + 0.5f
-            );
+            entityObject.transform.position = BlockToWorldSpace(blockPosition);
             
             var entity = entityObject.AddComponent<Entity>();
             entity.Initialize(entityId, version, template.Type, this);
             
-            template.Setup(entity);
+            // Register entity BEFORE setting up template
             _entities[entityId] = entity;
+            
+            template.Setup(entity);
             
             return new EntityHandle(entityId, version);
         }
@@ -117,26 +113,38 @@ namespace EntitySystem.Core
             position = default;
             if (_entities.TryGetValue(handle.Id, out var entity))
             {
-                Vector3 worldPos = entity.transform.position;
-                position = new int3(
-                    Mathf.FloorToInt(worldPos.x),
-                    Mathf.FloorToInt(worldPos.y) + 1,  // Changed: Floor + 1 instead of Ceil
-                    Mathf.FloorToInt(worldPos.z)
-                );
+                position = WorldToBlockSpace(entity.transform.position);
                 return true;
             }
             return false;
         }
 
-        public bool SetEntityPosition(EntityHandle handle, int3 position)
+        public bool TryGetEntityPosition(int entityId, out int3 position)
+        {
+            position = default;
+            if (_entities.TryGetValue(entityId, out var entity))
+            {
+                position = WorldToBlockSpace(entity.transform.position);
+                return true;
+            }
+            return false;
+        }
+
+        public bool SetEntityPosition(EntityHandle handle, int3 blockPosition)
         {
             if (_entities.TryGetValue(handle.Id, out var entity))
             {
-                entity.transform.position = new Vector3(
-                    position.x + 0.5f,
-                    position.y,           // Changed: Y is whole number
-                    position.z + 0.5f
-                );
+                entity.transform.position = BlockToWorldSpace(blockPosition);
+                return true;
+            }
+            return false;
+        }
+
+        public bool SetEntityPosition(int entityId, int3 blockPosition)
+        {
+            if (_entities.TryGetValue(entityId, out var entity))
+            {
+                entity.transform.position = BlockToWorldSpace(blockPosition);
                 return true;
             }
             return false;
@@ -192,69 +200,23 @@ namespace EntitySystem.Core
             return _entityRegistry.GetAvailableTemplates();
         }
 
-        public IEnumerable<EntityHandle> GetEntitiesInRadius(Vector3 position, float radius)
-        {
-            float sqrRadius = radius * radius;
-            foreach (var entity in _entities.Values)
-            {
-                float sqrDistance = (entity.transform.position - position).sqrMagnitude;
-                if (sqrDistance <= sqrRadius)
-                {
-                    yield return new EntityHandle(entity.Id, entity.Version);
-                }
-            }
-        }
-
-        public Vector3? GetEntityPosition(EntityHandle handle)
-        {
-            if (TryGetEntity(handle, out Entity entity))
-            {
-                return entity.transform.position;
-            }
-            return null;
-        }
-
         public void Update()
         {
             // Process path requests each frame
             _pathfinding.ProcessPathRequests();
         }
 
-        // Update all other position methods to match:
-        internal bool TryGetEntityPosition(int entityId, out int3 position)
-        {
-            position = default;
-            if (_entities.TryGetValue(entityId, out var entity))
-            {
-                Vector3 worldPos = entity.transform.position;
-                position = new int3(
-                    Mathf.FloorToInt(worldPos.x),
-                    Mathf.FloorToInt(worldPos.y) + 1,  // Changed: Floor + 1 instead of Ceil
-                    Mathf.FloorToInt(worldPos.z)
-                );
-                return true;
-            }
-            return false;
-        }
-
-        internal bool SetEntityPosition(int entityId, int3 position)
-        {
-            if (_entities.TryGetValue(entityId, out var entity))
-            {
-                entity.transform.position = new Vector3(
-                    position.x + 0.5f,
-                    position.y - 1f,      // Changed: -1f instead of -0.5f to lower by 0.5 more
-                    position.z + 0.5f
-                );
-                return true;
-            }
-            return false;
-        }
-
         private void OnDrawGizmosSelected()
         {
+            // Convert block position to world position for visualization
+            Vector3 worldPos = new Vector3(
+                _debugCubePosition.x + 0.5f,
+                _debugCubePosition.y,
+                _debugCubePosition.z + 0.5f
+            );
+            
             Gizmos.color = Color.green;
-            Gizmos.DrawWireCube(_debugCubePosition, Vector3.one);
+            Gizmos.DrawWireCube(worldPos, Vector3.one);
         }
 
         // World Space → Block Space
@@ -262,8 +224,32 @@ namespace EntitySystem.Core
         {
             return new int3(
                 Mathf.FloorToInt(worldPosition.x),
-                Mathf.FloorToInt(worldPosition.y) + 1,  // Changed: Floor + 1 instead of Ceil
+                Mathf.FloorToInt(worldPosition.y),  // No more +1 magic numbers
                 Mathf.FloorToInt(worldPosition.z)
+            );
+        }
+
+        public IEnumerable<Entity> GetAllEntities()
+        {
+            return _entities.Values;
+        }
+
+        // Public conversion utilities that everyone can use
+        public static int3 WorldToBlockSpace(Vector3 worldPosition)
+        {
+            return new int3(
+                Mathf.FloorToInt(worldPosition.x),
+                Mathf.FloorToInt(worldPosition.y),  // No more +1 magic numbers
+                Mathf.FloorToInt(worldPosition.z)
+            );
+        }
+
+        public static Vector3 BlockToWorldSpace(int3 blockPosition)
+        {
+            return new Vector3(
+                blockPosition.x + 0.5f,  // Center in block horizontally
+                blockPosition.y,         // Direct Y position
+                blockPosition.z + 0.5f   // Center in block horizontally
             );
         }
     }

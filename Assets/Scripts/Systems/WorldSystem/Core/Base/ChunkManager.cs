@@ -7,6 +7,7 @@ using WorldSystem.Data;
 using System.Linq;
 using WorldSystem.Mesh;
 using WorldSystem.Generation;
+using WorldSystem.Generation.Features;
 using Unity.Burst;
 using System.Threading.Tasks;
 using WorldSystem.Persistence;
@@ -276,37 +277,47 @@ namespace WorldSystem.Base
             {
                 if (kvp.Value.handle.IsCompleted)
                 {
-                    // Complete the job and process results
-                    kvp.Value.handle.Complete();
-                    
-                    // Convert heightMap in parallel
-                    var finalHeightMap = new NativeArray<Data.HeightPoint>(
-                        ChunkData.SIZE * ChunkData.SIZE, Allocator.Persistent);
-                    
-                    var conversionJob = new HeightMapConversionJob
+                    try
                     {
-                        sourceHeightMap = kvp.Value.heightMap,
-                        targetHeightMap = finalHeightMap
-                    };
-                    
-                    var conversionHandle = conversionJob.Schedule(finalHeightMap.Length, 64);
-                    conversionHandle.Complete();  // Still needs completion but faster than single-threaded
-                    
-                    // Create the final chunk data
-                    var chunkData = new Data.ChunkData
-                    {
-                        position = new int3(kvp.Key.x, viewMaxYLevel, kvp.Key.y),
-                        blocks = new NativeArray<byte>(kvp.Value.blocks, Allocator.Persistent),
-                        heightMap = finalHeightMap,
-                        isEdited = false
-                    };
+                        UnityEngine.Debug.Log($"Processing completed chunk at {kvp.Key}");
+                        // Complete the job and process results
+                        kvp.Value.handle.Complete();
+                        
+                        // Convert heightMap in parallel using Persistent allocator
+                        var finalHeightMap = new NativeArray<Data.HeightPoint>(
+                            Data.ChunkData.SIZE * Data.ChunkData.SIZE, 
+                            Allocator.Persistent);
+                        
+                        var conversionJob = new HeightMapConversionJob
+                        {
+                            sourceHeightMap = kvp.Value.heightMap,
+                            targetHeightMap = finalHeightMap
+                        };
+                        
+                        conversionJob.Schedule(finalHeightMap.Length, 64).Complete();
+                        
+                        // Create the final chunk data
+                        var chunkData = new Data.ChunkData
+                        {
+                            position = new int3(kvp.Key.x, viewMaxYLevel, kvp.Key.y),
+                            blocks = kvp.Value.blocks, // Transfer ownership
+                            heightMap = finalHeightMap,
+                            isEdited = false
+                        };
 
-                    OnChunkGenerated(chunkData);
-                    
-                    // Cleanup
-                    kvp.Value.blocks.Dispose();
-                    kvp.Value.heightMap.Dispose();
-                    completedJobs.Add(kvp.Key);
+                        UnityEngine.Debug.Log($"Generating features for chunk at {kvp.Key}");
+                        var featureGenerator = new FeatureGenerator(_worldSettings);
+                        featureGenerator.PopulateChunk(ref chunkData, _worldGenerator.BiomesArray);
+
+                        OnChunkGenerated(chunkData);
+                        completedJobs.Add(kvp.Key);
+                    }
+                    finally
+                    {
+                        // Cleanup source heightMap
+                        if (kvp.Value.heightMap.IsCreated)
+                            kvp.Value.heightMap.Dispose();
+                    }
                 }
             }
 
@@ -317,23 +328,24 @@ namespace WorldSystem.Base
             }
 
             // Schedule new jobs
-            while (_chunkLoadQueue.Count > 0 && _pendingJobs.Count < 8) // Limit concurrent jobs
+            while (_chunkLoadQueue.Count > 0 && _pendingJobs.Count < 8)
             {
                 var pos = _chunkLoadQueue.Dequeue();
                 if (!_pendingJobs.ContainsKey(pos) && !_generatedChunks.Contains(pos))
                 {
+                    // Use Persistent allocator instead of TempJob
                     var blocks = new NativeArray<byte>(
-                        ChunkData.SIZE * ChunkData.SIZE * ChunkData.HEIGHT, 
-                        Allocator.TempJob);
+                        Data.ChunkData.SIZE * Data.ChunkData.SIZE * Data.ChunkData.HEIGHT, 
+                        Allocator.Persistent);
                     var heightMap = new NativeArray<Core.HeightPoint>(
-                        ChunkData.SIZE * ChunkData.SIZE, 
-                        Allocator.TempJob);
+                        Data.ChunkData.SIZE * Data.ChunkData.SIZE, 
+                        Allocator.Persistent);
                         
                     var handle = _worldGenerator.GenerateChunkAsync(
                         new int3(pos.x, viewMaxYLevel, pos.y),
                         blocks,
                         heightMap,
-                        null  // We'll handle the callback manually when job completes
+                        null
                     );
                     
                     _pendingJobs.Add(pos, (handle, blocks, heightMap));

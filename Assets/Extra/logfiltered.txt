@@ -1,108 +1,58 @@
-Creating entity at block position int3(4, 65, 7)
-SnapToGrid - Old pos: (4.50, 65.50, 7.50), Block pos: int3(4, 65, 7), New pos: (4.50, 65.50, 7.50)
-Visual setup - Parent transform.position: (4.50, 65.50, 7.50), Visual localPosition: (0.00, 0.00, 0.00), Visual worldPosition: (4.50, 65.50, 7.50)
-[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-Mining tool activated
-[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
-[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
-EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+No available storage found
+No available storage found
+No available storage found
+Creating entity at block position int3(0, 64, 3)
+No available storage found
+No available storage found
+No available storage found
+No available storage found
+Creating entity at block position int3(6, 64, 7)
+No available storage found
+No available storage found
+Creating entity at block position int3(0, 64, 7)
+Found 1 storage locations with space
+Creating entity at block position int3(5, 64, 8)
+Found 2 storage locations with space
+Found 2 storage locations with space
+Creating entity at block position int3(3, 64, -2)
+Found 2 storage locations with space
+Chest returning storage position: int3(0, 65, 7)
+Added StoneItem to inventory. Space used: 3/10
+Found 2 storage locations with space
+Attempting to drop at position: int3(0, 65, 7)
+InventoryComponent dropping at: int3(0, 65, 7)
+Creating entity at block position int3(0, 65, 7)
+Dropped StoneItem. Space remaining: 10
+Successfully dropped at: int3(0, 65, 7)
+Found 2 storage locations with space
+Chest returning storage position: int3(0, 65, 7)
+Added StoneItem to inventory. Space used: 3/10
+Attempting to drop at position: int3(0, 65, 7)
+InventoryComponent dropping at: int3(0, 65, 7)
+Creating entity at block position int3(0, 65, 7)
+Dropped StoneItem. Space remaining: 10
+Successfully dropped at: int3(0, 65, 7)
+Found 2 storage locations with space
+Chest returning storage position: int3(0, 65, 7)
+Added StoneItem to inventory. Space used: 3/10
+Attempting to drop at position: int3(0, 65, 7)
+InventoryComponent dropping at: int3(0, 65, 7)
+Creating entity at block position int3(0, 65, 7)
+Dropped StoneItem. Space remaining: 10
+Successfully dropped at: int3(0, 65, 7)
+Found 2 storage locations with space
+Chest returning storage position: int3(0, 65, 7)
+Added StoneItem to inventory. Space used: 3/10
+Attempting to drop at position: int3(0, 65, 7)
+InventoryComponent dropping at: int3(0, 65, 7)
+Creating entity at block position int3(0, 65, 7)
+Dropped StoneItem. Space remaining: 10
+Successfully dropped at: int3(0, 65, 7)
+Found 2 storage locations with space
+Chest returning storage position: int3(0, 65, 7)
+Added StoneItem to inventory. Space used: 3/10
+Attempting to drop at position: int3(0, 65, 7)
+InventoryComponent dropping at: int3(0, 65, 7)
+Creating entity at block position int3(0, 65, 7)
+Dropped StoneItem. Space remaining: 10
+Successfully dropped at: int3(0, 65, 7)

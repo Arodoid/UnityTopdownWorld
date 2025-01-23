@@ -14,7 +14,9 @@ namespace WorldSystem.Data
         Snow = 6,
         Gravel = 7,
         Ice = 8,
-        Sandstone = 9
+        Sandstone = 9,
+        Leaves = 10,
+        Wood = 11
     }
 
     public struct BlockDefinition
@@ -109,6 +111,16 @@ namespace WorldSystem.Data
             new BlockDefinition { 
                 color = new float4(0.8f, 0.6f, 0.4f, 1f), 
                 isOpaque = true 
+            },
+            // Wood
+            new BlockDefinition { 
+                color = new float4(0.1f, 0.3f, 0.1f, 1f),
+                isOpaque = true 
+            },
+            // Leaves
+            new BlockDefinition { 
+                color = new float4(0.35f, 0.2f, 0.05f, 1f),
+                isOpaque = true
             }
         };
     }

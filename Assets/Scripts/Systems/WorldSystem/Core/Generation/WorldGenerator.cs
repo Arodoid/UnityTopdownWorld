@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using WorldSystem.Data;
 using WorldSystem.Core;
+using WorldSystem.Generation.Features;
 
 namespace WorldSystem.Generation
 {
@@ -25,6 +26,9 @@ namespace WorldSystem.Generation
         private const bool ENABLE_WATER = true;
         private const float OCEAN_THRESHOLD = 0.5f;
         private readonly NoiseSettings GLOBAL_DENSITY_NOISE = new() { Scale = 2f, Amplitude = 2f, Frequency = 0.01f, Octaves = 4, Persistence = 0.5f, Lacunarity = 2f };
+
+        // Add this property to access biomes array
+        public NativeArray<BiomeSettings> BiomesArray => _biomesArray;
 
         public int seed => _settings.Seed;
 
@@ -76,7 +80,11 @@ namespace WorldSystem.Generation
                     SecondaryBlock = BlockType.Stone,
                     TopBlock = BlockType.Sand,
                     UnderwaterBlock = BlockType.Sand,
-                    UnderwaterThreshold = 1f
+                    UnderwaterThreshold = 1f,
+                    TreeDensity = 0f,
+                    AllowsTrees = false,
+                    RockDensity = 0f,
+                    AllowsRocks = false,
                 },
 
                 // Beach biome
@@ -107,7 +115,17 @@ namespace WorldSystem.Generation
                     SecondaryBlock = BlockType.Stone,
                     TopBlock = BlockType.Sand,
                     UnderwaterBlock = BlockType.Sand,
-                    UnderwaterThreshold = 2f
+                    UnderwaterThreshold = 2f,
+                    TreeDensity = 0.001f,  // Very rare trees
+                    TreeMinHeight = 4,
+                    TreeMaxHeight = 6,
+                    AllowsTrees = true,
+                    RockDensity = 0.00002f,
+                    RockMinSize = 1f,
+                    RockMaxSize = 2f,
+                    RockSpikiness = 0.3f,
+                    RockGroundDepth = 0.5f,
+                    AllowsRocks = true,
                 },
 
                 // Grassland biome
@@ -138,7 +156,17 @@ namespace WorldSystem.Generation
                     SecondaryBlock = BlockType.Stone,
                     TopBlock = BlockType.Grass,
                     UnderwaterBlock = BlockType.Grass,
-                    UnderwaterThreshold = 2f
+                    UnderwaterThreshold = 2f,
+                    TreeDensity = 0.02f,   // More common trees
+                    TreeMinHeight = 4,
+                    TreeMaxHeight = 8,
+                    AllowsTrees = true,
+                    RockDensity = 0.0003f,
+                    RockMinSize = 0.5f,
+                    RockMaxSize = 1f,
+                    RockSpikiness = 0.4f,
+                    RockGroundDepth = 1f,
+                    AllowsRocks = true,
                 },
 
                 // Mountain biome (highest elevation, highest continentalness)
@@ -169,7 +197,17 @@ namespace WorldSystem.Generation
                     SecondaryBlock = BlockType.Stone,
                     TopBlock = BlockType.Stone,
                     UnderwaterBlock = BlockType.Gravel,
-                    UnderwaterThreshold = 3f
+                    UnderwaterThreshold = 3f,
+                    TreeDensity = 0.01f,   // Moderate tree density
+                    TreeMinHeight = 3,
+                    TreeMaxHeight = 6,
+                    AllowsTrees = true,
+                    RockDensity = 0.0004f,
+                    RockMinSize = 1f,
+                    RockMaxSize = 2f,
+                    RockSpikiness = 0.7f,
+                    RockGroundDepth = 1.5f,
+                    AllowsRocks = true,
                 }
             };
         }
@@ -179,10 +217,15 @@ namespace WorldSystem.Generation
         // Synchronous generation
         public void GenerateChunk(int3 chunkPos, Action<Data.ChunkData> callback)
         {
-            // Create native arrays with TempJob allocator
-            var blocks = new NativeArray<byte>(Data.ChunkData.SIZE * Data.ChunkData.SIZE * Data.ChunkData.HEIGHT, Allocator.TempJob);
-            var heightMap = new NativeArray<Core.HeightPoint>(Data.ChunkData.SIZE * Data.ChunkData.SIZE, Allocator.TempJob);
-            var finalHeightMap = new NativeArray<Data.HeightPoint>(Data.ChunkData.SIZE * Data.ChunkData.SIZE, Allocator.Persistent);
+            UnityEngine.Debug.Log($"Starting chunk generation at {chunkPos}");
+            
+            // Allocate with Persistent instead of TempJob
+            var blocks = new NativeArray<byte>(
+                Data.ChunkData.SIZE * Data.ChunkData.SIZE * Data.ChunkData.HEIGHT, 
+                Allocator.Persistent);
+            var heightMap = new NativeArray<Core.HeightPoint>(
+                Data.ChunkData.SIZE * Data.ChunkData.SIZE, 
+                Allocator.Persistent);
 
             try
             {
@@ -201,9 +244,11 @@ namespace WorldSystem.Generation
                     OceanThreshold = OCEAN_THRESHOLD,
                 };
 
+                // Complete the job immediately since we're not async here
                 job.Schedule(Data.ChunkData.SIZE * Data.ChunkData.SIZE, 64).Complete();
 
                 // Convert heightMap to final format
+                var finalHeightMap = new NativeArray<Data.HeightPoint>(Data.ChunkData.SIZE * Data.ChunkData.SIZE, Allocator.Persistent);
                 for (int i = 0; i < heightMap.Length; i++)
                 {
                     finalHeightMap[i] = new Data.HeightPoint
@@ -217,19 +262,26 @@ namespace WorldSystem.Generation
                 var chunkData = new Data.ChunkData
                 {
                     position = chunkPos,
-                    blocks = new NativeArray<byte>(blocks, Allocator.Persistent),
+                    blocks = blocks,
                     heightMap = finalHeightMap,
                     isEdited = false
                 };
 
+                // After terrain generation is complete
+                UnityEngine.Debug.Log("Terrain generation complete, starting feature generation");
+                var featureGenerator = new FeatureGenerator(_settings);
+                featureGenerator.PopulateChunk(ref chunkData, _biomesArray);
+                UnityEngine.Debug.Log("Feature generation complete");
+
                 callback(chunkData);
             }
-            finally
+            catch (System.Exception e)
             {
-                // Ensure we always dispose of temporary arrays
+                UnityEngine.Debug.LogError($"Error generating chunk: {e}");
+                // Ensure cleanup on error
                 if (blocks.IsCreated) blocks.Dispose();
                 if (heightMap.IsCreated) heightMap.Dispose();
-                // Note: finalHeightMap is transferred to ChunkData ownership
+                throw;
             }
         }
 

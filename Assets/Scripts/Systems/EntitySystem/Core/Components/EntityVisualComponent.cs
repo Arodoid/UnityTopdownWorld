@@ -18,15 +18,10 @@ namespace EntitySystem.Core.Components
         }
 
         private void SetupVisuals()
-        {
-            Debug.Log($"Parent hierarchy: {transform.parent?.name} -> {transform.name}");
-            Debug.Log($"Parent local position: {transform.localPosition}, Parent world position: {transform.position}");
-            
+        {            
             var visualObject = new GameObject("Visual");
             visualObject.transform.SetParent(transform);
             visualObject.transform.localPosition = Vector3.zero;
-            Debug.Log($"Visual local position before: {visualObject.transform.localPosition}");
-            Debug.Log($"Visual local position after: {visualObject.transform.localPosition}, world position: {visualObject.transform.position}");
             
             // Add components to the child object
             _meshFilter = visualObject.AddComponent<MeshFilter>();
@@ -39,10 +34,8 @@ namespace EntitySystem.Core.Components
             };
             _meshRenderer.material = _material;
 
-            Debug.Log($"Before mesh: Visual world pos: {visualObject.transform.position}");
             var mesh = CreateBoxMesh();
             _meshFilter.mesh = mesh;
-            Debug.Log($"After mesh: Visual world pos: {visualObject.transform.position}, Mesh bounds: {mesh.bounds}");
         }
 
         private Mesh CreateBoxMesh()

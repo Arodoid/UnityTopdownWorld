@@ -315,14 +315,9 @@ namespace EntitySystem.Core.Utilities
                 // For climbing up
                 if (dir.y > 0)
                 {
-                    // Check if we can stand at the higher position
                     if (await CanStandAt(checkPos))
                     {
-                        // Check if the block below is solid (for climbing)
-                        if (await _worldAPI.IsBlockSolidAsync(checkPos + new int3(0, -1, 0)))
-                        {
-                            _neighbors.Add(checkPos);
-                        }
+                        _neighbors.Add(checkPos);
                     }
                 }
                 // For climbing down or same level
@@ -340,11 +335,11 @@ namespace EntitySystem.Core.Utilities
 
         private async Task<bool> CanStandAt(int3 pos)
         {
-            // Position is valid if:
-            // 1. Current block is not solid (entity can be here)
-            // 2. Block below is solid (entity has support)
-            return !await _worldAPI.IsBlockSolidAsync(pos) && 
-                   await _worldAPI.IsBlockSolidAsync(pos + new int3(0, -1, 0));
+            // To stand AT pos (e.g. Y=65):
+            bool canStand = await _worldAPI.IsBlockSolidAsync(pos) &&  // pos must be solid (Y=65)
+                            !await _worldAPI.IsBlockSolidAsync(pos + new int3(0, 1, 0));  // above must be empty (Y=66)
+            
+            return canStand;
         }
 
         private List<int3> ReconstructPath(PathNode endNode)

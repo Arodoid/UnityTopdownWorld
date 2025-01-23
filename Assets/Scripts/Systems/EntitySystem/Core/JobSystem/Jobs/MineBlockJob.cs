@@ -80,11 +80,10 @@ namespace EntitySystem.Core.Jobs
 
         public bool Update()
         {
-            // Add timeout check for mining
             if (_currentState == State.Mining && 
                 _miningTimer.Elapsed.TotalSeconds > MINING_TIMEOUT_SECONDS)
             {
-                UnityEngine.Debug.LogWarning($"Mining operation timed out after {MINING_TIMEOUT_SECONDS}s");
+                UnityEngine.Debug.LogWarning($"Mining operation timed out");
                 _currentState = State.Failed;
                 return true;
             }
@@ -92,14 +91,13 @@ namespace EntitySystem.Core.Jobs
             switch (_currentState)
             {
                 case State.Moving:
-                    return false;  // Wait for movement callback
+                    return false;
 
                 case State.Mining:
                     if (!_miningComplete)
                     {
-                        // Start the mining operation
                         #pragma warning disable CS4014
-                        HandleMiningAsync();  // Fire and forget
+                        HandleMiningAsync();
                         #pragma warning restore CS4014
                         return false;
                     }
@@ -165,8 +163,22 @@ namespace EntitySystem.Core.Jobs
             if (!worker.EntityManager.TryGetEntityPosition(worker.Id, out workerPos))
                 return float.MinValue;
 
-            float distance = math.distance(workerPos, _blockPosition);
+            // Manhattan distance in block space
+            float distance = math.abs(workerPos.x - _blockPosition.x) + 
+                            math.abs(workerPos.y - _blockPosition.y) + 
+                            math.abs(workerPos.z - _blockPosition.z);
             return JobTypePriority - (distance / 1000f);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is MineBlockJob other && 
+                   _blockPosition.Equals(other._blockPosition);
+        }
+
+        public override int GetHashCode()
+        {
+            return _blockPosition.GetHashCode();
         }
     }
 }

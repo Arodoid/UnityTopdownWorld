@@ -1,19 +1,20 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-using EntitySystem.Core.Jobs;  // Add this for MineBlockJob
 
 namespace EntitySystem.Core
 {
     public class JobSystemComponent : MonoBehaviour
     {
         private Queue<IJob> _globalJobs = new();
-        private HashSet<IJob> _inProgressJobs = new();
+        private HashSet<IJob> _activeJobs = new();
         private Dictionary<IJob, float> _jobStartTimes = new();
         private Dictionary<System.Type, float> _jobTypePriorities = new();
         private bool _showDebug = true;
         
         private const float JOB_TIMEOUT_SECONDS = 300f; // 5 minutes
+        
+        private object _jobLock = new object();
         
         private void Update()
         {
@@ -50,7 +51,7 @@ namespace EntitySystem.Core
             
             GUILayout.Label("<b>Job System Status</b>");
             GUILayout.Label($"Global Jobs: {_globalJobs.Count}");
-            GUILayout.Label($"In Progress: {_inProgressJobs.Count}");
+            GUILayout.Label($"Active Jobs: {_activeJobs.Count}");
             
             // Show jobs by type with priorities
             foreach (var jobGroup in _globalJobs.GroupBy(j => j.GetType()))
@@ -60,10 +61,10 @@ namespace EntitySystem.Core
             }
             
             // Show running times
-            if (_inProgressJobs.Count > 0)
+            if (_activeJobs.Count > 0)
             {
                 GUILayout.Label("\n<b>Running Jobs</b>");
-                foreach (var job in _inProgressJobs)
+                foreach (var job in _activeJobs)
                 {
                     float runTime = Time.time - _jobStartTimes[job];
                     GUILayout.Label($"{job.GetType().Name}: {runTime:F1}s");
@@ -73,40 +74,65 @@ namespace EntitySystem.Core
             GUILayout.EndArea();
         }
 
-        public void AddGlobalJob(IJob job)
+        public void AddGlobalJob(IJob newJob)
         {
-            if (job == null) return;
-            _globalJobs.Enqueue(job);
+            if (newJob == null) return;
+            
+            lock (_jobLock)
+            {
+                // Check both queue and active jobs
+                var allJobs = _globalJobs.Concat(_activeJobs);
+                
+                // If we find any identical job, don't add it
+                if (allJobs.Any(existingJob => 
+                    existingJob.GetType() == newJob.GetType() && 
+                    existingJob.GetHashCode() == newJob.GetHashCode() && 
+                    existingJob.Equals(newJob)))
+                {
+                    return;
+                }
+                
+                _globalJobs.Enqueue(newJob);
+                Debug.Log($"Added new job: {newJob.GetType().Name}");
+            }
         }
 
         public IJob TryGetJob(Entity worker)
         {
-            if (worker == null) return null;
-
-            var jobsByType = _globalJobs
-                .Where(job => !_inProgressJobs.Contains(job) && job.CanAssignTo(worker))
-                .GroupBy(job => job.GetType())
-                .OrderByDescending(group => 
-                    _jobTypePriorities.GetValueOrDefault(group.Key, 0f));
-
-            foreach (var jobGroup in jobsByType)
+            lock (_jobLock)
             {
-                IJob bestJob = FindBestJobInGroup(jobGroup, worker);
-                if (bestJob != null && TryStartJob(bestJob, worker))
+                // Don't assign jobs that are already active
+                var availableJobs = _globalJobs.Where(job => !_activeJobs.Contains(job));
+                
+                var job = FindBestJobFrom(availableJobs, worker);
+                if (job != null && job.CanAssignTo(worker))
                 {
-                    return bestJob;
+                    if (_activeJobs.Add(job))
+                    {
+                        try 
+                        {
+                            job.Start(worker);
+                            _jobStartTimes[job] = Time.time;
+                            return job;
+                        }
+                        catch (System.Exception e)
+                        {
+                            Debug.LogError($"Failed to start job: {e}");
+                            _activeJobs.Remove(job);
+                            throw;
+                        }
+                    }
                 }
+                return null;
             }
-
-            return null;
         }
 
-        private IJob FindBestJobInGroup(IGrouping<System.Type, IJob> jobGroup, Entity worker)
+        private IJob FindBestJobFrom(IEnumerable<IJob> jobs, Entity worker)
         {
             IJob bestJob = null;
             float bestPriority = float.MinValue;
 
-            foreach (var job in jobGroup)
+            foreach (var job in jobs)
             {
                 float priority = job.GetPriority(worker);
                 if (priority > bestPriority)
@@ -119,63 +145,40 @@ namespace EntitySystem.Core
             return bestJob;
         }
 
-        private bool TryStartJob(IJob job, Entity worker)
-        {
-            try
-            {
-                job.Start(worker);
-                if (!job.Update()) // Job started successfully
-                {
-                    _inProgressJobs.Add(job);
-                    _jobStartTimes[job] = Time.time;
-                    return true;
-                }
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogError($"Error starting job {job.GetType().Name}: {e}");
-            }
-            return false;
-        }
-
         public void OnJobComplete(IJob job)
         {
-            if (job == null) return;
-            
-            _inProgressJobs.Remove(job);
-            _jobStartTimes.Remove(job);
-            
-            // Only remove from queue if the job actually completed its task
-            if (job.IsComplete)
+            lock (_jobLock)
             {
-                var remainingJobs = new Queue<IJob>();
-                while (_globalJobs.Count > 0)
+                if (_activeJobs.Remove(job))
                 {
-                    var nextJob = _globalJobs.Dequeue();
-                    if (nextJob != job)
+                    _jobStartTimes.Remove(job);
+                    // Only remove from queue if actually completed
+                    if (job.IsComplete)
                     {
-                        remainingJobs.Enqueue(nextJob);
+                        _globalJobs = new Queue<IJob>(_globalJobs.Where(j => j != job));
                     }
                 }
-                _globalJobs = remainingJobs;
             }
         }
 
         public void CancelJob(IJob job)
         {
-            if (job == null) return;
-            
-            try
+            lock (_jobLock)
             {
-                job.Cancel();
+                if (_activeJobs.Remove(job))
+                {
+                    job.Cancel();
+                }
             }
-            catch (System.Exception e)
+        }
+
+        public bool HasJobFor<T>(System.Func<T, bool> predicate) where T : IJob
+        {
+            lock (_jobLock)
             {
-                Debug.LogError($"Error cancelling job {job.GetType().Name}: {e}");
+                var allJobs = _globalJobs.Concat(_activeJobs);
+                return allJobs.OfType<T>().Any(predicate);
             }
-            
-            _inProgressJobs.Remove(job);
-            _jobStartTimes.Remove(job);
         }
     }
 } 

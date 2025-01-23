@@ -70,7 +70,7 @@ namespace EntitySystem.Core
                 entity.AddComponent<EntityVisualComponent>();
                 
                 var item = entity.GetComponent<ItemComponent>();
-                item.ItemId = "Wood";
+                item.ItemId = "WoodItem";
                 item.SpaceRequired = 2;
                 
                 entity.GetComponent<EntityVisualComponent>().SetColor(new Color(0.6f, 0.4f, 0.2f));
@@ -81,7 +81,7 @@ namespace EntitySystem.Core
                 entity.AddComponent<EntityVisualComponent>();
                 
                 var item = entity.GetComponent<ItemComponent>();
-                item.ItemId = "Stone";
+                item.ItemId = "StoneItem";
                 item.SpaceRequired = 3;
                 
                 entity.GetComponent<EntityVisualComponent>().SetColor(new Color(0.7f, 0.7f, 0.7f));
@@ -94,6 +94,12 @@ namespace EntitySystem.Core
                 
                 entity.GetComponent<HealthComponent>()._maxHealth = 50f;
                 entity.GetComponent<EntityVisualComponent>().SetColor(new Color(0.4f, 0.3f, 0.2f));
+            });
+
+            RegisterTemplate("StorageChest", EntityType.Furniture, entity => {
+                entity.AddComponent<ChestComponent>();
+                entity.AddComponent<EntityVisualComponent>();
+                entity.GetComponent<EntityVisualComponent>().SetColor(new Color(0.6f, 0.4f, 0.2f));
             });
         }
 

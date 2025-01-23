@@ -113,6 +113,7 @@ namespace EntitySystem.Core.Components
         {
             if (_currentJob != null)
             {
+                bool wasComplete = _currentJob.IsComplete;
                 _jobSystem.OnJobComplete(_currentJob);
                 _currentJob = null;
             }

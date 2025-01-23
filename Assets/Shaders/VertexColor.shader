@@ -38,6 +38,9 @@ Shader "Custom/VertexColor"
         _WaveSpeed ("Wave Speed", Range(0, 5)) = 1
         _WaveStrength ("Wave Strength", Range(0, 0.5)) = 0.2
         _WaveDistance ("Wave Distance", Range(1, 3)) = 1
+        [Header(Cloud Shadow Settings)]
+        _CloudShadowColor ("Cloud Shadow Color", Color) = (0.2, 0.23, 0.27, 1.0)  // Slightly bluish shadow
+        _CloudShadowStrength ("Cloud Shadow Strength", Range(0, 1)) = 0.6
     }
     SubShader
     {
@@ -133,6 +136,9 @@ Shader "Custom/VertexColor"
             float _WaveSpeed;
             float _WaveStrength;
             float _WaveDistance;
+
+            float4 _CloudShadowColor;
+            float _CloudShadowStrength;
 
             struct WaterEdgeInfo {
                 bool isEdge;
@@ -393,8 +399,11 @@ Shader "Custom/VertexColor"
                 shadowFactor *= (1.0 - saturate(rayLength / (_CloudHeight * 2.0)));
                 shadowFactor *= max(0, dot(input.normalWS, lightDir));
 
+                // Apply the same ortho scaling as clouds (not inverted)
+                shadowFactor *= orthoFactor;
+
                 // Smooth transition for shadows when they would intersect terrain
-                float shadowTerrainFade = smoothstep(0, 20, shadowSamplePos.y - worldPos.y); // 20 units fade distance
+                float shadowTerrainFade = smoothstep(0, 20, shadowSamplePos.y - worldPos.y);
                 shadowFactor *= shadowTerrainFade;
 
                 // Only apply shadow if the ray hasn't intersected terrain
@@ -402,8 +411,68 @@ Shader "Custom/VertexColor"
                     shadowFactor = 0;
                 }
 
-                // Apply shadow darkening to base color
-                color.rgb *= (1.0 - shadowFactor);
+                // Apply block-based color variation BEFORE shadow calculations
+                float2 blockPos = floor(input.worldPos.xz / _ColorVariationScale) * _ColorVariationScale;
+
+                // First noise layer
+                float2 noiseUV = blockPos / (_ColorVariationScale * 1.0);
+                float colorNoise1 = fbm(noiseUV, _WorldSeed + 42.1);
+
+                // Second noise layer at different scale and rotation
+                float2 rotatedUV1 = float2(
+                    blockPos.x * cos(0.7) - blockPos.y * sin(0.7),
+                    blockPos.x * sin(0.7) + blockPos.y * cos(0.7)
+                ) / (_ColorVariationScale * 2.3);
+                float colorNoise2 = fbm(rotatedUV1, _WorldSeed + 13.7);
+
+                // Third noise layer with different rotation and scale
+                float2 rotatedUV2 = float2(
+                    blockPos.x * cos(1.3) - blockPos.y * sin(1.3),
+                    blockPos.x * sin(1.3) + blockPos.y * cos(1.3)
+                ) / (_ColorVariationScale * 3.7);
+                float colorNoise3 = fbm(rotatedUV2, _WorldSeed + 89.3);
+
+                // Fourth noise layer for large-scale variation
+                float2 largeScaleUV = blockPos / (_ColorVariationScale * 5.5);
+                float colorNoise4 = fbm(largeScaleUV, _WorldSeed + 127.1);
+
+                // Combine all noise layers with different weights
+                float colorNoise = colorNoise1 * 0.4 + 
+                                  colorNoise2 * 0.3 + 
+                                  colorNoise3 * 0.2 + 
+                                  colorNoise4 * 0.1;
+
+                // Make it more discrete/blocky
+                colorNoise = floor(colorNoise * 6) / 6.0;
+
+                float3 colorVariation = (colorNoise - 0.5) * _ColorVariationStrength;
+
+                // Apply variation BEFORE shadow calculations
+                color.rgb += colorVariation;
+
+                float3 shadowColor = lerp(float3(1,1,1), _CloudShadowColor.rgb, _CloudShadowStrength);
+                float3 adjustedShadowStrength = float3(
+                    shadowFactor * (1.0 - (1.0 - shadowColor.r) * 0.7),
+                    shadowFactor * (1.0 - (1.0 - shadowColor.g) * 0.7),
+                    shadowFactor * (1.0 - (1.0 - shadowColor.b) * 0.7)
+                );
+
+                // Clamp shadow factor to prevent extreme values
+                adjustedShadowStrength = min(adjustedShadowStrength, 0.85);
+
+                // Apply shadow directly without luminance preservation
+                float3 shadowedColor = color.rgb * (float3(1,1,1) - adjustedShadowStrength);
+
+                // Soften very dark areas
+                float darknessFactor = 1.0 - smoothstep(0.1, 0.3, length(shadowedColor));
+                shadowedColor = lerp(shadowedColor, color.rgb * 0.3, darknessFactor);
+
+                // Apply a slight ambient light contribution in shadowed areas
+                float3 ambientLight = float3(0.4, 0.4, 0.5) * 0.2;
+                float3 finalShadowedColor = shadowedColor + (ambientLight * shadowFactor);
+
+                // Ensure we don't get values outside valid range
+                finalShadowedColor = saturate(finalShadowedColor);
 
                 // Now calculate and apply clouds ON TOP
                 float clouds = fbm(worldUV, _WorldSeed);
@@ -418,49 +487,10 @@ Shader "Custom/VertexColor"
                 clouds *= terrainFade;
                 
                 // Blend clouds over the already shadowed terrain
-                color.rgb = lerp(color.rgb, _CloudColor.rgb, clouds * _CloudColor.a);
+                color.rgb = lerp(finalShadowedColor, _CloudColor.rgb, clouds * _CloudColor.a);
                 
                 // Apply atmospheric scattering AFTER clouds
                 color.rgb = ApplyAtmosphericScattering(color.rgb, input.worldPos);
-                
-                // Block-based random color variation with multiple layers
-                float2 blockPos = floor(input.worldPos.xz / _ColorVariationScale) * _ColorVariationScale;
-                
-                // First noise layer
-                float2 noiseUV = blockPos / (_ColorVariationScale * 1.0);
-                float colorNoise1 = fbm(noiseUV, _WorldSeed + 42.1);
-                
-                // Second noise layer at different scale and rotation
-                float2 rotatedUV1 = float2(
-                    blockPos.x * cos(0.7) - blockPos.y * sin(0.7),
-                    blockPos.x * sin(0.7) + blockPos.y * cos(0.7)
-                ) / (_ColorVariationScale * 2.3);
-                float colorNoise2 = fbm(rotatedUV1, _WorldSeed + 13.7);
-                
-                // Third noise layer with different rotation and scale
-                float2 rotatedUV2 = float2(
-                    blockPos.x * cos(1.3) - blockPos.y * sin(1.3),
-                    blockPos.x * sin(1.3) + blockPos.y * cos(1.3)
-                ) / (_ColorVariationScale * 3.7);
-                float colorNoise3 = fbm(rotatedUV2, _WorldSeed + 89.3);
-                
-                // Fourth noise layer for large-scale variation
-                float2 largeScaleUV = blockPos / (_ColorVariationScale * 5.5);
-                float colorNoise4 = fbm(largeScaleUV, _WorldSeed + 127.1);
-                
-                // Combine all noise layers with different weights
-                float colorNoise = colorNoise1 * 0.4 + 
-                                  colorNoise2 * 0.3 + 
-                                  colorNoise3 * 0.2 + 
-                                  colorNoise4 * 0.1;
-                
-                // Make it more discrete/blocky
-                colorNoise = floor(colorNoise * 6) / 6.0;
-                
-                float3 colorVariation = (colorNoise - 0.5) * _ColorVariationStrength;
-                
-                // Apply variation after all other calculations but before fog
-                color.rgb += colorVariation;
                 
                 // Apply fog last
                 color.rgb = MixFog(color.rgb, input.fogFactor);

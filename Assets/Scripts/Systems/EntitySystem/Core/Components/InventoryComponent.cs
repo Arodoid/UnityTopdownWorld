@@ -9,7 +9,16 @@ namespace EntitySystem.Core.Components
     {
         [SerializeField] private int _maxCapacity = 10;
         private int _currentCapacity = 0;
-        private List<EntityHandle> _items = new();
+        
+        // Store item data instead of handles
+        private class StoredItem
+        {
+            public string ItemId;
+            public int SpaceRequired;
+            // Add any other properties we need to recreate the item
+        }
+        
+        private List<StoredItem> _items = new();
 
         public bool HasEmptySlot()
         {
@@ -28,54 +37,41 @@ namespace EntitySystem.Core.Components
 
             if (CanAddItem(item))
             {
-                _items.Add(itemHandle);
+                // Store the item's data
+                var storedItem = new StoredItem
+                {
+                    ItemId = item.ItemId,
+                    SpaceRequired = item.SpaceRequired
+                };
+                
+                _items.Add(storedItem);
                 _currentCapacity += item.SpaceRequired;
                 
-                // Move the item to this entity's position (effectively "picking it up")
-                Entity.EntityManager.SetEntityPosition(itemHandle, 
-                    new int3((int)transform.position.x, (int)transform.position.y, (int)transform.position.z));
+                // Destroy the world entity
+                Entity.EntityManager.DestroyEntity(itemHandle);
                 
-                Debug.Log($"Added {item.ItemId} to inventory. Space used: {_currentCapacity}/{_maxCapacity}");
                 return true;
             }
             return false;
         }
 
-        public bool TryDropItem(int index)
+        public bool TryDropItem(int index, int3 dropPosition)
         {
             if (index >= 0 && index < _items.Count)
             {
-                var itemHandle = _items[index];
-                var item = Entity.EntityManager.GetComponent<ItemComponent>(itemHandle);
-                if (item != null)
+                var storedItem = _items[index];
+                
+                // Create new entity at drop location
+                var newItemHandle = Entity.EntityManager.CreateEntity(storedItem.ItemId, dropPosition);
+                if (newItemHandle != EntityHandle.Invalid)
                 {
-                    _currentCapacity -= item.SpaceRequired;
+                    _currentCapacity -= storedItem.SpaceRequired;
                     _items.RemoveAt(index);
                     
-                    Vector3 dropPosition = transform.position + UnityEngine.Random.insideUnitSphere * 1f;
-                    dropPosition.y = transform.position.y;
-                    
-                    Entity.EntityManager.SetEntityPosition(itemHandle, 
-                        new int3((int)dropPosition.x, (int)dropPosition.y, (int)dropPosition.z));
-                    
-                    Debug.Log($"Dropped {item.ItemId}. Space remaining: {_maxCapacity - _currentCapacity}");
                     return true;
                 }
             }
             return false;
-        }
-
-        public void LogInventoryContents()
-        {
-            Debug.Log($"Inventory contents ({_currentCapacity}/{_maxCapacity} space used):");
-            foreach (var handle in _items)
-            {
-                var item = Entity.EntityManager.GetComponent<ItemComponent>(handle);
-                if (item != null)
-                {
-                    Debug.Log($"- {item.ItemId} (space: {item.SpaceRequired})");
-                }
-            }
         }
     }
 }
