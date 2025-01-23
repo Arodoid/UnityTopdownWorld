@@ -50,7 +50,7 @@ namespace UISystem.Core.Selection
         {
             if (_coordinateMapper.TryGetHoveredBlockPosition(screenPosition, out int3 pos))
             {
-                _startPos = new int3(pos.x, pos.y - 1, pos.z);
+                _startPos = pos;
                 _boxVisualizer.Show(_startPos.Value, _startPos.Value);
             }
         }
@@ -59,8 +59,7 @@ namespace UISystem.Core.Selection
         {
             if (_startPos.HasValue && _coordinateMapper.TryGetHoveredBlockPosition(screenPosition, out int3 currentPos))
             {
-                int3 adjustedPos = new int3(currentPos.x, currentPos.y - 1, currentPos.z);
-                _boxVisualizer.Show(_startPos.Value, adjustedPos);
+                _boxVisualizer.Show(_startPos.Value, currentPos);
             }
         }
 
@@ -68,8 +67,7 @@ namespace UISystem.Core.Selection
         {
             if (_startPos.HasValue && _coordinateMapper.TryGetHoveredBlockPosition(screenPosition, out int3 endPos))
             {
-                int3 adjustedEndPos = new int3(endPos.x, endPos.y - 1, endPos.z);
-                var finalSelection = new BoxSelectionResult(_startPos.Value, adjustedEndPos);
+                var finalSelection = new BoxSelectionResult(_startPos.Value, endPos);
                 _boxVisualizer.Hide();
                 _startPos = null;
                 OnSelectionFinished?.Invoke(finalSelection);

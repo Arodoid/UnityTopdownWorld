@@ -23,11 +23,7 @@ namespace EntitySystem.Core
             Type = type;
             EntityManager = entityManager;
             
-            _tickSystem = FindAnyObjectByType<TickSystem>();
-            if (_tickSystem == null)
-            {
-                Debug.LogError("No TickSystem found during Entity initialization!");
-            }
+            _tickSystem = entityManager.TickSystem;
             
             InitializeComponents();
         }
@@ -63,7 +59,7 @@ namespace EntitySystem.Core
 
             var component = gameObject.AddComponent<T>();
             
-            if (component is ITickable tickable && _tickSystem != null)
+            if (component is ITickable tickable)
             {
                 _tickSystem.Register(tickable);
             }

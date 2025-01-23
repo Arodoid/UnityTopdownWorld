@@ -7,16 +7,17 @@ namespace EntitySystem.Core.Components
     {
         private Queue<IJob> _personalJobs = new();
         private IJob _currentJob;
-        private IdleMovementComponent _idleMovement;
+        // private IdleBlockWorldPhysicsComponent _idleMovement;
         private JobSystemComponent _jobSystem;
         private TickSystem _tickSystem;
+        private IdleBlockWorldPhysicsComponent _idleMovement;
 
         protected override void OnInitialize(EntityManager entityManager)
         {
             base.OnInitialize(entityManager);
-            _idleMovement = Entity.GetComponent<IdleMovementComponent>();
+            _idleMovement = Entity.GetComponent<IdleBlockWorldPhysicsComponent>();
             
-            // Disable idle movement initially since we'll control it
+            //Disable idle movement initially since we'll control it
             if (_idleMovement != null)
             {
                 _idleMovement.enabled = false;
@@ -53,47 +54,72 @@ namespace EntitySystem.Core.Components
         {
             if (_jobSystem == null) return;
 
-            // If we don't have a job, try to get one
-            if (_currentJob == null)
+            try
             {
-                // First check personal jobs
-                if (_personalJobs.Count > 0)
+                if (_currentJob == null)
                 {
-                    _currentJob = _personalJobs.Dequeue();
-                    _currentJob.Start(Entity);
+                    if (_personalJobs.Count > 0)
+                    {
+                        _currentJob = _personalJobs.Dequeue();
+                        if (!TryStartJob(_currentJob))
+                        {
+                            _currentJob = null;
+                        }
+                    }
+                    else
+                    {
+                        _currentJob = _jobSystem.TryGetJob(Entity);
+                        if (_currentJob == null && _idleMovement != null)
+                        {
+                            _idleMovement.enabled = true;
+                        }
+                    }
                 }
-                // Then check global jobs
                 else
                 {
-                    _currentJob = _jobSystem.TryGetJob(Entity);
-                    if (_currentJob != null)
+                    bool isComplete = _currentJob.Update();
+                    if (isComplete)
                     {
-                        Debug.Log($"Entity {Entity.GetInstanceID()} starting job {_currentJob.GetType().Name}");
-                        _currentJob.Start(Entity);
-                    }
-                    else if (_idleMovement != null)
-                    {
-                        // Enable idle movement when no job is available
-                        _idleMovement.enabled = true;
+                        CompleteCurrentJob();
                     }
                 }
             }
-            // If we have a job, update it
-            else
+            catch (System.Exception e)
             {
-                bool isComplete = _currentJob.Update();
-                if (isComplete)
+                Debug.LogError($"Error in JobComponent.OnTick: {e}");
+                CompleteCurrentJob(); // Clean up on error
+            }
+        }
+
+        private bool TryStartJob(IJob job)
+        {
+            try
+            {
+                job.Start(Entity);
+                if (_idleMovement != null)
                 {
-                    Debug.Log($"Entity {Entity.GetInstanceID()} completed job {_currentJob.GetType().Name}");
-                    _jobSystem.OnJobComplete(_currentJob);
-                    _currentJob = null;
-                    
-                    // Re-enable idle movement when job is complete
-                    if (_idleMovement != null)
-                    {
-                        _idleMovement.enabled = true;
-                    }
+                    _idleMovement.enabled = false;
                 }
+                return true;
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"Error starting job: {e}");
+                return false;
+            }
+        }
+
+        private void CompleteCurrentJob()
+        {
+            if (_currentJob != null)
+            {
+                _jobSystem.OnJobComplete(_currentJob);
+                _currentJob = null;
+            }
+            
+            if (_idleMovement != null)
+            {
+                _idleMovement.enabled = true;
             }
         }
 

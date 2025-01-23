@@ -7,7 +7,6 @@ namespace EntitySystem.Core.Components
         [Header("Visual Settings")]
         [SerializeField] private Color _color = Color.white;
         [SerializeField] private float _radius = 0.4f;
-        [SerializeField] private float _heightOffset = -0.5f;
 
         private MeshFilter _meshFilter;
         private MeshRenderer _meshRenderer;
@@ -20,10 +19,14 @@ namespace EntitySystem.Core.Components
 
         private void SetupVisuals()
         {
-            // Create a child GameObject for the visual
+            Debug.Log($"Parent hierarchy: {transform.parent?.name} -> {transform.name}");
+            Debug.Log($"Parent local position: {transform.localPosition}, Parent world position: {transform.position}");
+            
             var visualObject = new GameObject("Visual");
             visualObject.transform.SetParent(transform);
-            visualObject.transform.localPosition = new Vector3(0, _heightOffset, 0); // Center in block below
+            visualObject.transform.localPosition = Vector3.zero;
+            Debug.Log($"Visual local position before: {visualObject.transform.localPosition}");
+            Debug.Log($"Visual local position after: {visualObject.transform.localPosition}, world position: {visualObject.transform.position}");
             
             // Add components to the child object
             _meshFilter = visualObject.AddComponent<MeshFilter>();
@@ -36,27 +39,29 @@ namespace EntitySystem.Core.Components
             };
             _meshRenderer.material = _material;
 
-            // Create box mesh
+            Debug.Log($"Before mesh: Visual world pos: {visualObject.transform.position}");
             var mesh = CreateBoxMesh();
             _meshFilter.mesh = mesh;
+            Debug.Log($"After mesh: Visual world pos: {visualObject.transform.position}, Mesh bounds: {mesh.bounds}");
         }
 
         private Mesh CreateBoxMesh()
         {
             var mesh = new Mesh();
-            float size = _radius * 2; // Use diameter for box size
+            float size = _radius * 2;
 
-            // Define vertices centered around local origin
+            // Define vertices with bottom at y=0
             Vector3[] vertices = new Vector3[]
             {
-                new Vector3(-size/2, -size/2, -size/2),
-                new Vector3(size/2, -size/2, -size/2),
-                new Vector3(size/2, size/2, -size/2),
-                new Vector3(-size/2, size/2, -size/2),
-                new Vector3(-size/2, -size/2, size/2),
-                new Vector3(size/2, -size/2, size/2),
-                new Vector3(size/2, size/2, size/2),
-                new Vector3(-size/2, size/2, size/2)
+                // Bottom vertices at y=0
+                new Vector3(-size/2, 0, -size/2),
+                new Vector3(size/2, 0, -size/2),
+                new Vector3(size/2, size, -size/2),
+                new Vector3(-size/2, size, -size/2),
+                new Vector3(-size/2, 0, size/2),
+                new Vector3(size/2, 0, size/2),
+                new Vector3(size/2, size, size/2),
+                new Vector3(-size/2, size, size/2)
             };
 
             // Fixed triangle indices to face outward

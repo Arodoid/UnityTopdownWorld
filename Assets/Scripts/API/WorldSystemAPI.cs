@@ -4,6 +4,10 @@ using System;
 using System.Threading.Tasks;
 using WorldSystem.Base;
 using WorldSystem.Data;
+using System.Collections.Generic;
+using Unity.Burst;
+using Unity.Collections;
+using Unity.Jobs;
 
 namespace WorldSystem.API
 {
@@ -70,23 +74,7 @@ namespace WorldSystem.API
         /// </remarks>
         public bool IsBlockSolid(int3 position)
         {
-            return _chunkManager.IsBlockSolid(position);
-        }
-
-        /// <summary>
-        /// Determines if an entity can stand at the specified position.
-        /// </summary>
-        /// <param name="position">The position to check in world space.</param>
-        /// <returns>True if an entity can stand at this position, false otherwise.</returns>
-        /// <remarks>
-        /// A valid standing position requires:
-        /// - The position itself to be non-solid (air)
-        /// - The block above to be non-solid (for head room)
-        /// - The block below to be solid (for ground)
-        /// </remarks>
-        public bool CanStandAt(int3 position)
-        {
-            return _chunkManager.CanStandAt(position);
+            return IsBlockSolidAsync(position).Result;
         }
 
         /// <summary>
@@ -152,6 +140,12 @@ namespace WorldSystem.API
         public int GetCurrentViewLevel()
         {
             return _chunkManager.ViewMaxYLevel;
+        }
+
+        public async Task<bool> IsBlockSolidAsync(int3 position)
+        {
+            var blockType = await GetBlockType(position);
+            return blockType != BlockType.Air;
         }
     }
 } 

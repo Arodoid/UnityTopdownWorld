@@ -38,7 +38,7 @@ namespace EntitySystem.Core
             RegisterTemplate("Colonist", EntityType.Living, entity => {
                 // Add all components first
                 entity.AddComponent<HealthComponent>();
-                entity.AddComponent<MovementComponent>();
+                entity.AddComponent<BlockWorldPhysicsComponent>();
                 entity.AddComponent<InventoryComponent>();
                 entity.AddComponent<ItemPickupComponent>();
                 entity.AddComponent<EntityVisualComponent>();
@@ -53,14 +53,14 @@ namespace EntitySystem.Core
             RegisterTemplate("Dog", EntityType.Living, entity => {
                 // Add components first
                 entity.AddComponent<HealthComponent>();
-                entity.AddComponent<MovementComponent>();
-                entity.AddComponent<IdleMovementComponent>();
+                entity.AddComponent<BlockWorldPhysicsComponent>();
+                // entity.AddComponent<IdleBlockWorldPhysicsComponent>();
                 entity.AddComponent<EntityVisualComponent>();
                 
                 // Then configure them
                 entity.GetComponent<HealthComponent>()._maxHealth = 100f;
-                entity.GetComponent<IdleMovementComponent>()._idleMovementRange = 10f;
-                entity.GetComponent<IdleMovementComponent>()._entityHeight = 1f;
+                // entity.GetComponent<IdleBlockWorldPhysicsComponent>()._idleMovementRange = 10f;
+                // entity.GetComponent<IdleBlockWorldPhysicsComponent>()._entityHeight = 1f;
                 entity.GetComponent<EntityVisualComponent>().SetColor(new Color(0.6f, 0.4f, 0.2f));
             });
 

@@ -12,8 +12,10 @@ namespace EntitySystem.Core
 {
     public class EntityManager : MonoBehaviour, IEntityManager
     {
-        [SerializeField] private JobSystemComponent jobSystem;
-        [SerializeField] private TickSystem tickSystem;
+        [SerializeField] private Vector3 _debugCubePosition = new Vector3(0f, 65f, 0f);
+
+        private JobSystemComponent _jobSystem;
+        private TickSystem _tickSystem;
         
         private EntityRegistry _entityRegistry;
         private Dictionary<int, Entity> _entities = new();
@@ -25,21 +27,31 @@ namespace EntitySystem.Core
         private WorldSystemAPI _worldAPI;
 
         public PathfindingUtility Pathfinding => _pathfinding;
+        public WorldSystemAPI WorldAPI => _worldAPI;
+        public TickSystem TickSystem => _tickSystem;
 
         private void Awake()
         {
             Debug.Log("EntityManager Awake");
             
+            _jobSystem = GetComponent<JobSystemComponent>();
+            _tickSystem = GetComponent<TickSystem>();
+            
+            if (_jobSystem == null || _tickSystem == null)
+            {
+                Debug.LogError("Required components JobSystemComponent or TickSystem not found on EntityManager GameObject!");
+            }
+            
             _entityRegistry = new EntityRegistry();
-            _entityRegistry.SetSystems(jobSystem, tickSystem);
+            _entityRegistry.SetSystems(_jobSystem, _tickSystem);
             
             CreateEntityContainers();
         }
 
         public void Initialize(WorldSystemAPI worldAPI)
         {
-            _pathfinding = new PathfindingUtility(worldAPI);
             _worldAPI = worldAPI;
+            _pathfinding = new PathfindingUtility(worldAPI, this);
         }
 
         private void CreateEntityContainers()
@@ -65,45 +77,23 @@ namespace EntitySystem.Core
                 return EntityHandle.Invalid;
             }
             
-            // Create the game object
             int entityId = GetNextEntityId();
             uint version = _nextVersion++;
             
             var entityObject = new GameObject($"{templateName}_{entityId}");
             entityObject.transform.SetParent(_entityContainers[template.Type]);
             
-            // Add and initialize the Entity component
+            // Position is the block position - entity lives in the center of that block
+            entityObject.transform.position = new Vector3(
+                position.x + 0.5f,
+                position.y,           // Changed: Y is whole number
+                position.z + 0.5f
+            );
+            
             var entity = entityObject.AddComponent<Entity>();
             entity.Initialize(entityId, version, template.Type, this);
             
-            // Set position
-            entityObject.transform.position = new Vector3(position.x + 0.5f, position.y, position.z + 0.5f);
-            
-            // Apply the template setup
             template.Setup(entity);
-            
-            _entities[entityId] = entity;
-            
-            return new EntityHandle(entityId, version);
-        }
-
-        public async Task<EntityHandle> CreateEntity(EntityType type, int3 position)
-        {
-            await Task.Yield();
-            
-            int entityId = GetNextEntityId();
-            uint version = _nextVersion++;
-
-            var entityObject = new GameObject($"{type}_{entityId}");
-            entityObject.transform.SetParent(_entityContainers[type]);
-            
-            var entity = entityObject.AddComponent<Entity>();
-            // Pass 'this' as the EntityManager
-            entity.Initialize(entityId, version, type, this);
-            
-            // Set position directly on transform
-            entityObject.transform.position = new Vector3(position.x, position.y, position.z);
-            
             _entities[entityId] = entity;
             
             return new EntityHandle(entityId, version);
@@ -125,10 +115,14 @@ namespace EntitySystem.Core
         public bool TryGetEntityPosition(EntityHandle handle, out int3 position)
         {
             position = default;
-            if (TryGetEntity(handle, out Entity entity))
+            if (_entities.TryGetValue(handle.Id, out var entity))
             {
                 Vector3 worldPos = entity.transform.position;
-                position = new int3((int)worldPos.x, (int)worldPos.y, (int)worldPos.z);
+                position = new int3(
+                    Mathf.FloorToInt(worldPos.x),
+                    Mathf.FloorToInt(worldPos.y) + 1,  // Changed: Floor + 1 instead of Ceil
+                    Mathf.FloorToInt(worldPos.z)
+                );
                 return true;
             }
             return false;
@@ -136,9 +130,13 @@ namespace EntitySystem.Core
 
         public bool SetEntityPosition(EntityHandle handle, int3 position)
         {
-            if (TryGetEntity(handle, out Entity entity))
+            if (_entities.TryGetValue(handle.Id, out var entity))
             {
-                entity.transform.position = new Vector3(position.x, position.y, position.z);
+                entity.transform.position = new Vector3(
+                    position.x + 0.5f,
+                    position.y,           // Changed: Y is whole number
+                    position.z + 0.5f
+                );
                 return true;
             }
             return false;
@@ -215,5 +213,58 @@ namespace EntitySystem.Core
             }
             return null;
         }
+
+        public void Update()
+        {
+            // Process path requests each frame
+            _pathfinding.ProcessPathRequests();
+        }
+
+        // Update all other position methods to match:
+        internal bool TryGetEntityPosition(int entityId, out int3 position)
+        {
+            position = default;
+            if (_entities.TryGetValue(entityId, out var entity))
+            {
+                Vector3 worldPos = entity.transform.position;
+                position = new int3(
+                    Mathf.FloorToInt(worldPos.x),
+                    Mathf.FloorToInt(worldPos.y) + 1,  // Changed: Floor + 1 instead of Ceil
+                    Mathf.FloorToInt(worldPos.z)
+                );
+                return true;
+            }
+            return false;
+        }
+
+        internal bool SetEntityPosition(int entityId, int3 position)
+        {
+            if (_entities.TryGetValue(entityId, out var entity))
+            {
+                entity.transform.position = new Vector3(
+                    position.x + 0.5f,
+                    position.y - 1f,      // Changed: -1f instead of -0.5f to lower by 0.5 more
+                    position.z + 0.5f
+                );
+                return true;
+            }
+            return false;
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireCube(_debugCubePosition, Vector3.one);
+        }
+
+        // World Space → Block Space
+        public int3 GetBlockPosition(Vector3 worldPosition)
+        {
+            return new int3(
+                Mathf.FloorToInt(worldPosition.x),
+                Mathf.FloorToInt(worldPosition.y) + 1,  // Changed: Floor + 1 instead of Ceil
+                Mathf.FloorToInt(worldPosition.z)
+            );
+        }
     }
-}
+}//

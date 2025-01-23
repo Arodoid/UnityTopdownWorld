@@ -1,278 +1,415 @@
 using UnityEngine;
 using Unity.Mathematics;
-using System;
-using System.Collections.Generic;
 using WorldSystem.API;
-using Random = UnityEngine.Random;
+using System.Collections.Generic;
 using System.Linq;
+using System;
+using System.Threading.Tasks;
 
 namespace EntitySystem.Core.Utilities
 {
+    public static class ChunkHelper
+    {
+        public static int3 GetChunkPos(int3 worldPos)
+        {
+            return new int3(
+                worldPos.x >> 5,  // Divide by CHUNK_SIZE (32)
+                worldPos.y >> 5,
+                worldPos.z >> 5
+            );
+        }
+    }
+
+    public class PathNode
+    {
+        public int3 Position;
+        public PathNode Parent;
+        public float GCost;  // Distance from start
+        public float HCost;  // Estimated distance to goal
+        public float FCost => GCost + HCost;
+
+        public PathNode(int3 pos)
+        {
+            Position = pos;
+        }
+    }
+
+    public class Path
+    {
+        public List<int3> Points { get; private set; }
+        public HashSet<int3> ChunksUsed { get; private set; }
+        public bool IsValid { get; set; } = true;
+
+        public Path(List<int3> points)
+        {
+            Points = points;
+            ChunksUsed = new HashSet<int3>();
+            foreach (var point in points)
+            {
+                ChunksUsed.Add(ChunkHelper.GetChunkPos(point));
+            }
+        }
+    }
+
     public class PathfindingUtility
     {
+        public WorldSystemAPI WorldAPI => _worldAPI;
         private readonly WorldSystemAPI _worldAPI;
-        private const int MAX_CLIMB = 1;  // Can climb 1 block
-        private const int MAX_DROP = 3;   // Can drop 3 blocks
+        private const int MAX_CLIMB = 1;
+        private const float DIAGONAL_COST = 1.4f;
+        private const int MAX_PATH_LENGTH = 1000;
+        private const int MAX_FALL_DISTANCE = 50;
+        private const int MAX_CONCURRENT_PATHFINDS = 4;
+        private const int MAX_QUEUED_REQUESTS = 1000;
 
-        public PathfindingUtility(WorldSystemAPI worldAPI)
+        // Cache of active paths and their users
+        private Dictionary<Entity, Path> _activePaths = new();
+        private Dictionary<int3, HashSet<Entity>> _chunkPathUsers = new();
+
+        // Reusable collections for pathfinding
+        private Dictionary<int3, PathNode> _openNodes = new();
+        private HashSet<int3> _closedNodes = new();
+        private List<int3> _neighbors = new();
+
+        private Queue<PathRequest> _pathRequests = new();
+        private HashSet<Entity> _activePathfinding = new();
+        private Dictionary<Entity, float> _lastPathRequestTime = new();
+        private const float PATH_REQUEST_COOLDOWN = 0.1f; // seconds
+        
+        private class PathRequest
+        {
+            public Entity Entity;
+            public int3 Start;
+            public int3 End;
+            public float EntityHeight;
+            public Action<Path> Callback;
+            public float RequestTime;
+        }
+
+        private readonly EntityManager _entityManager;
+
+        public PathfindingUtility(WorldSystemAPI worldAPI, EntityManager entityManager)
         {
             _worldAPI = worldAPI;
+            _entityManager = entityManager;
         }
 
-        public List<Vector3> FindPath(int3 start, int3 end, float entityHeight)
+        public void RequestPath(Entity entity, int3 start, int3 end, float entityHeight, Action<Path> callback)
         {
-            var openSet = new PriorityQueue<PathNode>();
-            var closedSet = new HashSet<int3>();
-            var cameFrom = new Dictionary<int3, int3>();
-            var gScore = new Dictionary<int3, float>();
-            var fScore = new Dictionary<int3, float>();
-
-            var startNode = new PathNode(start, 0, EstimateDistance(start, end));
-            openSet.Enqueue(startNode);
-            gScore[start] = 0;
-            fScore[start] = startNode.FCost;
-
-            while (openSet.Count > 0)
+            // Prevent spam requests from same entity
+            if (_lastPathRequestTime.TryGetValue(entity, out float lastRequest))
             {
-                var current = openSet.Dequeue();
-
-                if (current.Position.Equals(end))
+                if (Time.time - lastRequest < PATH_REQUEST_COOLDOWN)
                 {
-                    return ReconstructPath(cameFrom, end);
+                    callback?.Invoke(null);
+                    return;
                 }
+            }
+            
+            // Limit queue size
+            if (_pathRequests.Count >= MAX_QUEUED_REQUESTS)
+            {
+                Debug.LogWarning($"Path request queue full ({MAX_QUEUED_REQUESTS} requests)");
+                callback?.Invoke(null);
+                return;
+            }
 
-                closedSet.Add(current.Position);
+            _lastPathRequestTime[entity] = Time.time;
+            _pathRequests.Enqueue(new PathRequest 
+            { 
+                Entity = entity,
+                Start = start,
+                End = end,
+                EntityHeight = entityHeight,
+                Callback = callback,
+                RequestTime = Time.time
+            });
+        }
 
-                foreach (var neighbor in GetValidNeighbors(current.Position, entityHeight))
+        private void RegisterPath(Entity entity, Path path)
+        {
+            // Remove old path if exists
+            if (_activePaths.TryGetValue(entity, out var oldPath))
+            {
+                foreach (var chunk in oldPath.ChunksUsed)
                 {
-                    if (closedSet.Contains(neighbor))
-                        continue;
-
-                    float tentativeGScore = gScore[current.Position] + 
-                        GetMovementCost(current.Position, neighbor);
-
-                    if (!gScore.ContainsKey(neighbor) || tentativeGScore < gScore[neighbor])
+                    if (_chunkPathUsers.ContainsKey(chunk))
                     {
-                        cameFrom[neighbor] = current.Position;
-                        gScore[neighbor] = tentativeGScore;
-                        float f = tentativeGScore + EstimateDistance(neighbor, end);
-                        fScore[neighbor] = f;
-
-                        var node = new PathNode(neighbor, tentativeGScore, f);
-                        openSet.Enqueue(node);
+                        _chunkPathUsers[chunk].Remove(entity);
+                        if (_chunkPathUsers[chunk].Count == 0)
+                            _chunkPathUsers.Remove(chunk);
                     }
                 }
             }
 
-            return new List<Vector3>(); // No path found
+            // Register new path
+            _activePaths[entity] = path;
+            foreach (var chunk in path.ChunksUsed)
+            {
+                if (!_chunkPathUsers.ContainsKey(chunk))
+                    _chunkPathUsers[chunk] = new HashSet<Entity>();
+                _chunkPathUsers[chunk].Add(entity);
+            }
         }
 
-        private List<int3> GetValidNeighbors(int3 pos, float entityHeight)
+        public void OnChunkModified(int3 chunkPos)
         {
-            var neighbors = new List<int3>();
-            
-            // Check all horizontal neighbors
+            if (!_chunkPathUsers.TryGetValue(chunkPos, out var entities))
+                return;
+
+            foreach (var entity in entities)
+            {
+                if (_activePaths.TryGetValue(entity, out var path))
+                {
+                    bool needsInvalidation = false;
+                    foreach (var point in path.Points)
+                    {
+                        var pointChunkPos = ChunkHelper.GetChunkPos(point);
+                        if (pointChunkPos.x == chunkPos.x && 
+                            pointChunkPos.y == chunkPos.y && 
+                            pointChunkPos.z == chunkPos.z)
+                        {
+                            needsInvalidation = true;
+                            break;
+                        }
+                    }
+
+                    if (needsInvalidation)
+                    {
+                        path.IsValid = false;
+                    }
+                }
+            }
+        }
+
+        private async Task<bool> HasAccessibleNeighbor(int3 pos)
+        {
             for (int x = -1; x <= 1; x++)
+            for (int y = -1; y <= 1; y++)
+            for (int z = -1; z <= 1; z++)
             {
-                for (int z = -1; z <= 1; z++)
-                {
-                    if (x == 0 && z == 0) continue;
-
-                    var basePos = new int3(pos.x + x, pos.y, pos.z + z);
-                    
-                    // Check all possible Y levels within climb/drop range
-                    for (int y = -MAX_DROP; y <= MAX_CLIMB; y++)
-                    {
-                        var checkPos = new int3(basePos.x, pos.y + y, basePos.z);
-                        if (IsPositionValid(checkPos, entityHeight))
-                        {
-                            neighbors.Add(checkPos);
-                        }
-                    }
-                }
+                if (x == 0 && y == 0 && z == 0) continue;
+                var checkPos = pos + new int3(x, y, z);
+                if (await CanStandAt(checkPos))
+                    return true;
             }
-            return neighbors;
-        }
-
-        private bool IsPositionValid(int3 pos, float entityHeight)
-        {
-            // IMPORTANT: Only allow positions that are directly on top of blocks
-            
-            // The position must be air (where we're standing)
-            if (_worldAPI.IsBlockSolid(pos))
-            {
-                return false;
-            }
-
-            // Must have solid block below (what we're standing on)
-            if (!_worldAPI.IsBlockSolid(new int3(pos.x, pos.y - 1, pos.z)))
-            {
-                return false;
-            }
-
-            // Check the space above for head clearance
-            for (int h = 1; h < entityHeight; h++)
-            {
-                if (_worldAPI.IsBlockSolid(new int3(pos.x, pos.y + h, pos.z)))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        private float GetMovementCost(int3 from, int3 to)
-        {
-            float baseCost = math.distance(new float3(from), new float3(to));
-            
-            // Additional cost for vertical movement
-            int heightDiff = to.y - from.y;
-            if (heightDiff > 0)
-                baseCost *= 1.5f; // Climbing is harder
-            else if (heightDiff < 0)
-                baseCost *= 1.2f; // Dropping has small penalty
-
-            return baseCost;
-        }
-
-        private float EstimateDistance(int3 from, int3 to)
-        {
-            return math.distance(new float3(from), new float3(to));
-        }
-
-        private List<Vector3> ReconstructPath(Dictionary<int3, int3> cameFrom, int3 current)
-        {
-            var blockPath = new List<int3> { current };
-            while (cameFrom.ContainsKey(current))
-            {
-                current = cameFrom[current];
-                blockPath.Add(current);
-            }
-            blockPath.Reverse();
-            
-            // Convert block positions to world positions (centered in blocks)
-            return blockPath.Select(pos => new Vector3(
-                pos.x + 0.5f,  // Center in block X
-                pos.y,         // Bottom of block Y
-                pos.z + 0.5f   // Center in block Z
-            )).ToList();
-        }
-
-        public List<Vector3> FindRandomPath(int3 start, float maxDistance, float entityHeight)
-        {
-            if (TryGetRandomNearbyPosition(start, maxDistance, entityHeight, out int3 end))
-            {
-                return FindPath(start, end, entityHeight);
-            }
-            return new List<Vector3>();
-        }
-
-        public bool TryGetRandomNearbyPosition(int3 start, float maxDistance, float entityHeight, out int3 position)
-        {            
-            for (int attempts = 0; attempts < 30; attempts++)
-            {
-                float angle = Random.Range(0f, 2f * Mathf.PI);
-                float distance = Random.Range(maxDistance * 0.3f, maxDistance);
-                
-                float xOffset = math.cos(angle) * distance;
-                float zOffset = math.sin(angle) * distance;
-                
-                int x = start.x + (int)xOffset;
-                int z = start.z + (int)zOffset;
-                                
-                // Search in a larger vertical range
-                int verticalRange = math.max(MAX_CLIMB, MAX_DROP);
-                for (int y = -verticalRange; y <= verticalRange; y++)
-                {
-                    position = new int3(x, start.y + y, z);
-                    
-                    if (IsPositionValid(position, entityHeight))
-                    {
-                        // Verify the position is actually reachable
-                        var path = FindPath(start, position, entityHeight);
-                        if (path.Count > 0)
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            position = default;
             return false;
         }
 
-        private class PathNode : IComparable<PathNode>
+        private async Task<Path> FindPath(int3 start, int3 end, float entityHeight)
         {
-            public int3 Position { get; }
-            public float GCost { get; }
-            public float FCost { get; }
-
-            public PathNode(int3 pos, float g, float f)
+            // Early check - if target is completely enclosed, don't even try
+            if (!await HasAccessibleNeighbor(end))
             {
-                Position = pos;
-                GCost = g;
-                FCost = f;
+                return null;
             }
 
-            public int CompareTo(PathNode other)
+            _openNodes.Clear();
+            _closedNodes.Clear();
+
+            var startNode = new PathNode(start);
+            startNode.HCost = EstimateDistance(start, end);
+            _openNodes.Add(start, startNode);
+
+            int iterations = 0;
+            while (_openNodes.Count > 0 && iterations < MAX_PATH_LENGTH)
             {
-                int compare = FCost.CompareTo(other.FCost);
-                if (compare == 0)
+                iterations++;
+                var current = GetLowestFCostNode();
+
+                var dx = math.abs(current.Position.x - end.x);
+                var dy = math.abs(current.Position.y - end.y);
+                var dz = math.abs(current.Position.z - end.z);
+                if (dx <= 1 && dy <= 1 && dz <= 1)
                 {
-                    compare = GCost.CompareTo(other.GCost);
+                    var pathPoints = ReconstructPath(current);
+                    return new Path(pathPoints);
                 }
-                return compare;
+
+                _openNodes.Remove(current.Position);
+                _closedNodes.Add(current.Position);
+
+                foreach (var neighbor in await GetNeighbors(current.Position, end))
+                {
+                    if (_closedNodes.Contains(neighbor))
+                        continue;
+
+                    float gCost = current.GCost +
+                        (IsDiagonal(current.Position, neighbor) ? DIAGONAL_COST : 1f);
+
+                    if (!_openNodes.TryGetValue(neighbor, out var neighborNode))
+                    {
+                        neighborNode = new PathNode(neighbor);
+                        _openNodes.Add(neighbor, neighborNode);
+                    }
+                    else if (gCost >= neighborNode.GCost)
+                        continue;
+
+                    neighborNode.Parent = current;
+                    neighborNode.GCost = gCost;
+                    neighborNode.HCost = EstimateDistance(neighbor, end);
+                }
             }
+
+            return null;
         }
 
-        private class PriorityQueue<T> where T : IComparable<T>
+        private float EstimateDistance(int3 a, int3 b)
         {
-            private List<T> _list = new();
+            return math.abs(a.x - b.x) + math.abs(a.y - b.y) + math.abs(a.z - b.z);
+        }
 
-            public int Count => _list.Count;
+        private bool IsDiagonal(int3 from, int3 to)
+        {
+            return from.x != to.x && from.z != to.z;
+        }
 
-            public void Enqueue(T item)
+        private PathNode GetLowestFCostNode()
+        {
+            PathNode lowest = null;
+            float lowestFCost = float.MaxValue;
+
+            foreach (var node in _openNodes.Values)
             {
-                _list.Add(item);
-                int ci = _list.Count - 1;
-                while (ci > 0)
+                if (node.FCost < lowestFCost ||
+                    (node.FCost == lowestFCost && node.HCost < lowest?.HCost))
                 {
-                    int pi = (ci - 1) / 2;
-                    if (_list[ci].CompareTo(_list[pi]) >= 0)
-                        break;
-                    T tmp = _list[ci];
-                    _list[ci] = _list[pi];
-                    _list[pi] = tmp;
-                    ci = pi;
+                    lowest = node;
+                    lowestFCost = node.FCost;
                 }
             }
 
-            public T Dequeue()
-            {
-                int li = _list.Count - 1;
-                T frontItem = _list[0];
-                _list[0] = _list[li];
-                _list.RemoveAt(li);
+            return lowest;
+        }
 
-                --li;
-                int pi = 0;
-                while (true)
+        private async Task<List<int3>> GetNeighbors(int3 pos, int3 end)
+        {
+            _neighbors.Clear();
+            
+            // Check horizontal and vertical neighbors
+            var directions = new int3[]
+            {
+                // Same level
+                new int3(1, 0, 0),
+                new int3(-1, 0, 0),
+                new int3(0, 0, 1),
+                new int3(0, 0, -1),
+                
+                // Climbing up
+                new int3(1, 1, 0),
+                new int3(-1, 1, 0),
+                new int3(0, 1, 1),
+                new int3(0, 1, -1),
+                
+                // Climbing down
+                new int3(1, -1, 0),
+                new int3(-1, -1, 0),
+                new int3(0, -1, 1),
+                new int3(0, -1, -1)
+            };
+
+            foreach (var dir in directions)
+            {
+                var checkPos = pos + dir;
+                
+                // For climbing up
+                if (dir.y > 0)
                 {
-                    int ci = pi * 2 + 1;
-                    if (ci > li) break;
-                    int rc = ci + 1;
-                    if (rc <= li && _list[rc].CompareTo(_list[ci]) < 0)
-                        ci = rc;
-                    if (_list[pi].CompareTo(_list[ci]) <= 0)
-                        break;
-                    T tmp = _list[pi];
-                    _list[pi] = _list[ci];
-                    _list[ci] = tmp;
-                    pi = ci;
+                    // Check if we can stand at the higher position
+                    if (await CanStandAt(checkPos))
+                    {
+                        // Check if the block below is solid (for climbing)
+                        if (await _worldAPI.IsBlockSolidAsync(checkPos + new int3(0, -1, 0)))
+                        {
+                            _neighbors.Add(checkPos);
+                        }
+                    }
                 }
-                return frontItem;
+                // For climbing down or same level
+                else
+                {
+                    if (await CanStandAt(checkPos))
+                    {
+                        _neighbors.Add(checkPos);
+                    }
+                }
+            }
+
+            return _neighbors;
+        }
+
+        private async Task<bool> CanStandAt(int3 pos)
+        {
+            // Position is valid if:
+            // 1. Current block is not solid (entity can be here)
+            // 2. Block below is solid (entity has support)
+            return !await _worldAPI.IsBlockSolidAsync(pos) && 
+                   await _worldAPI.IsBlockSolidAsync(pos + new int3(0, -1, 0));
+        }
+
+        private List<int3> ReconstructPath(PathNode endNode)
+        {
+            var path = new List<int3>();
+            var current = endNode;
+
+            while (current != null)
+            {
+                path.Add(current.Position);
+                current = current.Parent;
+            }
+
+            path.Reverse();
+            return path;
+        }
+
+        public bool IsPositionValid(int3 pos, float entityHeight)
+        {
+            return !_worldAPI.IsBlockSolid(pos) && 
+                   _worldAPI.IsBlockSolid(pos + new int3(0, -1, 0));
+        }
+
+        public async void ProcessPathRequests()
+        {
+            // Process multiple requests per frame if possible
+            int processedThisFrame = 0;
+            while (_pathRequests.Count > 0 && 
+                   _activePathfinding.Count < MAX_CONCURRENT_PATHFINDS &&
+                   processedThisFrame < MAX_CONCURRENT_PATHFINDS)
+            {
+                var request = _pathRequests.Peek();
+                
+                // Skip if entity already pathfinding
+                if (_activePathfinding.Contains(request.Entity))
+                {
+                    _pathRequests.Dequeue();
+                    continue;
+                }
+
+                // Check request age
+                if (Time.time - request.RequestTime > 5f)
+                {
+                    Debug.LogWarning("Discarding stale path request");
+                    _pathRequests.Dequeue();
+                    continue;
+                }
+
+                _pathRequests.Dequeue();
+                processedThisFrame++;
+                
+                _activePathfinding.Add(request.Entity);
+                try
+                {
+                    var path = await FindPath(request.Start, request.End, request.EntityHeight);
+                    if (path != null)
+                    {
+                        RegisterPath(request.Entity, path);
+                    }
+                    request.Callback?.Invoke(path);
+                }
+                finally
+                {
+                    _activePathfinding.Remove(request.Entity);
+                }
             }
         }
     }

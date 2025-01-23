@@ -29,15 +29,17 @@ namespace UISystem.Core.Interactions
         {
             var (min, max) = GetBoxBounds(start, end);
             
-            // Set corners
+            // Set corners - only add +1 to X and Z to enclose blocks horizontally
             _corners[0] = new Vector3(min.x, min.y, min.z);
             _corners[1] = new Vector3(max.x + 1, min.y, min.z);
             _corners[2] = new Vector3(max.x + 1, min.y, max.z + 1);
             _corners[3] = new Vector3(min.x, min.y, max.z + 1);
-            _corners[4] = new Vector3(min.x, max.y + 1, min.z);
-            _corners[5] = new Vector3(max.x + 1, max.y + 1, min.z);
-            _corners[6] = new Vector3(max.x + 1, max.y + 1, max.z + 1);
-            _corners[7] = new Vector3(min.x, max.y + 1, max.z + 1);
+            
+            // Top face - no +1 to Y anymore
+            _corners[4] = new Vector3(min.x, max.y, min.z);
+            _corners[5] = new Vector3(max.x + 1, max.y, min.z);
+            _corners[6] = new Vector3(max.x + 1, max.y, max.z + 1);
+            _corners[7] = new Vector3(min.x, max.y, max.z + 1);
 
             // Update line renderer
             for (int i = 0; i < _lineIndices.Length; i++)

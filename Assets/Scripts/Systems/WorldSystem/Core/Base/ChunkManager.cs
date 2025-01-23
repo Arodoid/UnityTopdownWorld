@@ -654,23 +654,14 @@ namespace WorldSystem.Base
 
         public bool IsBlockSolid(int3 position)
         {
-            var chunk = GetChunk(new int2(
-                Mathf.FloorToInt(position.x / ChunkData.SIZE),
-                Mathf.FloorToInt(position.z / ChunkData.SIZE)
-            ));
+            // Use the existing GetBlockTypeAsync method and check if it's not Air (0)
+            return GetBlockTypeAsync(position).Result != 0;
+        }
 
-            if (chunk.blocks.IsCreated)
-            {
-                // Get local position within chunk
-                int localX = position.x % ChunkData.SIZE;
-                int localZ = position.z % ChunkData.SIZE;
-                if (localX < 0) localX += ChunkData.SIZE;
-                if (localZ < 0) localZ += ChunkData.SIZE;
-
-                int index = (position.y * ChunkData.SIZE * ChunkData.SIZE) + (localZ * ChunkData.SIZE) + localX;
-                return chunk.blocks[index] != 0; // 0 is assumed to be air
-            }
-            return false;
+        public async Task<bool> IsBlockSolidAsync(int3 position)
+        {
+            byte blockType = await GetBlockTypeAsync(position);
+            return blockType != 0;
         }
 
         public bool CanStandAt(int3 position)

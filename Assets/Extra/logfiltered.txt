@@ -1,58 +1,108 @@
-Creating entity at block position int3(-1, 64, 10)
-Initialized IdleMovementComponent with range: 15
-Idle timer: 3.986743
-Idle timer: 3.886743
-Idle timer: 3.786743
-Idle timer: 3.686743
-Idle timer: 3.586743
-Idle timer: 3.486743
-Idle timer: 3.386744
-Idle timer: 3.286744
-Idle timer: 3.186744
-Idle timer: 3.086744
-Idle timer: 2.986744
-Idle timer: 2.886744
-Idle timer: 2.786744
-Idle timer: 2.686744
-Idle timer: 2.586744
-Idle timer: 2.486744
-Idle timer: 2.386744
-Idle timer: 2.286745
-Idle timer: 2.186745
-Idle timer: 2.086745
-Idle timer: 1.986745
-Idle timer: 1.886745
-Idle timer: 1.786745
-Idle timer: 1.686745
-Idle timer: 1.586745
-Idle timer: 1.486745
-Idle timer: 1.386745
-Idle timer: 1.286745
-Idle timer: 1.186745
-Idle timer: 1.086745
-Idle timer: 0.9867445
-Idle timer: 0.8867445
-Idle timer: 0.7867445
-Idle timer: 0.6867445
-Idle timer: 0.5867444
-Idle timer: 0.4867444
-Idle timer: 0.3867444
-Idle timer: 0.2867444
-Idle timer: 0.1867445
-Idle timer: 0.08674445
-Idle timer: -0.01325555
-Attempting random movement with range: 5
-TryGetRandomNearbyPosition called with maxDistance: 5
-Attempt 0: Trying position at distance 4.180277 (x:-4, z:10)
-Found 8 valid neighbors for position int3(0, 65, 10)
-Found 8 valid neighbors for position int3(-1, 65, 10)
-Found 8 valid neighbors for position int3(-2, 65, 10)
-Found 8 valid neighbors for position int3(-3, 65, 10)
-Found 8 valid neighbors for position int3(0, 65, 10)
-Found 8 valid neighbors for position int3(-1, 65, 10)
-Found 8 valid neighbors for position int3(-2, 65, 10)
-Found 8 valid neighbors for position int3(-3, 65, 10)
-Found path with distance 3 (target range: 5, path points: 5)
-Skipping idle tick: IsMoving=True, IsWaiting=True
-Idle timer: 3.83043
-Idle timer: 3.73043
+Creating entity at block position int3(4, 65, 7)
+SnapToGrid - Old pos: (4.50, 65.50, 7.50), Block pos: int3(4, 65, 7), New pos: (4.50, 65.50, 7.50)
+Visual setup - Parent transform.position: (4.50, 65.50, 7.50), Visual localPosition: (0.00, 0.00, 0.00), Visual worldPosition: (4.50, 65.50, 7.50)
+[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+Mining tool activated
+[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Entity Transform: (4.50, 65.50, 7.50), Block Position: int3(4, 65, 7)
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()
+[Physics] Checking for ground at: int3(4, 64, 7), Has Support: True
+EntitySystem.Core.Components.BlockWorldPhysicsComponent:CheckPhysics ()

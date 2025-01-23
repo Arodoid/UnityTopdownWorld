@@ -98,11 +98,9 @@ namespace UISystem.Core.Tools
                     {
                         var mineJob = new MineBlockJob(pos, _worldAPI);
                         _entityAPI.AddGlobalJob(mineJob);
-                        Debug.Log($"Created mining job for block at {pos}");
                     }
                 }
                 
-                Debug.Log($"Successfully processed all blocks in selection. Total checks: {blockChecks.Count}");
             }
             catch (System.Exception e)
             {

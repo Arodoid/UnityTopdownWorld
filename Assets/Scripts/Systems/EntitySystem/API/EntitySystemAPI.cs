@@ -69,7 +69,6 @@ namespace EntitySystem.API
             }
 
             _jobSystem.AddGlobalJob(job);
-            Debug.Log($"Added global job of type {job.GetType().Name}");
         }
     }
 } 
