@@ -7,7 +7,7 @@ using WorldSystem.Data;
 using System.Linq;
 using WorldSystem.Mesh;
 using WorldSystem.Generation;
-using WorldSystem.Generation.Features;
+// using WorldSystem.Generation.Features;
 using Unity.Burst;
 using System.Threading.Tasks;
 using WorldSystem.Persistence;
@@ -306,8 +306,8 @@ namespace WorldSystem.Base
                         };
 
                         UnityEngine.Debug.Log($"Generating features for chunk at {kvp.Key}");
-                        var featureGenerator = new FeatureGenerator(_worldSettings);
-                        featureGenerator.PopulateChunk(ref chunkData, _worldGenerator.BiomesArray);
+                        // var featureGenerator = new FeatureGenerator(_worldSettings);
+                        // featureGenerator.PopulateChunk(ref chunkData, _worldGenerator.BiomesArray);
 
                         OnChunkGenerated(chunkData);
                         completedJobs.Add(kvp.Key);

@@ -4,222 +4,76 @@ using Unity.Collections;
 using Unity.Jobs;
 using System;
 using System.Collections.Generic;
-using WorldSystem.Data;
-using WorldSystem.Core;
-using WorldSystem.Generation.Features;
+using WorldSystem.Core;  // Keep this for Core types
+using WorldSystem.Data; // Keep this for Data types
 
 namespace WorldSystem.Generation
 {
     public class WorldGenerator : IDisposable
     {
-        private readonly WorldGenSettings _settings;
-        private NativeArray<BiomeSettings> _biomesArray;
-        private bool _isInitialized;
-        private HashSet<int2> _generatingChunks = new();
+        private readonly FastNoise _noise;
+        private readonly Dictionary<int2, bool> _generatingChunks = new();
+        public int seed { get; private set; } = 1337;
+        private const float WATER_LEVEL = 120f; // Default water level
         
-        // Hardcoded world generation settings
-        private readonly BiomeSettings[] DEFAULT_BIOMES;
-        private readonly NoiseSettings BIOME_NOISE = new() { Scale = 3f, Amplitude = 1.3f, Frequency = 0.01f, Octaves = 4, Persistence = 0.5f, Lacunarity = 2f };
-        private const float BIOME_FALLOFF = 5f;
-        private const float SEA_LEVEL = 64f;
-        private const bool ENABLE_3D_TERRAIN = true;
-        private const bool ENABLE_WATER = true;
-        private const float OCEAN_THRESHOLD = 0.5f;
-        private readonly NoiseSettings GLOBAL_DENSITY_NOISE = new() { Scale = 2f, Amplitude = 2f, Frequency = 0.01f, Octaves = 4, Persistence = 0.5f, Lacunarity = 2f };
+        public NativeArray<BiomeSettings> BiomesArray;
 
-        // Add this property to access biomes array
-        public NativeArray<BiomeSettings> BiomesArray => _biomesArray;
-
-        public int seed => _settings.Seed;
-
-        public WorldGenerator(WorldGenSettings settings)
+        public WorldGenerator(WorldSystem.WorldGenSettings settings)
         {
-            _settings = settings;
-            BIOME_NOISE.Seed = settings.Seed;
-            GLOBAL_DENSITY_NOISE.Seed = settings.Seed;
-            DEFAULT_BIOMES = CreateDefaultBiomes();
-            Initialize();
-        }
+            seed = settings.Seed;
+            _noise = FastNoise.FromEncodedNodeTree("HgATAB+Faz8bAB0AHgAeACEAIgBmZhZBexSuPhkAHwAgABMACtcjPxkAFwAAAAAAAACAPwrXo78AAABAGgAAAACAPwEkAAIAAAAPAAEAAAAAAABADQAIAAAAAAAAQAcAAAAAAD8AAAAAAAAAAAA/AAAAAAABDQACAAAArkcBQBoAARMAPQrXPv//BQAAKVwvQADXo3A/AIXr0cAA16OwPwBmZrZBAJqZmT4ASOGaQAEXAAAAgL8AAIA/7FE4vs3MzD0bABMAMzPzPxYAAQAAAB8AIAAXAArXoz2PwvU9AAAAAAAAgD///wQAAM3MTD4ArkeRQAAK1yO+AHsUrkAArkfhPv//FAABDQACAAAACtejPhsACAAAKVyPPwDsUTg/AFK4BkEBGQAbAP//GQAArkfhQAAfhWu/ASEADwAEAAAAKVwPQAsAAQAAAAAAAAAAAAAAAwAAAABmZqY/ABSuRz8AcT0KQBcApHC9PwAAwD8pXA8+CtejPiUAKVyPvnsULj8K1+NASOH6PwUAAQAAAAAAAAAK1yM9AAAAAAAAAAAAAAAAPwD2KFw/ANejcD8AzczMvQ==");
 
-        private void Initialize()
-        {
-            if (_isInitialized) return;
-            _biomesArray = new NativeArray<BiomeSettings>(DEFAULT_BIOMES, Allocator.Persistent);
-            _isInitialized = true;
-        }
+            // Initialize default biomes
+            BiomesArray = new NativeArray<BiomeSettings>(4, Allocator.Persistent);
+            
+            // Beach
+            BiomesArray[0] = new BiomeSettings 
+            { 
+                PreferredTemperature = 0.5f,
+                PreferredHumidity = 0.5f,
+                PreferredContinentalness = 0.45f, // Lowest elevation
+                TopBlock = BlockType.Sand,
+                UnderwaterBlock = BlockType.Sand
+            };
 
-        private BiomeSettings[] CreateDefaultBiomes()
-        {
-            return new BiomeSettings[]
-            {
-                // Ocean biome (lowest elevation, lowest continentalness)
-                new BiomeSettings
-                {
-                    BiomeId = 0,
-                    Temperature = 0.5f,
-                    Humidity = 0.5f,
-                    Continentalness = 0.50f,
-                    DensitySettings = new TerrainDensitySettings
-                    {
-                        DeepStart = 0,
-                        CaveStart = 30,
-                        CaveEnd = 45,
-                        SurfaceStart = 30,
-                        SurfaceEnd = 40,
-                        DeepBias = 1f,
-                        CaveBias = 0f,
-                        SurfaceBias = 0.8f,
-                        DeepTransitionScale = 1f,
-                        CaveTransitionScale = 1f,
-                        AirTransitionScale = 1f,
-                        DeepTransitionCurve = 1f,
-                        CaveTransitionCurve = 1f,
-                        AirTransitionCurve = 1f
-                    },
-                    PrimaryBlock = BlockType.Sand,
-                    SecondaryBlock = BlockType.Stone,
-                    TopBlock = BlockType.Sand,
-                    UnderwaterBlock = BlockType.Sand,
-                    UnderwaterThreshold = 1f,
-                    TreeDensity = 0f,
-                    AllowsTrees = false,
-                    RockDensity = 0f,
-                    AllowsRocks = false,
-                },
+            // Grassland
+            BiomesArray[1] = new BiomeSettings 
+            { 
+                PreferredTemperature = 0.5f,
+                PreferredHumidity = 0.5f,
+                PreferredContinentalness = 0.57f, // Low-medium elevation
+                TopBlock = BlockType.Grass,
+                UnderwaterBlock = BlockType.Dirt
+            };
 
-                // Beach biome
-                new BiomeSettings
-                {
-                    BiomeId = 1,
-                    Temperature = 0.5f,
-                    Humidity = 0.5f,
-                    Continentalness = 0.60f,
-                    DensitySettings = new TerrainDensitySettings
-                    {
-                        DeepStart = 0,
-                        CaveStart = 40,
-                        CaveEnd = 55,
-                        SurfaceStart = 55,
-                        SurfaceEnd = 64,
-                        DeepBias = 1f,
-                        CaveBias = 0f,
-                        SurfaceBias = 0.4f,
-                        DeepTransitionScale = 1f,
-                        CaveTransitionScale = 1f,
-                        AirTransitionScale = 1f,
-                        DeepTransitionCurve = 1f,
-                        CaveTransitionCurve = 1f,
-                        AirTransitionCurve = 1f
-                    },
-                    PrimaryBlock = BlockType.Sand,
-                    SecondaryBlock = BlockType.Stone,
-                    TopBlock = BlockType.Sand,
-                    UnderwaterBlock = BlockType.Sand,
-                    UnderwaterThreshold = 2f,
-                    TreeDensity = 0.001f,  // Very rare trees
-                    TreeMinHeight = 4,
-                    TreeMaxHeight = 6,
-                    AllowsTrees = true,
-                    RockDensity = 0.00002f,
-                    RockMinSize = 1f,
-                    RockMaxSize = 2f,
-                    RockSpikiness = 0.3f,
-                    RockGroundDepth = 0.5f,
-                    AllowsRocks = true,
-                },
+            // Mountain
+            BiomesArray[2] = new BiomeSettings 
+            { 
+                PreferredTemperature = 0.5f,
+                PreferredHumidity = 0.5f,
+                PreferredContinentalness = 0.60f, // Medium-high elevation
+                TopBlock = BlockType.Stone,
+                UnderwaterBlock = BlockType.Stone
+            };
 
-                // Grassland biome
-                new BiomeSettings
-                {
-                    BiomeId = 2,
-                    Temperature = 0.5f,
-                    Humidity = 0.5f,
-                    Continentalness = 0.65f,
-                    DensitySettings = new TerrainDensitySettings
-                    {
-                        DeepStart = 0,
-                        CaveStart = 50,
-                        CaveEnd = 70,
-                        SurfaceStart = 64,
-                        SurfaceEnd = 70,
-                        DeepBias = 1f,
-                        CaveBias = 0f,
-                        SurfaceBias = 0.5f,
-                        DeepTransitionScale = 1f,
-                        CaveTransitionScale = 1f,
-                        AirTransitionScale = 1f,
-                        DeepTransitionCurve = 1f,
-                        CaveTransitionCurve = 1f,
-                        AirTransitionCurve = 1f
-                    },
-                    PrimaryBlock = BlockType.Grass,
-                    SecondaryBlock = BlockType.Stone,
-                    TopBlock = BlockType.Grass,
-                    UnderwaterBlock = BlockType.Grass,
-                    UnderwaterThreshold = 2f,
-                    TreeDensity = 0.02f,   // More common trees
-                    TreeMinHeight = 4,
-                    TreeMaxHeight = 8,
-                    AllowsTrees = true,
-                    RockDensity = 0.0003f,
-                    RockMinSize = 0.5f,
-                    RockMaxSize = 1f,
-                    RockSpikiness = 0.4f,
-                    RockGroundDepth = 1f,
-                    AllowsRocks = true,
-                },
-
-                // Mountain biome (highest elevation, highest continentalness)
-                new BiomeSettings
-                {
-                    BiomeId = 3,
-                    Temperature = 0.5f,
-                    Humidity = 0.5f,
-                    Continentalness = 0.95f,
-                    DensitySettings = new TerrainDensitySettings
-                    {
-                        DeepStart = 0,
-                        CaveStart = 70,
-                        CaveEnd = 100,
-                        SurfaceStart = 70,
-                        SurfaceEnd = 110,
-                        DeepBias = 1f,
-                        CaveBias = 0.2f,
-                        SurfaceBias = 0.4f,
-                        DeepTransitionScale = 1f,
-                        CaveTransitionScale = 1f,
-                        AirTransitionScale = 0.7f,
-                        DeepTransitionCurve = 1f,
-                        CaveTransitionCurve = 1f,
-                        AirTransitionCurve = 1f
-                    },
-                    PrimaryBlock = BlockType.Stone,
-                    SecondaryBlock = BlockType.Stone,
-                    TopBlock = BlockType.Stone,
-                    UnderwaterBlock = BlockType.Gravel,
-                    UnderwaterThreshold = 3f,
-                    TreeDensity = 0.01f,   // Moderate tree density
-                    TreeMinHeight = 3,
-                    TreeMaxHeight = 6,
-                    AllowsTrees = true,
-                    RockDensity = 0.0004f,
-                    RockMinSize = 1f,
-                    RockMaxSize = 2f,
-                    RockSpikiness = 0.7f,
-                    RockGroundDepth = 1.5f,
-                    AllowsRocks = true,
-                }
+            // Snow
+            BiomesArray[3] = new BiomeSettings 
+            { 
+                PreferredTemperature = 0.5f,
+                PreferredHumidity = 0.5f,
+                PreferredContinentalness = 0.62f, // Highest elevation
+                TopBlock = BlockType.Snow,
+                UnderwaterBlock = BlockType.Ice
             };
         }
 
-        public bool IsGenerating(int2 position) => _generatingChunks.Contains(position);
+        public bool IsGenerating(int2 position)
+        {
+            return _generatingChunks.ContainsKey(position) && _generatingChunks[position];
+        }
 
-        // Synchronous generation
         public void GenerateChunk(int3 chunkPos, Action<Data.ChunkData> callback)
         {
-            UnityEngine.Debug.Log($"Starting chunk generation at {chunkPos}");
-            
-            // Allocate with Persistent instead of TempJob
             var blocks = new NativeArray<byte>(
                 Data.ChunkData.SIZE * Data.ChunkData.SIZE * Data.ChunkData.HEIGHT, 
                 Allocator.Persistent);
@@ -234,84 +88,110 @@ namespace WorldSystem.Generation
                     ChunkPosition = chunkPos,
                     Blocks = blocks,
                     HeightMap = heightMap,
-                    Biomes = _biomesArray,
-                    BiomeNoise = BIOME_NOISE,
-                    BiomeFalloff = BIOME_FALLOFF,
-                    SeaLevel = SEA_LEVEL,
-                    EnableCaves = ENABLE_3D_TERRAIN,
-                    EnableWater = ENABLE_WATER,
-                    GlobalDensityNoise = GLOBAL_DENSITY_NOISE,
-                    OceanThreshold = OCEAN_THRESHOLD,
+                    NoiseValues = new NativeArray<float>(
+                        Data.ChunkData.SIZE * Data.ChunkData.SIZE, 
+                        Allocator.TempJob)
                 };
 
-                // Complete the job immediately since we're not async here
                 job.Schedule(Data.ChunkData.SIZE * Data.ChunkData.SIZE, 64).Complete();
 
-                // Convert heightMap to final format
-                var finalHeightMap = new NativeArray<Data.HeightPoint>(Data.ChunkData.SIZE * Data.ChunkData.SIZE, Allocator.Persistent);
+                var dataHeightMap = new NativeArray<Data.HeightPoint>(heightMap.Length, Allocator.Persistent);
                 for (int i = 0; i < heightMap.Length; i++)
                 {
-                    finalHeightMap[i] = new Data.HeightPoint
+                    dataHeightMap[i] = new Data.HeightPoint
                     {
                         height = heightMap[i].height,
                         blockType = heightMap[i].blockType
                     };
                 }
 
-                // Create the final chunk data
                 var chunkData = new Data.ChunkData
                 {
                     position = chunkPos,
                     blocks = blocks,
-                    heightMap = finalHeightMap,
+                    heightMap = dataHeightMap,
                     isEdited = false
                 };
 
-                // After terrain generation is complete
-                UnityEngine.Debug.Log("Terrain generation complete, starting feature generation");
-                var featureGenerator = new FeatureGenerator(_settings);
-                featureGenerator.PopulateChunk(ref chunkData, _biomesArray);
-                UnityEngine.Debug.Log("Feature generation complete");
-
+                heightMap.Dispose();
                 callback(chunkData);
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
-                UnityEngine.Debug.LogError($"Error generating chunk: {e}");
-                // Ensure cleanup on error
+                Debug.LogError($"Error generating chunk: {e}");
                 if (blocks.IsCreated) blocks.Dispose();
                 if (heightMap.IsCreated) heightMap.Dispose();
                 throw;
             }
         }
 
-        // Asynchronous generation
         public JobHandle GenerateChunkAsync(int3 chunkPos, NativeArray<byte> blocks, 
             NativeArray<Core.HeightPoint> heightMap, Action<Data.ChunkData> callback)
         {
+            var int2Pos = new int2(chunkPos.x, chunkPos.z);
+            _generatingChunks[int2Pos] = true;
+
+            var noiseValues = new NativeArray<float>(
+                Data.ChunkData.SIZE * Data.ChunkData.SIZE, 
+                Allocator.TempJob);
+            var temperatureMap = new NativeArray<float>(
+                Data.ChunkData.SIZE * Data.ChunkData.SIZE, 
+                Allocator.TempJob);
+            var humidityMap = new NativeArray<float>(
+                Data.ChunkData.SIZE * Data.ChunkData.SIZE, 
+                Allocator.TempJob);
+
+            for (int x = 0; x < Data.ChunkData.SIZE; x++)
+            {
+                for (int z = 0; z < Data.ChunkData.SIZE; z++)
+                {
+                    float worldX = chunkPos.x * Data.ChunkData.SIZE + x;
+                    float worldZ = chunkPos.z * Data.ChunkData.SIZE + z;
+                    
+                    float scale = 0.004f;
+                    
+                    // Height/Continentalness noise - normalize from [-1,1] to [0,1]
+                    float noise = _noise.GenSingle2D(worldX * scale, worldZ * scale, seed);
+                    noiseValues[x + z * Data.ChunkData.SIZE] = (noise + 1f) * 0.5f;
+                    
+                    // Temperature noise (different seed)
+                    temperatureMap[x + z * Data.ChunkData.SIZE] = 
+                        (_noise.GenSingle2D(worldX * scale, worldZ * scale, seed + 1) + 1f) * 0.5f;
+                    
+                    // Humidity noise (different seed)
+                    humidityMap[x + z * Data.ChunkData.SIZE] = 
+                        (_noise.GenSingle2D(worldX * scale, worldZ * scale, seed + 2) + 1f) * 0.5f;
+                }
+            }
+
             var job = new TerrainGenerationJob
             {
                 ChunkPosition = chunkPos,
                 Blocks = blocks,
                 HeightMap = heightMap,
-                Biomes = _biomesArray,
-                BiomeNoise = BIOME_NOISE,
-                BiomeFalloff = BIOME_FALLOFF,
-                SeaLevel = SEA_LEVEL,
-                EnableCaves = ENABLE_3D_TERRAIN,
-                EnableWater = ENABLE_WATER,
-                GlobalDensityNoise = GLOBAL_DENSITY_NOISE,
-                OceanThreshold = OCEAN_THRESHOLD,
+                NoiseValues = noiseValues,
+                TemperatureMap = temperatureMap,
+                HumidityMap = humidityMap,
+                Biomes = BiomesArray,
+                WaterLevel = WATER_LEVEL
             };
 
-            return job.Schedule(Data.ChunkData.SIZE * Data.ChunkData.SIZE, 64);
+            var handle = job.Schedule(Data.ChunkData.SIZE * Data.ChunkData.SIZE, 64);
+            
+            handle.Complete();
+            noiseValues.Dispose();
+            temperatureMap.Dispose();
+            humidityMap.Dispose();
+            _generatingChunks[int2Pos] = false;
+            
+            return handle;
         }
 
         public void Dispose()
         {
-            if (_biomesArray.IsCreated)
-                _biomesArray.Dispose();
-            _isInitialized = false;
+            _generatingChunks.Clear();
+            if (BiomesArray.IsCreated)
+                BiomesArray.Dispose();
         }
     }
-} 
+}
