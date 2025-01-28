@@ -25,23 +25,29 @@ namespace UISystem.Core
                 return;
             }
 
-            // Always handle pointer movement
-            HandlePointerMoved(currentPointerPosition);
+            // Check if pointer is over UI - if so, only handle UI interactions
+            bool isOverUI = IsPointerOverUI();
             
-            // Handle dragging if any mouse button is held down
-            if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
+            // Always handle pointer movement if not over UI
+            if (!isOverUI)
+            {
+                HandlePointerMoved(currentPointerPosition);
+            }
+            
+            // Handle dragging if any mouse button is held down and not over UI
+            if (!isOverUI && (Input.GetMouseButton(0) || Input.GetMouseButton(1)))
             {
                 HandlePointerDragged(currentPointerPosition);
             }
 
-            // Handle mouse button down events
-            if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+            // Handle mouse button down events if not over UI
+            if (!isOverUI && (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1)))
             {
                 HandlePointerDown(currentPointerPosition);
             }
 
-            // Handle mouse button up events
-            if (Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1))
+            // Handle mouse button up events if not over UI
+            if (!isOverUI && (Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1)))
             {
                 HandlePointerUp(currentPointerPosition);
             }
@@ -57,7 +63,9 @@ namespace UISystem.Core
 
         public bool IsPointerOverUI()
         {
-            return UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject();
+            var eventSystem = UnityEngine.EventSystems.EventSystem.current;
+            if (eventSystem == null) return false;
+            return eventSystem.IsPointerOverGameObject();
         }
 
         public Vector2 GetPointerPosition()

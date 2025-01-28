@@ -22,6 +22,7 @@ namespace WorldSystem.Environment
         [SerializeField] private float overcastFactor = 0f;
         [SerializeField] private float shadowMaxOrthoSize = 100f;
         [SerializeField] private float shadowMinOrthoSize = 20f;
+        [SerializeField] private Color cloudShadowColor = new Color(0.2f, 0.23f, 0.27f, 1.0f);
 
         private void OnValidate()
         {
@@ -42,15 +43,17 @@ namespace WorldSystem.Environment
             targetMaterial.SetFloat("_CloudDensity", cloudDensity);
             targetMaterial.SetFloat("_CloudHeight", cloudHeight);
             targetMaterial.SetColor("_CloudColor", cloudColor);
-            targetMaterial.SetFloat("_ShadowStrength", cloudShadowStrength);
+            targetMaterial.SetFloat("_CloudShadowStrength", cloudShadowStrength);
+            
+            // Set both cloud and shadow ortho sizes
             targetMaterial.SetFloat("_CloudMaxOrthoSize", cloudMaxOrthoSize);
             targetMaterial.SetFloat("_CloudMinOrthoSize", cloudMinOrthoSize);
+            targetMaterial.SetFloat("_ShadowMaxOrthoSize", shadowMaxOrthoSize);
+            targetMaterial.SetFloat("_ShadowMinOrthoSize", shadowMinOrthoSize);
             
             // Shadow properties
             targetMaterial.SetFloat("_ShadowSoftness", shadowSoftness);
             targetMaterial.SetFloat("_OvercastFactor", overcastFactor);
-            targetMaterial.SetFloat("_ShadowMaxOrthoSize", shadowMaxOrthoSize);
-            targetMaterial.SetFloat("_ShadowMinOrthoSize", shadowMinOrthoSize);
 
             // Calculate shadow offset based on main directional light
             Light mainLight = RenderSettings.sun;
@@ -62,6 +65,9 @@ namespace WorldSystem.Environment
                 Vector2 shadowOffset = new Vector2(lightDir.x, lightDir.z) * (cloudHeight / -lightDir.y);
                 targetMaterial.SetVector("_ShadowOffset", shadowOffset);
             }
+
+            // Add shadow color property
+            targetMaterial.SetColor("_CloudShadowColor", cloudShadowColor);
         }
     }
 } 

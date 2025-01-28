@@ -279,7 +279,6 @@ namespace WorldSystem.Base
                 {
                     try
                     {
-                        UnityEngine.Debug.Log($"Processing completed chunk at {kvp.Key}");
                         // Complete the job and process results
                         kvp.Value.handle.Complete();
                         
@@ -304,11 +303,6 @@ namespace WorldSystem.Base
                             heightMap = finalHeightMap,
                             isEdited = false
                         };
-
-                        UnityEngine.Debug.Log($"Generating features for chunk at {kvp.Key}");
-                        // var featureGenerator = new FeatureGenerator(_worldSettings);
-                        // featureGenerator.PopulateChunk(ref chunkData, _worldGenerator.BiomesArray);
-
                         OnChunkGenerated(chunkData);
                         completedJobs.Add(kvp.Key);
                     }

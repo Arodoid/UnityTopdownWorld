@@ -28,6 +28,21 @@ namespace WorldSystem.Generation
         [Header("Block Types")]
         public BlockType TopBlock;          // Main surface block
         public BlockType UnderwaterBlock;   // Block when below water level
+
+        [Header("Tree Settings")]
+        public bool AllowsTrees;
+        public float TreeDensity;
+        public float TreeMinHeight;
+        public float TreeMaxHeight;
+        public bool IsPalmTree;            // Whether trees in this biome are palm trees
+
+        [Header("Rock Settings")]
+        public bool AllowsRocks;
+        public float RockDensity;
+        public float RockMinSize;
+        public float RockMaxSize;
+        public float RockSpikiness;
+        public float RockGroundDepth;
     }
 
     public struct ClimateParameters

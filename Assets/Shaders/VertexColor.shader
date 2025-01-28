@@ -18,12 +18,9 @@ Shader "Custom/VertexColor"
         _CloudSpeed ("Cloud Speed", Range(0, 1)) = 0.1
         _CloudDensity ("Cloud Density", Range(0, 1)) = 0.5
         _CloudHeight ("Cloud Height", Range(10, 1000)) = 100
-        _CloudColor ("Cloud Color", Color) = (1,1,1,0.6)
-        _CloudShadowTexture ("Cloud Shadow Texture", 2D) = "white" {}
-        _ShadowStrength ("Shadow Strength", Range(0, 1)) = 0.3
-        _CloudMaxOrthoSize ("Cloud Max Ortho Size", Float) = 100
-        _CloudMinOrthoSize ("Cloud Min Ortho Size", Float) = 20
-        _ShadowOffset ("Shadow Offset", Vector) = (0, 0, 0, 0)
+        _CloudColor ("Cloud Color", Color) = (1,1,1,1)
+        _CloudShadowColor ("Cloud Shadow Color", Color) = (0.2, 0.23, 0.27, 1.0)
+        _CloudShadowStrength ("Cloud Shadow Strength", Range(0, 1)) = 0.3
         [Header(Shadow Settings)]
         _ShadowSoftness ("Shadow Softness", Range(0, 1)) = 0.3
         _OvercastFactor ("Overcast Factor", Range(0, 1)) = 0
@@ -38,9 +35,10 @@ Shader "Custom/VertexColor"
         _WaveSpeed ("Wave Speed", Range(0, 5)) = 1
         _WaveStrength ("Wave Strength", Range(0, 0.5)) = 0.2
         _WaveDistance ("Wave Distance", Range(1, 3)) = 1
-        [Header(Cloud Shadow Settings)]
-        _CloudShadowColor ("Cloud Shadow Color", Color) = (0.2, 0.23, 0.27, 1.0)  // Slightly bluish shadow
-        _CloudShadowStrength ("Cloud Shadow Strength", Range(0, 1)) = 0.6
+        _CloudMaxOrthoSize ("Cloud Max Ortho Size", Float) = 100
+        _CloudMinOrthoSize ("Cloud Min Ortho Size", Float) = 20
+        _ShadowMaxOrthoSize ("Shadow Max Ortho Size", Float) = 100
+        _ShadowMinOrthoSize ("Shadow Min Ortho Size", Float) = 20
     }
     SubShader
     {
@@ -113,7 +111,7 @@ Shader "Custom/VertexColor"
             float _CloudDensity;
             float _CloudHeight;
             float4 _CloudColor;
-            float _ShadowStrength;
+            float _CloudShadowStrength;
             float _CloudMaxOrthoSize;
             float _CloudMinOrthoSize;
 
@@ -138,7 +136,9 @@ Shader "Custom/VertexColor"
             float _WaveDistance;
 
             float4 _CloudShadowColor;
-            float _CloudShadowStrength;
+
+            float _ShadowMaxOrthoSize;
+            float _ShadowMinOrthoSize;
 
             struct WaterEdgeInfo {
                 bool isEdge;
@@ -336,6 +336,40 @@ Shader "Custom/VertexColor"
                 return 1.0 - smoothstep(0, 1, orthoFactor);
             }
 
+            float3 CalculateClouds(float3 worldPos, float2 worldUV, float orthoFactor)
+            {
+                float clouds = fbm(worldUV + _Time.y * _CloudSpeed, _WorldSeed);
+                clouds = smoothstep(_CloudDensity - 0.2, _CloudDensity + 0.2, clouds);
+                
+                float heightFade = 1.0 - saturate((worldPos.y - _CloudHeight) / (_CloudHeight * 0.5));
+                float terrainFade = smoothstep(0, 20, _CloudHeight - worldPos.y);
+                
+                // Use cloud-specific ortho factor
+                float cloudOrthoFactor = saturate((_OrthoSize - _CloudMinOrthoSize) / 
+                                                (_CloudMaxOrthoSize - _CloudMinOrthoSize));
+                
+                return clouds * heightFade * terrainFade * cloudOrthoFactor;
+            }
+
+            float3 CalculateCloudShadows(float3 worldPos, float3 lightDir, float clouds)
+            {
+                // Don't cast shadows if cloud layer is below the terrain
+                if (worldPos.y > _CloudHeight)
+                    return 0;
+
+                float rayLength = (_CloudHeight - worldPos.y) / lightDir.y;
+                float2 shadowUV = (worldPos + lightDir * rayLength).xz / _CloudScale;
+                
+                float shadow = fbm(shadowUV + _Time.y * _CloudSpeed, _WorldSeed);
+                shadow = smoothstep(_CloudDensity - 0.2, _CloudDensity + 0.2, shadow);
+                
+                // Apply shadow ortho factor
+                float shadowOrthoFactor = saturate((_OrthoSize - _ShadowMinOrthoSize) / 
+                                                 (_ShadowMaxOrthoSize - _ShadowMinOrthoSize));
+                
+                return shadow * _CloudShadowStrength * shadowOrthoFactor;
+            }
+
             half4 frag(Varyings input) : SV_Target
             {
                 UNITY_SETUP_INSTANCE_ID(input);
@@ -369,125 +403,24 @@ Shader "Custom/VertexColor"
                 
                 color.rgb *= lighting;
                 
-                // Calculate cloud density modifier based on ortho size
-                float orthoFactor = saturate((_OrthoSize - _CloudMinOrthoSize) / (_CloudMaxOrthoSize - _CloudMinOrthoSize));
-                orthoFactor = smoothstep(0, 1, orthoFactor);
+                // Calculate ortho factor
+                float orthoFactor = saturate((_OrthoSize - _CloudMinOrthoSize) / 
+                                            (_CloudMaxOrthoSize - _CloudMinOrthoSize));
                 
-                // Calculate cloud position
+                // Calculate clouds
                 float2 worldUV = input.worldPos.xz / _CloudScale;
-                float time = _Time.y * _CloudSpeed;
-                worldUV.x += time;
+                float3 clouds = CalculateClouds(input.worldPos, worldUV, orthoFactor);
                 
-                // Calculate and apply cloud shadows BEFORE clouds
+                // Calculate shadows
                 float3 lightDir = normalize(_MainLightPosition.xyz);
-                float3 worldPos = input.worldPos;
+                float shadowStrength = CalculateCloudShadows(input.worldPos, lightDir, clouds);
                 
-                // Calculate ray length to cloud height
-                float rayLength = (_CloudHeight - worldPos.y) / lightDir.y;
-                float3 shadowSamplePos = worldPos + lightDir * rayLength;
-
-                // Check if the shadow sample point is below terrain
-                bool shadowPointInTerrain = shadowSamplePos.y < worldPos.y;
-
-                // Calculate and apply cloud shadows
-                float2 shadowUV = shadowSamplePos.xz / _CloudScale;
-                shadowUV.x += _Time.y * _CloudSpeed;
-                float cloudShadow = fbm(shadowUV, _WorldSeed);
-                cloudShadow = smoothstep(_CloudDensity - 0.3, _CloudDensity + 0.3, cloudShadow);
-
-                float shadowFactor = cloudShadow * _ShadowStrength;
-                shadowFactor *= (1.0 - saturate(rayLength / (_CloudHeight * 2.0)));
-                shadowFactor *= max(0, dot(input.normalWS, lightDir));
-
-                // Apply the same ortho scaling as clouds (not inverted)
-                shadowFactor *= orthoFactor;
-
-                // Smooth transition for shadows when they would intersect terrain
-                float shadowTerrainFade = smoothstep(0, 20, shadowSamplePos.y - worldPos.y);
-                shadowFactor *= shadowTerrainFade;
-
-                // Only apply shadow if the ray hasn't intersected terrain
-                if (shadowPointInTerrain) {
-                    shadowFactor = 0;
-                }
-
-                // Apply block-based color variation BEFORE shadow calculations
-                float2 blockPos = floor(input.worldPos.xz / _ColorVariationScale) * _ColorVariationScale;
-
-                // First noise layer
-                float2 noiseUV = blockPos / (_ColorVariationScale * 1.0);
-                float colorNoise1 = fbm(noiseUV, _WorldSeed + 42.1);
-
-                // Second noise layer at different scale and rotation
-                float2 rotatedUV1 = float2(
-                    blockPos.x * cos(0.7) - blockPos.y * sin(0.7),
-                    blockPos.x * sin(0.7) + blockPos.y * cos(0.7)
-                ) / (_ColorVariationScale * 2.3);
-                float colorNoise2 = fbm(rotatedUV1, _WorldSeed + 13.7);
-
-                // Third noise layer with different rotation and scale
-                float2 rotatedUV2 = float2(
-                    blockPos.x * cos(1.3) - blockPos.y * sin(1.3),
-                    blockPos.x * sin(1.3) + blockPos.y * cos(1.3)
-                ) / (_ColorVariationScale * 3.7);
-                float colorNoise3 = fbm(rotatedUV2, _WorldSeed + 89.3);
-
-                // Fourth noise layer for large-scale variation
-                float2 largeScaleUV = blockPos / (_ColorVariationScale * 5.5);
-                float colorNoise4 = fbm(largeScaleUV, _WorldSeed + 127.1);
-
-                // Combine all noise layers with different weights
-                float colorNoise = colorNoise1 * 0.4 + 
-                                  colorNoise2 * 0.3 + 
-                                  colorNoise3 * 0.2 + 
-                                  colorNoise4 * 0.1;
-
-                // Make it more discrete/blocky
-                colorNoise = floor(colorNoise * 6) / 6.0;
-
-                float3 colorVariation = (colorNoise - 0.5) * _ColorVariationStrength;
-
-                // Apply variation BEFORE shadow calculations
-                color.rgb += colorVariation;
-
-                float3 shadowColor = lerp(float3(1,1,1), _CloudShadowColor.rgb, _CloudShadowStrength);
-                float3 adjustedShadowStrength = float3(
-                    shadowFactor * (1.0 - (1.0 - shadowColor.r) * 0.7),
-                    shadowFactor * (1.0 - (1.0 - shadowColor.g) * 0.7),
-                    shadowFactor * (1.0 - (1.0 - shadowColor.b) * 0.7)
-                );
-
-                // Clamp shadow factor to prevent extreme values
-                adjustedShadowStrength = min(adjustedShadowStrength, 0.85);
-
-                // Apply shadow directly without luminance preservation
-                float3 shadowedColor = color.rgb * (float3(1,1,1) - adjustedShadowStrength);
-
-                // Soften very dark areas
-                float darknessFactor = 1.0 - smoothstep(0.1, 0.3, length(shadowedColor));
-                shadowedColor = lerp(shadowedColor, color.rgb * 0.3, darknessFactor);
-
-                // Apply a slight ambient light contribution in shadowed areas
-                float3 ambientLight = float3(0.4, 0.4, 0.5) * 0.2;
-                float3 finalShadowedColor = shadowedColor + (ambientLight * shadowFactor);
-
-                // Ensure we don't get values outside valid range
-                finalShadowedColor = saturate(finalShadowedColor);
-
-                // Now calculate and apply clouds ON TOP
-                float clouds = fbm(worldUV, _WorldSeed);
-                clouds = smoothstep(_CloudDensity - 0.3, _CloudDensity + 0.3, clouds);
-                clouds *= orthoFactor;
+                // Simplified shadow application - no extra multiplier needed since we applied it above
+                float3 shadowedColor = lerp(color.rgb, color.rgb * _CloudShadowColor.rgb, 
+                                           saturate(shadowStrength) * (1 - clouds));
                 
-                float cloudFade = 1.0 - saturate((input.worldPos.y - _CloudHeight) / (_CloudHeight * 0.5));
-                clouds *= cloudFade;
-                
-                // Smooth transition when clouds intersect terrain
-                float terrainFade = smoothstep(0, 20, _CloudHeight - input.worldPos.y); // 20 units fade distance
-                clouds *= terrainFade;
-                
-                // Blend clouds over the already shadowed terrain
-                color.rgb = lerp(finalShadowedColor, _CloudColor.rgb, clouds * _CloudColor.a);
+                // Blend with clouds
+                color.rgb = lerp(shadowedColor, _CloudColor.rgb, clouds);
                 
                 // Apply atmospheric scattering AFTER clouds
                 color.rgb = ApplyAtmosphericScattering(color.rgb, input.worldPos);
