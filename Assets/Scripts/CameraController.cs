@@ -51,6 +51,9 @@ public class CameraController : MonoBehaviour
 
         _targetPosition = transform.position;
         _targetZoom = _camera.orthographicSize;
+
+        // Ensure far clipping plane is set for maximum view distance
+        _camera.farClipPlane = 100000f;
     }
 
     private void InitializeYLevelSlider()
@@ -108,11 +111,15 @@ public class CameraController : MonoBehaviour
         
         Vector3 movement = Vector3.zero;
         
-        // Movement relative to camera direction
-        if (Input.GetKey(KeyCode.W)) movement += transform.forward;
-        if (Input.GetKey(KeyCode.S)) movement -= transform.forward;
-        if (Input.GetKey(KeyCode.A)) movement -= transform.right;
-        if (Input.GetKey(KeyCode.D)) movement += transform.right;
+        // Get the camera's Y rotation only
+        float yaw = transform.eulerAngles.y;
+        Quaternion rotation = Quaternion.Euler(0, yaw, 0);
+        
+        // Movement using world-aligned directions rotated by camera's Y angle
+        if (Input.GetKey(KeyCode.W)) movement += rotation * Vector3.forward;
+        if (Input.GetKey(KeyCode.S)) movement += rotation * Vector3.back;
+        if (Input.GetKey(KeyCode.A)) movement += rotation * Vector3.left;
+        if (Input.GetKey(KeyCode.D)) movement += rotation * Vector3.right;
         if (Input.GetKey(KeyCode.E)) movement += Vector3.up;
         if (Input.GetKey(KeyCode.Q)) movement += Vector3.down;
         

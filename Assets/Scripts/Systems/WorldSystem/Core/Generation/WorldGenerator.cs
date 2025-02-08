@@ -224,13 +224,9 @@ namespace WorldSystem.Generation
             }
         }
 
-        public JobHandle GenerateChunkAsync(int3 chunkPos, NativeArray<byte> blocks, 
-            NativeArray<Core.HeightPoint> heightMap, Action<Data.ChunkData> callback)
+        public JobHandle GenerateChunkAsync(int3 chunkPos, NativeArray<byte> blocks, NativeArray<Core.HeightPoint> heightMap, Action<Data.ChunkData> callback)
         {
-            var int2Pos = new int2(chunkPos.x, chunkPos.z);
-            _generatingChunks[int2Pos] = true;
-
-            // Allocate arrays for noise values
+            // Generate noise on main thread first
             var noiseValues3D = new NativeArray<float>(
                 Data.ChunkData.SIZE * Data.ChunkData.SIZE * Data.ChunkData.HEIGHT, 
                 Allocator.TempJob);
@@ -244,113 +240,80 @@ namespace WorldSystem.Generation
                 Data.ChunkData.SIZE * Data.ChunkData.SIZE, 
                 Allocator.TempJob);
 
-            try
+            // Generate all noise on main thread
+            GenerateNoiseData(chunkPos, noiseValues3D, heightOffsets, temperatureMap, humidityMap);
+
+            // Schedule terrain generation job
+            var terrainJob = new TerrainGenerationJob
             {
-                // Generate noise values
-                float scale2D = 0.004f;
-                float scale3D = 0.03f;  // Adjust this to control cave size
+                ChunkPosition = chunkPos,
+                Blocks = blocks,
+                HeightMap = heightMap,
+                NoiseValues3D = noiseValues3D,
+                HeightOffsets = heightOffsets,
+                TemperatureMap = temperatureMap,
+                HumidityMap = humidityMap,
+                Biomes = BiomesArray,
+                BaseHeight = 64f / Data.ChunkData.HEIGHT,
+                Strength = 1.0f,
+                WaterLevel = WATER_LEVEL,
+            };
 
-                // Generate 3D noise for basic structure
-                for (int y = 0; y < Data.ChunkData.HEIGHT; y++)
-                {
-                    for (int x = 0; x < Data.ChunkData.SIZE; x++)
-                    {
-                        for (int z = 0; z < Data.ChunkData.SIZE; z++)
-                        {
-                            float worldX = chunkPos.x * Data.ChunkData.SIZE + x;
-                            float worldY = y;
-                            float worldZ = chunkPos.z * Data.ChunkData.SIZE + z;
+            // Chain jobs together
+            var handle = terrainJob.Schedule(Data.ChunkData.SIZE * Data.ChunkData.SIZE, 64);
 
-                            int index = x + (z * Data.ChunkData.SIZE) + (y * Data.ChunkData.SIZE * Data.ChunkData.SIZE);
-                            float noise = _3dNoise.GenSingle3D(
-                                worldX * scale3D, 
-                                worldY * scale3D, 
-                                worldZ * scale3D, 
-                                seed);
-                            noiseValues3D[index] = (noise + 1f) * 0.5f;  // Normalize to 0-1
-                        }
-                    }
-                }
+            // Add cleanup job
+            handle = new CleanupNoiseJob
+            {
+                NoiseValues3D = noiseValues3D,
+                HeightOffsets = heightOffsets,
+                TemperatureMap = temperatureMap,
+                HumidityMap = humidityMap
+            }.Schedule(handle);
 
-                // Generate 2D noise for height offsets and biome data
+            return handle;
+        }
+
+        private void GenerateNoiseData(int3 chunkPos, 
+            NativeArray<float> noiseValues3D,
+            NativeArray<float> heightOffsets, 
+            NativeArray<float> temperatureMap,
+            NativeArray<float> humidityMap)
+        {
+            float scale2D = 0.004f;
+            float scale3D = 0.03f;
+
+            // Generate 3D noise
+            for (int y = 0; y < Data.ChunkData.HEIGHT; y++)
+            {
                 for (int x = 0; x < Data.ChunkData.SIZE; x++)
                 {
                     for (int z = 0; z < Data.ChunkData.SIZE; z++)
                     {
                         float worldX = chunkPos.x * Data.ChunkData.SIZE + x;
+                        float worldY = y;
                         float worldZ = chunkPos.z * Data.ChunkData.SIZE + z;
-                        
-                        int index = x + z * Data.ChunkData.SIZE;
-                        
-                        // Height offset noise
-                        heightOffsets[index] = (_heightNoise.GenSingle2D(worldX * scale2D, worldZ * scale2D, seed) + 1f) * 0.5f;
-                        
-                        // Temperature noise (different seed)
-                        temperatureMap[index] = (_temperatureNoise.GenSingle2D(worldX * scale2D, worldZ * scale2D, seed + 1) + 1f) * 0.5f;
-                        
-                        // Humidity noise (different seed)
-                        humidityMap[index] = (_humidityNoise.GenSingle2D(worldX * scale2D, worldZ * scale2D, seed + 2) + 1f) * 0.5f;
+
+                        int index = x + (z * Data.ChunkData.SIZE) + (y * Data.ChunkData.SIZE * Data.ChunkData.SIZE);
+                        float noise = _3dNoise.GenSingle3D(worldX * scale3D, worldY * scale3D, worldZ * scale3D, seed);
+                        noiseValues3D[index] = (noise + 1f) * 0.5f;
                     }
                 }
-
-                var job = new TerrainGenerationJob
-                {
-                    ChunkPosition = chunkPos,
-                    Blocks = blocks,
-                    HeightMap = heightMap,
-                    NoiseValues3D = noiseValues3D,
-                    HeightOffsets = heightOffsets,
-                    TemperatureMap = temperatureMap,
-                    HumidityMap = humidityMap,
-                    Biomes = BiomesArray,
-                    BaseHeight = 64f / Data.ChunkData.HEIGHT,  // Normalize to 0-1 range
-                    Strength = 1.0f,
-                    WaterLevel = WATER_LEVEL,
-                };
-
-                var handle = job.Schedule(Data.ChunkData.SIZE * Data.ChunkData.SIZE, 64);
-                handle.Complete();
-
-                // Create a new Data.HeightPoint array and copy the values
-                var dataHeightMap = ConvertHeightMap(heightMap);
-                var chunkData = new Data.ChunkData
-                {
-                    position = chunkPos,
-                    blocks = blocks,
-                    heightMap = dataHeightMap,
-                    isEdited = false
-                };
-
-                // Use stored settings
-                var featureGen = new FeatureGenerator(_settings);
-                featureGen.PopulateChunk(ref chunkData, BiomesArray);
-
-                if (callback != null)
-                {
-                    callback(chunkData);
-                }
-
-                // Cleanup
-                noiseValues3D.Dispose();
-                heightOffsets.Dispose();
-                temperatureMap.Dispose();
-                humidityMap.Dispose();
-                _generatingChunks[int2Pos] = false;
-
-                return handle;
             }
-            catch (Exception e)
+
+            // Generate 2D noise
+            for (int x = 0; x < Data.ChunkData.SIZE; x++)
             {
-                Debug.LogError($"Error in GenerateChunkAsync: {e}");
-                
-                // Cleanup on error
-                if (noiseValues3D.IsCreated) noiseValues3D.Dispose();
-                if (heightOffsets.IsCreated) heightOffsets.Dispose();
-                if (temperatureMap.IsCreated) temperatureMap.Dispose();
-                if (humidityMap.IsCreated) humidityMap.Dispose();
-                _generatingChunks[int2Pos] = false;
-                
-                throw;
+                for (int z = 0; z < Data.ChunkData.SIZE; z++)
+                {
+                    float worldX = chunkPos.x * Data.ChunkData.SIZE + x;
+                    float worldZ = chunkPos.z * Data.ChunkData.SIZE + z;
+                    
+                    int index = x + z * Data.ChunkData.SIZE;
+                    heightOffsets[index] = (_heightNoise.GenSingle2D(worldX * scale2D, worldZ * scale2D, seed) + 1f) * 0.5f;
+                    temperatureMap[index] = (_temperatureNoise.GenSingle2D(worldX * scale2D, worldZ * scale2D, seed + 1) + 1f) * 0.5f;
+                    humidityMap[index] = (_humidityNoise.GenSingle2D(worldX * scale2D, worldZ * scale2D, seed + 2) + 1f) * 0.5f;
+                }
             }
         }
 

@@ -97,6 +97,23 @@ namespace WorldSystem.Base
 
         private HashSet<int2> _dirtyChunks = new HashSet<int2>();
 
+        private struct ChunkBounds
+        {
+            public Vector3 center;
+            public Vector3 extents;
+            
+            public static readonly Vector3 DefaultExtents = new(
+                ChunkData.SIZE * 0.5f,
+                ChunkData.HEIGHT * 0.5f,
+                ChunkData.SIZE * 0.5f
+            );
+        }
+
+        private readonly Dictionary<int2, ChunkBounds> _chunkBoundsCache = new();
+        private Plane[] _cachedFrustumPlanes = new Plane[6];
+        private Vector3 _lastFrustumUpdatePos;
+        private Quaternion _lastFrustumUpdateRot;
+
         public void Initialize(WorldGenSettings settings)
         {
         _worldSettings = settings;
@@ -166,50 +183,90 @@ namespace WorldSystem.Base
         {
             _visibleChunkPositions.Clear();
             
-            // Get the actual camera frustum planes
-            Plane[] frustumPlanes = GeometryUtility.CalculateFrustumPlanes(mainCamera);
-            
-            // Get camera position and forward direction
             Vector3 camPos = mainCamera.transform.position;
-            Vector3 camForward = mainCamera.transform.forward;
             
-            // Calculate the maximum possible chunks we need to check based on view distance
-            // This is just for optimization to avoid checking every chunk in the world
-            float maxViewDistance = loadDistance * chunkLoadBuffer;
-            int maxChunkRadius = Mathf.CeilToInt(maxViewDistance / ChunkData.SIZE);
-            int2 centerChunk = new int2(
-                Mathf.FloorToInt(camPos.x / ChunkData.SIZE),
-                Mathf.FloorToInt(camPos.z / ChunkData.SIZE)
+            // Get camera frustum planes
+            GeometryUtility.CalculateFrustumPlanes(mainCamera, _cachedFrustumPlanes);
+            
+            // For orthographic camera, calculate visible area based on orthographicSize
+            float orthoSize = mainCamera.orthographicSize;
+            float aspectRatio = mainCamera.aspect;
+            float visibleWidth = orthoSize * 2 * aspectRatio;
+            float visibleHeight = orthoSize * 2;
+
+            // Convert to world space considering camera rotation
+            Vector3 forward = mainCamera.transform.forward;
+            Vector3 right = mainCamera.transform.right;
+            Vector3 up = mainCamera.transform.up;
+
+            // Add more buffer to ensure chunks load before they're visible
+            float buffer = 2.5f; // Increased from 2f
+            visibleWidth *= buffer;
+            visibleHeight *= buffer;
+            
+            // Add vertical buffer for tilted camera views
+            float verticalBuffer = Mathf.Abs(mainCamera.transform.forward.y) * orthoSize * 4f;
+            visibleHeight += verticalBuffer;
+
+            // Calculate bounds in chunk coordinates
+            int minX = Mathf.FloorToInt((camPos.x - visibleWidth) / ChunkData.SIZE);
+            int maxX = Mathf.CeilToInt((camPos.x + visibleWidth) / ChunkData.SIZE);
+            int minZ = Mathf.FloorToInt((camPos.z - visibleHeight) / ChunkData.SIZE);
+            int maxZ = Mathf.CeilToInt((camPos.z + visibleHeight) / ChunkData.SIZE);
+
+            // Check chunks within the calculated bounds
+            for (int x = minX; x <= maxX; x++)
+            {
+                for (int z = minZ; z <= maxZ; z++)
+                {
+                    CheckChunkVisibility(new int2(x, z), float.MaxValue, camPos);
+                }
+            }
+        }
+
+        private void CheckChunkVisibility(int2 chunkPos, float maxViewDistanceSq, Vector3 camPos)
+        {
+            float worldX = chunkPos.x * ChunkData.SIZE + ChunkData.SIZE * 0.5f;
+            float worldZ = chunkPos.y * ChunkData.SIZE + ChunkData.SIZE * 0.5f;
+            
+            // Calculate bounds based on viewMaxYLevel
+            float visibleHeight = Mathf.Min(viewMaxYLevel + 1, ChunkData.HEIGHT); // +1 to include current level
+            float centerY = visibleHeight * 0.5f; // Center of visible portion
+            
+            // Create bounds that only encompasses the visible portion of the chunk
+            var bounds = new Bounds(
+                new Vector3(worldX, centerY, worldZ),
+                new Vector3(
+                    ChunkData.SIZE,      // Full width
+                    visibleHeight,       // Only up to viewMaxYLevel
+                    ChunkData.SIZE       // Full depth
+                )
             );
 
-            // Check all potential chunks in range
-            for (int x = -maxChunkRadius; x <= maxChunkRadius; x++)
-            for (int z = -maxChunkRadius; z <= maxChunkRadius; z++)
-            {
-                int2 chunkPos = new int2(centerChunk.x + x, centerChunk.y + z);
-                
-                // Create full height bounds for the chunk (including Y axis)
-                Vector3 chunkMin = new Vector3(
-                    chunkPos.x * ChunkData.SIZE,
-                    0, // Always start from bottom
-                    chunkPos.y * ChunkData.SIZE
-                );
-                Vector3 chunkMax = new Vector3(
-                    (chunkPos.x + 1) * ChunkData.SIZE,
-                    ChunkData.HEIGHT, // Full height (256)
-                    (chunkPos.y + 1) * ChunkData.SIZE
-                );
-                
-                Bounds chunkBounds = new Bounds(
-                    (chunkMax + chunkMin) * 0.5f, // Center
-                    chunkMax - chunkMin // Size
-                );
+            // Add some padding to the bounds to prevent pop-in
+            bounds.Expand(new Vector3(1f, 1f, 1f));
 
-                // If ANY part of the chunk is visible in the frustum, we need to load it
-                if (GeometryUtility.TestPlanesAABB(frustumPlanes, chunkBounds))
-                {
-                    _visibleChunkPositions.Add(chunkPos);
-                }
+            if (GeometryUtility.TestPlanesAABB(_cachedFrustumPlanes, bounds))
+            {
+                _visibleChunkPositions.Add(chunkPos);
+                
+                // Debug visualization
+                Debug.DrawLine(
+                    bounds.min,
+                    bounds.max,
+                    Color.green,
+                    Time.deltaTime
+                );
+            }
+            else
+            {
+                // Debug visualization for culled chunks
+                Debug.DrawLine(
+                    bounds.min,
+                    bounds.max,
+                    Color.red,
+                    Time.deltaTime
+                );
             }
         }
 

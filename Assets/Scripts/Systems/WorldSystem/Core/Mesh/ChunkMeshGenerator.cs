@@ -154,6 +154,7 @@ namespace WorldSystem.Mesh
                     if (block == 0 || block >= blockColors.Length) continue;
 
                     // For each direction, check its own processed array
+                    // Example for positive X:
                     if (!processedXPos[x, y, z] && IsBlockFaceVisible(x, y, z, 1, 0, 0))
                     {
                         // Find maximum width and height for this face
@@ -197,6 +198,7 @@ namespace WorldSystem.Mesh
                         facesAdded++;
                     }
 
+                    // Repeat for other directions, using their respective processed arrays
                     if (!processedXNeg[x, y, z] && IsBlockFaceVisible(x, y, z, -1, 0, 0))
                     {
                         int width = 1;
