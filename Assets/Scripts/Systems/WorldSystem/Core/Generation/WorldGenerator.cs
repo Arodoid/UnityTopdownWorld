@@ -19,7 +19,7 @@ namespace WorldSystem.Generation
         private readonly Dictionary<int2, bool> _generatingChunks = new();
         private readonly WorldSystem.WorldGenSettings _settings;
         public int seed { get; private set; } = 1337;
-        private const float WATER_LEVEL = 120f; // Default water level
+        private const float WATER_LEVEL = 123f; // Default water level
         
         public NativeArray<BiomeSettings> BiomesArray;
 

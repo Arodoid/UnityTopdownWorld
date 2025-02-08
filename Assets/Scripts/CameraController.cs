@@ -21,9 +21,16 @@ public class CameraController : MonoBehaviour
     [SerializeField] private ChunkManager chunkManager;
     [SerializeField] private Slider yLevelSlider;
     
+    [Header("Camera Rotation")]
+    [SerializeField] private float rotationSpeed = 2f;
+    [SerializeField] private float minVerticalAngle = -80f;
+    [SerializeField] private float maxVerticalAngle = 80f;
+    
     private Camera _camera;
     private Vector3 _targetPosition;
     private float _targetZoom;
+    private float _rotationX = 0f;
+    private float _rotationY = 0f;
     
     private void Start()
     {
@@ -74,24 +81,40 @@ public class CameraController : MonoBehaviour
     private void Update()
     {
         HandleMovement();
+        HandleRotation();
         HandleZoom();
+    }
+
+    private void HandleRotation()
+    {
+        // Only rotate when right mouse button is held
+        if (Input.GetMouseButton(1))
+        {
+            float mouseX = Input.GetAxis("Mouse X") * rotationSpeed;
+            float mouseY = Input.GetAxis("Mouse Y") * rotationSpeed;
+            
+            _rotationY += mouseX;
+            _rotationX -= mouseY;
+            _rotationX = Mathf.Clamp(_rotationX, minVerticalAngle, maxVerticalAngle);
+            
+            transform.rotation = Quaternion.Euler(_rotationX, _rotationY, 0);
+        }
     }
 
     private void HandleMovement()
     {
         float multiplier = Input.GetKey(KeyCode.LeftShift) ? fastMoveMultiplier : 1f;
-        
-        // Scale movement speed based on zoom level to maintain consistent screen speed
-        float zoomScale = _camera.orthographicSize / minZoom;
-        float speed = moveSpeed * multiplier * zoomScale * Time.deltaTime;
+        float speed = moveSpeed * multiplier * Time.deltaTime;
         
         Vector3 movement = Vector3.zero;
         
-        // WASD movement
-        if (Input.GetKey(KeyCode.W)) movement.z += 1;
-        if (Input.GetKey(KeyCode.S)) movement.z -= 1;
-        if (Input.GetKey(KeyCode.A)) movement.x -= 1;
-        if (Input.GetKey(KeyCode.D)) movement.x += 1;
+        // Movement relative to camera direction
+        if (Input.GetKey(KeyCode.W)) movement += transform.forward;
+        if (Input.GetKey(KeyCode.S)) movement -= transform.forward;
+        if (Input.GetKey(KeyCode.A)) movement -= transform.right;
+        if (Input.GetKey(KeyCode.D)) movement += transform.right;
+        if (Input.GetKey(KeyCode.E)) movement += Vector3.up;
+        if (Input.GetKey(KeyCode.Q)) movement += Vector3.down;
         
         if (movement != Vector3.zero)
         {

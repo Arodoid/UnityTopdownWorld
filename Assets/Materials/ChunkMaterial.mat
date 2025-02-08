@@ -125,6 +125,7 @@ Material:
     - _CloudMinOrthoSize: 100
     - _CloudScale: 400
     - _CloudShadowHeight: -6.44
+    - _CloudShadowStrength: 4.5
     - _CloudSpeed: 0.05
     - _ColorVariationScale: 1
     - _ColorVariationStrength: 0.02
@@ -195,6 +196,7 @@ Material:
     - _AtmosphereColor: {r: 0.2688679, g: 0.634434, b: 1, a: 1}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _CloudColor: {r: 1, g: 1, b: 1, a: 0.6}
+    - _CloudShadowColor: {r: 0.2, g: 0.23, b: 0.27, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _HazeColor: {r: 0, g: 0.4764049, b: 1, a: 1}

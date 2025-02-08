@@ -33,6 +33,7 @@ namespace WorldSystem.Base
         private Vector3 _lastCameraPosition;
         private float _lastCameraHeight;
         private float _lastOrthoSize;
+        private Quaternion _lastCameraRotation;
         private const float UPDATE_THRESHOLD = 16f;
 
         [SerializeField] private int poolSize = 512;
@@ -40,7 +41,7 @@ namespace WorldSystem.Base
 
         [SerializeField] private int maxChunks = 512;
 
-        private IChunkMeshBuilder _meshBuilder;
+        private ChunkMeshManager _meshManager;
 
         [SerializeField] private int viewMaxYLevel = 20;
         public int ViewMaxYLevel
@@ -98,26 +99,27 @@ namespace WorldSystem.Base
 
         public void Initialize(WorldGenSettings settings)
         {
-            _worldSettings = settings;
-            _worldGenerator = new WorldGenerator(_worldSettings);
-            _meshBuilder = new ChunkMeshBuilder();
+        _worldSettings = settings;
+        _worldGenerator = new WorldGenerator(_worldSettings);
+        _meshManager = new ChunkMeshManager(BlockColors.Definitions);  // Pass BlockDefinitions directly
 
-            _chunkPool = new ChunkPool(chunkMaterial, transform, poolSize, maxChunks, bufferTimeSeconds);
-            _lastViewMaxYLevel = viewMaxYLevel;
-            UpdateVisibleChunks();
+        _chunkPool = new ChunkPool(chunkMaterial, transform, poolSize, maxChunks, bufferTimeSeconds);
+        _lastViewMaxYLevel = viewMaxYLevel;
+        UpdateVisibleChunks();
 
-            _lastCameraPosition = mainCamera.transform.position;
-            _lastCameraHeight = _lastCameraPosition.y;
-            _lastOrthoSize = mainCamera.orthographicSize;
+        _lastCameraPosition = mainCamera.transform.position;
+        _lastCameraHeight = _lastCameraPosition.y;
+        _lastOrthoSize = mainCamera.orthographicSize;
+        _lastCameraRotation = mainCamera.transform.rotation;
 
-            _persistenceManager = new ChunkPersistenceManager(worldName);
-        }
+        _persistenceManager = new ChunkPersistenceManager(worldName);        }
 
         void Update()
         {
             Vector3 currentCamPos = mainCamera.transform.position;
             float currentHeight = currentCamPos.y;
             float currentOrthoSize = mainCamera.orthographicSize;
+            Quaternion currentRotation = mainCamera.transform.rotation;
             
             // Check if Y-level has changed
             if (_lastViewMaxYLevel != viewMaxYLevel)
@@ -125,10 +127,11 @@ namespace WorldSystem.Base
                 HandleYLevelChange();
                 _lastViewMaxYLevel = viewMaxYLevel;
             }
-            // Regular position update check
+            // Add rotation check to trigger updates
             else if (Vector3.Distance(_lastCameraPosition, currentCamPos) > UPDATE_THRESHOLD ||
                 Mathf.Abs(_lastCameraHeight - currentHeight) > UPDATE_THRESHOLD ||
-                Mathf.Abs(_lastOrthoSize - currentOrthoSize) > 0.01f)
+                Mathf.Abs(_lastOrthoSize - currentOrthoSize) > 0.01f ||
+                Quaternion.Angle(_lastCameraRotation, currentRotation) > 1f) // Check rotation changes
             {
                 UpdateVisibleChunks();
                 QueueMissingChunks();
@@ -137,10 +140,11 @@ namespace WorldSystem.Base
                 _lastCameraPosition = currentCamPos;
                 _lastCameraHeight = currentHeight;
                 _lastOrthoSize = currentOrthoSize;
+                _lastCameraRotation = currentRotation; // Store last rotation
             }
 
             ProcessChunkQueue();
-            _meshBuilder.Update();
+            _meshManager.Update();
             
             // Process any dirty chunks
             foreach (var dirtyChunk in _dirtyChunks)
@@ -150,8 +154,8 @@ namespace WorldSystem.Base
                     var chunk = _chunkPool.GetChunk(dirtyChunk, viewMaxYLevel);
                     if (chunk.HasValue)
                     {
-                        _meshBuilder.QueueMeshBuild(dirtyChunk, blocks, 
-                            chunk.Value.meshFilter, chunk.Value.shadowFilter);
+                        _meshManager.QueueMeshBuild(dirtyChunk, blocks, 
+                            chunk.Value.meshFilter, chunk.Value.shadowFilter, viewMaxYLevel);
                     }
                 }
             }
@@ -161,48 +165,73 @@ namespace WorldSystem.Base
         void UpdateVisibleChunks()
         {
             _visibleChunkPositions.Clear();
-            Vector3 camPos = mainCamera.transform.position;
             
-            if (mainCamera.orthographic)
-            {
-                float aspect = mainCamera.aspect;
-                float orthoWidth = mainCamera.orthographicSize * 2f * aspect;
-                float orthoHeight = mainCamera.orthographicSize * 2f;
-                
-                orthoWidth *= chunkLoadBuffer;
-                orthoHeight *= chunkLoadBuffer;
-                
-                int chunkDistanceX = Mathf.CeilToInt((orthoWidth * 0.5f) / Data.ChunkData.SIZE);
-                int chunkDistanceZ = Mathf.CeilToInt((orthoHeight * 0.5f) / Data.ChunkData.SIZE);
+            // Get the actual camera frustum planes
+            Plane[] frustumPlanes = GeometryUtility.CalculateFrustumPlanes(mainCamera);
+            
+            // Get camera position and forward direction
+            Vector3 camPos = mainCamera.transform.position;
+            Vector3 camForward = mainCamera.transform.forward;
+            
+            // Calculate the maximum possible chunks we need to check based on view distance
+            // This is just for optimization to avoid checking every chunk in the world
+            float maxViewDistance = loadDistance * chunkLoadBuffer;
+            int maxChunkRadius = Mathf.CeilToInt(maxViewDistance / ChunkData.SIZE);
+            int2 centerChunk = new int2(
+                Mathf.FloorToInt(camPos.x / ChunkData.SIZE),
+                Mathf.FloorToInt(camPos.z / ChunkData.SIZE)
+            );
 
-                int2 centerChunk = new int2(
-                    Mathf.FloorToInt(camPos.x / Data.ChunkData.SIZE),
-                    Mathf.FloorToInt(camPos.z / Data.ChunkData.SIZE)
+            // Check all potential chunks in range
+            for (int x = -maxChunkRadius; x <= maxChunkRadius; x++)
+            for (int z = -maxChunkRadius; z <= maxChunkRadius; z++)
+            {
+                int2 chunkPos = new int2(centerChunk.x + x, centerChunk.y + z);
+                
+                // Create full height bounds for the chunk (including Y axis)
+                Vector3 chunkMin = new Vector3(
+                    chunkPos.x * ChunkData.SIZE,
+                    0, // Always start from bottom
+                    chunkPos.y * ChunkData.SIZE
+                );
+                Vector3 chunkMax = new Vector3(
+                    (chunkPos.x + 1) * ChunkData.SIZE,
+                    ChunkData.HEIGHT, // Full height (256)
+                    (chunkPos.y + 1) * ChunkData.SIZE
+                );
+                
+                Bounds chunkBounds = new Bounds(
+                    (chunkMax + chunkMin) * 0.5f, // Center
+                    chunkMax - chunkMin // Size
                 );
 
-                for (int x = -chunkDistanceX; x <= chunkDistanceX; x++)
-                for (int z = -chunkDistanceZ; z <= chunkDistanceZ; z++)
+                // If ANY part of the chunk is visible in the frustum, we need to load it
+                if (GeometryUtility.TestPlanesAABB(frustumPlanes, chunkBounds))
                 {
-                    int2 chunkPos = new int2(centerChunk.x + x, centerChunk.y + z);
                     _visibleChunkPositions.Add(chunkPos);
                 }
             }
-            else
-            {
-                float viewDistance = loadDistance * chunkLoadBuffer;
-                int2 centerChunk = new int2(
-                    Mathf.FloorToInt(camPos.x / Data.ChunkData.SIZE),
-                    Mathf.FloorToInt(camPos.z / Data.ChunkData.SIZE)
-                );
-                
-                int chunkDistance = Mathf.CeilToInt(viewDistance / Data.ChunkData.SIZE);
-                for (int x = -chunkDistance; x <= chunkDistance; x++)
-                for (int z = -chunkDistance; z <= chunkDistance; z++)
-                {
-                    int2 chunkPos = new int2(centerChunk.x + x, centerChunk.y + z);
-                    _visibleChunkPositions.Add(chunkPos);
-                }
-            }
+        }
+
+        // Add helper method to determine if a chunk should be rendered at current camera angle
+        private bool ShouldRenderChunkAtAngle(int2 chunkPos, Vector3 camPos, Vector3 camForward)
+        {
+            Vector3 chunkCenter = new Vector3(
+                (chunkPos.x + 0.5f) * Data.ChunkData.SIZE,
+                0,
+                (chunkPos.y + 0.5f) * Data.ChunkData.SIZE
+            );
+            
+            // Direction from camera to chunk
+            Vector3 toChunk = chunkCenter - camPos;
+            toChunk.y = 0;
+            toChunk.Normalize();
+            
+            // Dot product to check if chunk is in front of camera
+            float dot = Vector3.Dot(camForward, toChunk);
+            
+            // Allow some chunks behind camera based on angle threshold
+            return dot > -0.5f; // Adjust threshold as needed
         }
 
         void QueueMissingChunks()
@@ -353,25 +382,24 @@ namespace WorldSystem.Base
             if (chunkResult == null) return;
 
             var (chunk, meshFilter, shadowMeshFilter) = chunkResult.Value;
-            _meshBuilder.QueueMeshBuild(position, blocks, meshFilter, shadowMeshFilter, viewMaxYLevel);
+            _meshManager.QueueMeshBuild(position, blocks, meshFilter, shadowMeshFilter, viewMaxYLevel);
         }
 
         void CleanupDistantChunks()
         {
             var activeChunkPositions = _chunkPool.GetActiveChunkPositions().ToList();
             
+            // Immediately deactivate any chunks not in the current view frustum
             foreach (var (pos, yLevel) in activeChunkPositions)
             {
                 if (!_visibleChunkPositions.Contains(pos))
                 {
                     _chunkPool.DeactivateChunk(pos, yLevel);
-                    // Invoke the OnChunkUnloaded event
                     OnChunkUnloaded?.Invoke(pos);
                 }
             }
 
-            _chunkPool.CheckBufferTimeout();
-
+            // Clear the load queue of any chunks that are no longer visible
             var newQueue = new PriorityQueue<int2>();
             while (_chunkLoadQueue.Count > 0)
             {
@@ -386,6 +414,7 @@ namespace WorldSystem.Base
             }
             _chunkLoadQueue = newQueue;
 
+            _chunkPool.CheckBufferTimeout();
             CleanupExcessChunks();
         }
 
@@ -734,6 +763,11 @@ namespace WorldSystem.Base
                 public TKey Key;
                 public TValue Value;
             }
+        }
+
+        private void Dispose()
+        {
+            _meshManager.Dispose();
         }
     }
 } 
