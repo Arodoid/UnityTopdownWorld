@@ -72,13 +72,23 @@ namespace WorldSystem.Generation.Features
 
         private void GenerateTrees(ref FeatureContext context, BiomeGenerator biomeGen)
         {
-
+            // Add debug logging
+            Debug.Log($"Generating trees for chunk at {context.ChunkPosition}");
+            
             for (int x = 0; x < Data.ChunkData.SIZE; x++)
             {
                 for (int z = 0; z < Data.ChunkData.SIZE; z++)
                 {
                     int heightMapIndex = x + z * Data.ChunkData.SIZE;
+                    // Convert heightmap value to actual world height
                     int surfaceHeight = context.HeightMap[heightMapIndex].height;
+                    
+                    // Debug the height values
+                    if (x == 0 && z == 0)
+                    {
+                        Debug.Log($"Surface height at (0,0): {surfaceHeight}");
+                    }
+                    
                     byte surfaceBlock = context.HeightMap[heightMapIndex].blockType;
                     
                     // First check: Only allow trees on grass blocks
@@ -90,6 +100,22 @@ namespace WorldSystem.Generation.Features
                         surfaceHeight >= Data.ChunkData.HEIGHT - 10)
                         continue;
 
+                    // Verify the position is actually air
+                    int checkIndex = x + (z * Data.ChunkData.SIZE) + 
+                                   (surfaceHeight * Data.ChunkData.SIZE * Data.ChunkData.SIZE);
+                    if (context.Blocks[checkIndex] != (byte)BlockType.Air)
+                    {
+                        // Search upward for the actual surface
+                        while (surfaceHeight < Data.ChunkData.HEIGHT - 1)
+                        {
+                            surfaceHeight++;
+                            checkIndex = x + (z * Data.ChunkData.SIZE) + 
+                                       (surfaceHeight * Data.ChunkData.SIZE * Data.ChunkData.SIZE);
+                            if (context.Blocks[checkIndex] == (byte)BlockType.Air)
+                                break;
+                        }
+                    }
+
                     // Get biome for this position
                     BlockType biomeType = biomeGen.GetSurfaceBlock(x, z, surfaceHeight);
                     BiomeSettings biome = GetBiomeFromSurfaceBlock(context.Biomes, biomeType);
@@ -97,7 +123,8 @@ namespace WorldSystem.Generation.Features
                     // Only generate if biome allows it AND we're on grass
                     if (biome.AllowsTrees && context.Random.NextFloat() < biome.TreeDensity)
                     {
-                        int height = (int)math.lerp(biome.TreeMinHeight, biome.TreeMaxHeight, context.Random.NextFloat());
+                        int height = (int)math.lerp(biome.TreeMinHeight, biome.TreeMaxHeight, 
+                            context.Random.NextFloat());
                         GenerateTree(ref context, new int3(x, surfaceHeight + 1, z), height);
                     }
                 }

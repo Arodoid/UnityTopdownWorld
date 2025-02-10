@@ -271,6 +271,31 @@ namespace WorldSystem.Generation
                 HumidityMap = humidityMap
             }.Schedule(handle);
 
+            // After the terrain job completes, we need to run feature generation
+            handle.Complete(); // We need to complete here to modify the blocks
+
+            // Convert heightMap from Core to Data namespace
+            var dataHeightMap = new NativeArray<Data.HeightPoint>(heightMap.Length, Allocator.Persistent);
+            for (int i = 0; i < heightMap.Length; i++)
+            {
+                dataHeightMap[i] = new Data.HeightPoint
+                {
+                    height = heightMap[i].height,
+                    blockType = heightMap[i].blockType
+                };
+            }
+
+            var chunkData = new Data.ChunkData
+            {
+                position = chunkPos,
+                blocks = blocks,
+                heightMap = dataHeightMap, // Use the converted heightMap
+                isEdited = false
+            };
+
+            var featureGenerator = new FeatureGenerator(_settings);
+            featureGenerator.PopulateChunk(ref chunkData, BiomesArray);
+
             return handle;
         }
 
