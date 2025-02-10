@@ -23,6 +23,9 @@ public class CameraController : MonoBehaviour
     
     [Header("Camera Rotation")]
     [SerializeField] private float rotationSpeed = 2f;
+    [SerializeField] private float quickRotationSpeed = 400f;
+    [SerializeField] private float quickRotationSmoothness = 0.1f;
+    [SerializeField] private float orbitDistance = 50f;
     [SerializeField] private float minVerticalAngle = -80f;
     [SerializeField] private float maxVerticalAngle = 80f;
     
@@ -31,6 +34,9 @@ public class CameraController : MonoBehaviour
     private float _targetZoom;
     private float _rotationX = 0f;
     private float _rotationY = 0f;
+    private float _targetRotationY = 0f;
+    private Vector3 _pivotPoint;
+    private bool _isOrbiting = false;
     
     private void Start()
     {
@@ -90,17 +96,54 @@ public class CameraController : MonoBehaviour
 
     private void HandleRotation()
     {
-        // Only rotate when right mouse button is held
-        if (Input.GetMouseButton(1))
+        // Quick 90-degree orbit with Q/E
+        if (Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.E))
         {
-            float mouseX = Input.GetAxis("Mouse X") * rotationSpeed;
-            float mouseY = Input.GetAxis("Mouse Y") * rotationSpeed;
+            // Calculate pivot point using current camera orientation
+            _pivotPoint = transform.position + transform.rotation * Vector3.forward * orbitDistance;
+            _targetRotationY += Input.GetKeyDown(KeyCode.Q) ? -90f : 90f;
+            _isOrbiting = true;
+        }
+
+        // Start orbiting when right mouse is first pressed
+        if (Input.GetMouseButtonDown(1))
+        {
+            _pivotPoint = transform.position + transform.rotation * Vector3.forward * orbitDistance;
+            _isOrbiting = true;
+        }
+
+        if (_isOrbiting)
+        {
+            if (Input.GetMouseButton(1)) // Update target rotation during right-click drag
+            {
+                float mouseX = Input.GetAxis("Mouse X") * rotationSpeed;
+                float mouseY = Input.GetAxis("Mouse Y") * rotationSpeed;
+                
+                _targetRotationY += mouseX;
+                _rotationX -= mouseY;
+                _rotationX = Mathf.Clamp(_rotationX, minVerticalAngle, maxVerticalAngle);
+            }
+
+            // Smooth rotation towards target angle
+            _rotationY = Mathf.LerpAngle(_rotationY, _targetRotationY, quickRotationSmoothness);
             
-            _rotationY += mouseX;
-            _rotationX -= mouseY;
-            _rotationX = Mathf.Clamp(_rotationX, minVerticalAngle, maxVerticalAngle);
+            // Calculate new position based on orbit, maintaining initial orientation
+            Quaternion initialRotation = Quaternion.Euler(transform.eulerAngles.x, 0, transform.eulerAngles.z);
+            Quaternion orbitRotation = Quaternion.Euler(0, _rotationY, 0);
+            Vector3 orbitPosition = _pivotPoint - (orbitRotation * initialRotation * Vector3.forward * orbitDistance);
             
-            transform.rotation = Quaternion.Euler(_rotationX, _rotationY, 0);
+            _targetPosition = orbitPosition;
+            
+            // Only modify the Y rotation, preserve other axes
+            Vector3 currentRotation = transform.eulerAngles;
+            currentRotation.y = _rotationY;
+            transform.eulerAngles = currentRotation;
+
+            // Stop orbiting when right mouse is released or we reach Q/E target
+            if (!Input.GetMouseButton(1) && Mathf.Abs(Mathf.DeltaAngle(_rotationY, _targetRotationY)) < 0.01f)
+            {
+                _isOrbiting = false;
+            }
         }
     }
 
@@ -111,17 +154,15 @@ public class CameraController : MonoBehaviour
         
         Vector3 movement = Vector3.zero;
         
-        // Get the camera's Y rotation only
         float yaw = transform.eulerAngles.y;
         Quaternion rotation = Quaternion.Euler(0, yaw, 0);
         
-        // Movement using world-aligned directions rotated by camera's Y angle
         if (Input.GetKey(KeyCode.W)) movement += rotation * Vector3.forward;
         if (Input.GetKey(KeyCode.S)) movement += rotation * Vector3.back;
         if (Input.GetKey(KeyCode.A)) movement += rotation * Vector3.left;
         if (Input.GetKey(KeyCode.D)) movement += rotation * Vector3.right;
-        if (Input.GetKey(KeyCode.E)) movement += Vector3.up;
-        if (Input.GetKey(KeyCode.Q)) movement += Vector3.down;
+        if (Input.GetKey(KeyCode.R)) movement += Vector3.up;
+        if (Input.GetKey(KeyCode.F)) movement += Vector3.down;
         
         if (movement != Vector3.zero)
         {
@@ -138,12 +179,10 @@ public class CameraController : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.LeftShift) && chunkManager != null)
             {
-                // Y-Level control via scroll
                 int yLevelChange = scrollDelta > 0 ? 1 : -1;
                 int newYLevel = Mathf.Clamp(chunkManager.ViewMaxYLevel + yLevelChange, minYLevel, maxYLevel);
                 chunkManager.ViewMaxYLevel = newYLevel;
                 
-                // Update slider to match
                 if (yLevelSlider != null)
                 {
                     yLevelSlider.value = newYLevel;
@@ -151,7 +190,6 @@ public class CameraController : MonoBehaviour
             }
             else
             {
-                // Regular zoom control
                 float currentZoomPercent = (_camera.orthographicSize - minZoom) / (maxZoom - minZoom);
                 float currentZoomSpeed = _camera.orthographicSize * zoomSpeed;
                 

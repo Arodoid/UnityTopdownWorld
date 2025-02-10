@@ -151,7 +151,7 @@ Material:
     - _OrthoFalloffEnd: 100
     - _OrthoFalloffMultiplier: 1
     - _OrthoFalloffStart: 20
-    - _OrthoSize: 5
+    - _OrthoSize: 3
     - _OvercastFactor: 0
     - _Parallax: 0.005
     - _QueueOffset: 0

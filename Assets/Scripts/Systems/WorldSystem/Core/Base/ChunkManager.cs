@@ -114,6 +114,9 @@ namespace WorldSystem.Base
         private Vector3 _lastFrustumUpdatePos;
         private Quaternion _lastFrustumUpdateRot;
 
+        // Add this field to track conversion jobs
+        private Dictionary<int2, (JobHandle handle, NativeArray<Data.HeightPoint> heightMap, NativeArray<byte> blocks)> _pendingConversionJobs = new();
+
         public void Initialize(WorldGenSettings settings)
         {
         _worldSettings = settings;
@@ -185,42 +188,45 @@ namespace WorldSystem.Base
             
             Vector3 camPos = mainCamera.transform.position;
             
-            // Get camera frustum planes
-            GeometryUtility.CalculateFrustumPlanes(mainCamera, _cachedFrustumPlanes);
+            // Update cached frustum planes only if camera has moved significantly
+            if (Vector3.Distance(_lastFrustumUpdatePos, camPos) > 1f || 
+                Quaternion.Angle(_lastFrustumUpdateRot, mainCamera.transform.rotation) > 1f)
+            {
+                GeometryUtility.CalculateFrustumPlanes(mainCamera, _cachedFrustumPlanes);
+                _lastFrustumUpdatePos = camPos;
+                _lastFrustumUpdateRot = mainCamera.transform.rotation;
+            }
             
-            // For orthographic camera, calculate visible area based on orthographicSize
+            // Calculate visible area based on orthographicSize
             float orthoSize = mainCamera.orthographicSize;
             float aspectRatio = mainCamera.aspect;
             float visibleWidth = orthoSize * 2 * aspectRatio;
             float visibleHeight = orthoSize * 2;
 
-            // Convert to world space considering camera rotation
-            Vector3 forward = mainCamera.transform.forward;
-            Vector3 right = mainCamera.transform.right;
-            Vector3 up = mainCamera.transform.up;
-
-            // Add more buffer to ensure chunks load before they're visible
-            float buffer = 2.5f; // Increased from 2f
+            // Add buffer for chunk loading
+            float buffer = chunkLoadBuffer;
             visibleWidth *= buffer;
             visibleHeight *= buffer;
             
-            // Add vertical buffer for tilted camera views
-            float verticalBuffer = Mathf.Abs(mainCamera.transform.forward.y) * orthoSize * 4f;
-            visibleHeight += verticalBuffer;
-
-            // Calculate bounds in chunk coordinates
-            int minX = Mathf.FloorToInt((camPos.x - visibleWidth) / ChunkData.SIZE);
-            int maxX = Mathf.CeilToInt((camPos.x + visibleWidth) / ChunkData.SIZE);
-            int minZ = Mathf.FloorToInt((camPos.z - visibleHeight) / ChunkData.SIZE);
-            int maxZ = Mathf.CeilToInt((camPos.z + visibleHeight) / ChunkData.SIZE);
+            // Calculate bounds in chunk coordinates with extra padding
+            int minX = Mathf.FloorToInt((camPos.x - visibleWidth) / ChunkData.SIZE) - 1;
+            int maxX = Mathf.CeilToInt((camPos.x + visibleWidth) / ChunkData.SIZE) + 1;
+            int minZ = Mathf.FloorToInt((camPos.z - visibleHeight) / ChunkData.SIZE) - 1;
+            int maxZ = Mathf.CeilToInt((camPos.z + visibleHeight) / ChunkData.SIZE) + 1;
 
             // Check chunks within the calculated bounds
             for (int x = minX; x <= maxX; x++)
             {
                 for (int z = minZ; z <= maxZ; z++)
                 {
-                    CheckChunkVisibility(new int2(x, z), float.MaxValue, camPos);
+                    CheckChunkVisibility(new int2(x, z), loadDistance * loadDistance, camPos);
                 }
+            }
+
+            // Debug output if no chunks are visible
+            if (_visibleChunkPositions.Count == 0)
+            {
+                Debug.LogWarning($"No visible chunks! Camera pos: {camPos}, Ortho size: {orthoSize}");
             }
         }
 
@@ -230,43 +236,26 @@ namespace WorldSystem.Base
             float worldZ = chunkPos.y * ChunkData.SIZE + ChunkData.SIZE * 0.5f;
             
             // Calculate bounds based on viewMaxYLevel
-            float visibleHeight = Mathf.Min(viewMaxYLevel + 1, ChunkData.HEIGHT); // +1 to include current level
-            float centerY = visibleHeight * 0.5f; // Center of visible portion
+            float visibleHeight = Mathf.Min(viewMaxYLevel + 1, ChunkData.HEIGHT);
+            float centerY = visibleHeight * 0.5f;
             
             // Create bounds that only encompasses the visible portion of the chunk
             var bounds = new Bounds(
                 new Vector3(worldX, centerY, worldZ),
                 new Vector3(
-                    ChunkData.SIZE,      // Full width
-                    visibleHeight,       // Only up to viewMaxYLevel
-                    ChunkData.SIZE       // Full depth
+                    ChunkData.SIZE,
+                    visibleHeight,
+                    ChunkData.SIZE
                 )
             );
 
             // Add some padding to the bounds to prevent pop-in
             bounds.Expand(new Vector3(1f, 1f, 1f));
 
+            // If the chunk is within view frustum, add it to visible chunks
             if (GeometryUtility.TestPlanesAABB(_cachedFrustumPlanes, bounds))
             {
                 _visibleChunkPositions.Add(chunkPos);
-                
-                // Debug visualization
-                Debug.DrawLine(
-                    bounds.min,
-                    bounds.max,
-                    Color.green,
-                    Time.deltaTime
-                );
-            }
-            else
-            {
-                // Debug visualization for culled chunks
-                Debug.DrawLine(
-                    bounds.min,
-                    bounds.max,
-                    Color.red,
-                    Time.deltaTime
-                );
             }
         }
 
@@ -357,56 +346,41 @@ namespace WorldSystem.Base
 
         void ProcessChunkQueue()
         {
-            // First, check for completed jobs
-            var completedJobs = new List<int2>();
+            // Create a combined dependency for all completed jobs
+            JobHandle combinedHandle = default;
+            var completedJobs = new List<(int2 pos, Data.ChunkData data)>();
+            
             foreach (var kvp in _pendingJobs)
             {
                 if (kvp.Value.handle.IsCompleted)
                 {
-                    try
+                    // Combine job handles instead of completing them individually
+                    combinedHandle = JobHandle.CombineDependencies(combinedHandle, kvp.Value.handle);
+                    
+                    var chunkData = new Data.ChunkData
                     {
-                        // Complete the job and process results
-                        kvp.Value.handle.Complete();
-                        
-                        // Convert heightMap in parallel using Persistent allocator
-                        var finalHeightMap = new NativeArray<Data.HeightPoint>(
-                            Data.ChunkData.SIZE * Data.ChunkData.SIZE, 
-                            Allocator.Persistent);
-                        
-                        var conversionJob = new HeightMapConversionJob
-                        {
-                            sourceHeightMap = kvp.Value.heightMap,
-                            targetHeightMap = finalHeightMap
-                        };
-                        
-                        conversionJob.Schedule(finalHeightMap.Length, 64).Complete();
-                        
-                        // Create the final chunk data
-                        var chunkData = new Data.ChunkData
-                        {
-                            position = new int3(kvp.Key.x, viewMaxYLevel, kvp.Key.y),
-                            blocks = kvp.Value.blocks, // Transfer ownership
-                            heightMap = finalHeightMap,
-                            isEdited = false
-                        };
-                        OnChunkGenerated(chunkData);
-                        completedJobs.Add(kvp.Key);
-                    }
-                    finally
-                    {
-                        // Cleanup source heightMap
-                        if (kvp.Value.heightMap.IsCreated)
-                            kvp.Value.heightMap.Dispose();
-                    }
+                        position = new int3(kvp.Key.x, viewMaxYLevel, kvp.Key.y),
+                        blocks = kvp.Value.blocks,
+                        isEdited = false
+                    };
+                    
+                    completedJobs.Add((kvp.Key, chunkData));
                 }
             }
 
-            // Remove completed jobs
-            foreach (var pos in completedJobs)
+            // Complete all jobs at once
+            if (combinedHandle.IsCompleted)
             {
-                _pendingJobs.Remove(pos);
+                combinedHandle.Complete();
+                
+                // Now process all completed chunks
+                foreach (var (pos, chunkData) in completedJobs)
+                {
+                    OnChunkGenerated(chunkData);
+                    _pendingJobs.Remove(pos);
+                }
             }
-
+            
             // Schedule new jobs
             while (_chunkLoadQueue.Count > 0 && _pendingJobs.Count < 8)
             {
@@ -822,9 +796,24 @@ namespace WorldSystem.Base
             }
         }
 
-        private void Dispose()
+        public void Dispose()
         {
-            _meshManager.Dispose();
+            foreach (var job in _pendingJobs.Values)
+            {
+                job.handle.Complete();
+                if (job.heightMap.IsCreated) job.heightMap.Dispose();
+                if (job.blocks.IsCreated) job.blocks.Dispose();
+            }
+            
+            foreach (var job in _pendingConversionJobs.Values)
+            {
+                job.handle.Complete();
+                if (job.heightMap.IsCreated) job.heightMap.Dispose();
+                if (job.blocks.IsCreated) job.blocks.Dispose();
+            }
+            
+            _pendingJobs.Clear();
+            _pendingConversionJobs.Clear();
         }
     }
 } 
